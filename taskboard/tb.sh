@@ -94,8 +94,14 @@ done
 			;;
 
 		"" )
-			./quickswap.sh "${tasks[$selected]}"
-			active=$selected
+			./quickswap.sh -m "${tasks[$active]}"
+			if [[ $selected = $active ]]
+			then
+				active=-1
+			else
+				./quickswap.sh "${tasks[$selected]}"
+				active=$selected
+			fi
 			;;
 
 	esac
