@@ -51,13 +51,13 @@ done
 				read -n 1
 				continue
 			fi
-			./quickswap.sh -n "$giturl" "$jiraurl"
+			./taskswap.sh -n "$giturl" "$jiraurl"
 			selected=${#tasks[*]}
 			tasks[${#tasks[*]}]="$jiranum   $repo"
 			;;
 
 		"X" )
-			./quickswap.sh -x "${tasks[selected]}"
+			./taskswap.sh -x "${tasks[selected]}"
 			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [[ $active = $selected ]]
 			then
@@ -94,12 +94,12 @@ done
 			;;
 
 		"" )
-			./quickswap.sh -m "${tasks[$active]}"
+			./taskswap.sh -m "${tasks[$active]}"
 			if [[ $selected = $active ]]
 			then
 				active=-1
 			else
-				./quickswap.sh "${tasks[$selected]}"
+				./taskswap.sh "${tasks[$selected]}"
 				active=$selected
 			fi
 			;;
