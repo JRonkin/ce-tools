@@ -13,8 +13,8 @@ do
 "
 for ((i = 0; i < ${#tasks[@]}; i++))
 do
-	if [[ $selected = $i ]]; then s=">"; else s=" "; fi
-	if [[ $active = $i ]]; then a="*"; else a=" "; fi
+	if [ $selected = $i ]; then s=">"; else s=" "; fi
+	if [ $active = $i ]; then a="*"; else a=" "; fi
 	printf "\
 | $s$a%s |
 " "$(echo "${tasks[i]}                                                       " | sed "s/\(.\{55\}\).*/\1/")"
@@ -59,23 +59,23 @@ done
 		"X" )
 			./taskswap.sh -x "${tasks[selected]}"
 			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
-			if [[ $active = $selected ]]
+			if [ $active = $selected ]
 			then
 				active=-1
 			else
-				if [[ $active -gt $selected ]]
+				if [ $active -gt $selected ]
 				then
 					(( --active ))
 				fi
 			fi
-			if [[ $selected = ${#tasks[*]} ]]; then (( --selected )); fi
+			if [ $selected = ${#tasks[*]} ]; then (( --selected )); fi
 			;;
 
 		"" )
 			read -n 2 -t 1 input2
 			case $input2 in
 				"[A" )
-					if [[ $selected -gt 0 ]]
+					if [ $selected -gt 0 ]
 					then
 						(( --selected ))
 					else
@@ -83,7 +83,7 @@ done
 					fi
 					;;
 				"[B" )
-					if [[ $selected -lt $(( ${#tasks[*]} - 1 )) ]]
+					if [ $selected -lt $(( ${#tasks[*]} - 1 )) ]
 					then
 						(( ++selected ))
 					else
@@ -95,7 +95,7 @@ done
 
 		"" )
 			./taskswap.sh -m "${tasks[$active]}"
-			if [[ $selected = $active ]]
+			if [ $selected = $active ]
 			then
 				active=-1
 			else
