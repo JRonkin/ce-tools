@@ -6,7 +6,7 @@ new() {
 	git clone "git@github.com:yext-pages/${repo}.git" || true
 
 	printf 'tell app "Terminal"
-				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk"
+				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk; git branch"
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3256, 387, 3841, 753}
 			end tell
@@ -21,7 +21,8 @@ new() {
 }
 
 activate() {
-	repo=$1
+	repo=$(echo "$1" | cut -d " " -f 4)
+	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
 				set miniaturized of every window with custom title "%s" to false
@@ -30,7 +31,8 @@ activate() {
 }
 
 deactivate() {
-	repo=$1
+	repo=$(echo "$1" | cut -d " " -f 4)
+	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
 				set miniaturized of every window with custom title "%s" to true
@@ -39,7 +41,8 @@ deactivate() {
 }
 
 close() {
-	repo=$1
+	repo=$(echo "$1" | cut -d " " -f 4)
+	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
 				close every window with custom title "%s"
