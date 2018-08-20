@@ -5,11 +5,10 @@ new() {
 	killall -9 grunt || true
 
 	cd ~/repo
-	echo "Cloning git@github.com:yext-pages/${repo}.git"
 	git clone "git@github.com:yext-pages/${repo}.git" || true
 
 	printf 'tell app "Terminal"
-				do script "cd ~/repo/%s && git co %s/trunk || git co -b %s/trunk"
+				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk"
 			end tell
 		' $repo $jiranum $jiranum | osascript
 
