@@ -2,8 +2,6 @@ new() {
 	repo=$1
 	jiranum=$2
 
-	killall -9 grunt || true
-
 	cd ~/repo
 	git clone "git@github.com:yext-pages/${repo}.git" || true
 
