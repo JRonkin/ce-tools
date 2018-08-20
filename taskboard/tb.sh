@@ -1,3 +1,8 @@
+set -o errexit
+set -o errtrace
+
+source taskswap.sh
+
 tasks=()
 selected=0
 active=-1
@@ -51,13 +56,13 @@ done
 				read -n 1
 				continue
 			fi
-			./taskswap.sh -n "$giturl" "$jiraurl"
+			new "$giturl" "$jiraurl"
 			selected=${#tasks[*]}
 			tasks[${#tasks[*]}]="$jiranum   $repo"
 			;;
 
 		"X" )
-			./taskswap.sh -x "${tasks[selected]}"
+			close "${tasks[selected]}"
 			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [ $active = $selected ]
 			then
@@ -94,12 +99,12 @@ done
 			;;
 
 		"" )
-			./taskswap.sh -m "${tasks[$active]}"
+			deactivate "${tasks[$active]}"
 			if [ $selected = $active ]
 			then
 				active=-1
 			else
-				./taskswap.sh "${tasks[$selected]}"
+				activate "${tasks[$selected]}"
 				active=$selected
 			fi
 			;;
