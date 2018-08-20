@@ -1,6 +1,3 @@
-set -o errexit
-set -o errtrace
-
 source taskswap.sh
 
 tasks=()
@@ -47,16 +44,8 @@ done
 				read -n 1
 				continue
 			fi
-			read -p "JIRA Item URL: " jiraurl
-			if [[ "$jiraurl" =~ .*selectedIssue=([^\&]+).* ]]
-			then
-				jiranum=${BASH_REMATCH[1]}
-			else
-				printf "No JIRA number found -- select an issue and copy the URL\n\n> Return to TaskBoard"
-				read -n 1
-				continue
-			fi
-			new "$giturl" "$jiraurl"
+			read -p "JIRA Number: " jiranum
+			new "$repo" "$jiranum"
 			selected=${#tasks[*]}
 			tasks[${#tasks[*]}]="$jiranum   $repo"
 			;;
