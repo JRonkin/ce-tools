@@ -45,14 +45,14 @@ done
 				continue
 			fi
 			read -p "JIRA Number: " jiranum
+			new "$repo" "$jiranum"
+			selected=${#tasks[*]}
+			tasks[${#tasks[*]}]="$jiranum   $repo"
 			if [ $active -gt -1 ]
 			then
 				deactivate "${tasks[$active]}"
 			fi
-			new "$repo" "$jiranum"
-			active=${#tasks[*]}
-			selected=$active
-			tasks[${#tasks[*]}]="$jiranum   $repo"
+			active=$selected
 			;;
 
 		"X" )
