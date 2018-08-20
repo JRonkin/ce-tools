@@ -9,11 +9,13 @@ new() {
 
 	printf 'tell app "Terminal"
 				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk"
+				set the bounds of the front window to {3256, 387, 3841, 753}
 			end tell
 		' $repo $jiranum $jiranum | osascript
 
 	printf 'tell app "Terminal"
 				do script "cd ~/repo/%s/src && touch yarn.lock && rm yarn.lock && yarn install && bower install && bundle install"
+				set the bounds of the front window to {3255, 754, 3840, 1120}
 			end tell
 		' $repo | osascript
 }
