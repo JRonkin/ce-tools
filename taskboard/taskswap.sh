@@ -6,18 +6,18 @@ new() {
 	git clone "git@github.com:yext-pages/${repo}.git" || true
 
 	printf 'tell app "Terminal"
-				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk; git branch"
-				set the custom title of the front window to "%s"
-				set the bounds of the front window to {3256, 387, 3841, 753}
-			end tell
-		' "$repo" "$jiranum" "$jiranum" "$repo" | osascript
-
-	printf 'tell app "Terminal"
 				do script "cd ~/repo/%s/src && touch yarn.lock && rm yarn.lock && yarn install && bower install && bundle install"
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3255, 754, 3840, 1120}
 			end tell
 		' "$repo" "$repo" | osascript
+
+	printf 'tell app "Terminal"
+				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk; git branch"
+				set the custom title of the front window to "%s"
+				set the bounds of the front window to {3256, 387, 3841, 753}
+			end tell
+		' "$repo" "$jiranum" "$jiranum" "$repo" | osascript
 }
 
 activate() {
@@ -25,7 +25,7 @@ activate() {
 	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
-				set miniaturized of every window with custom title "%s" to false
+				set index of every window whose name contains " — %s — -bash" to 1
 			end tell
 		' "$repo" | osascript
 }
@@ -35,7 +35,7 @@ deactivate() {
 	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
-				set miniaturized of every window with custom title "%s" to true
+				set miniaturized of every window whose name contains " — %s — -bash" to true
 			end tell
 		' "$repo" | osascript
 }
@@ -45,7 +45,7 @@ close() {
 	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
-				close every window with custom title "%s"
+				close every window whose name contains " — %s — -bash"
 			end tell
 		' "$repo" | osascript
 }
