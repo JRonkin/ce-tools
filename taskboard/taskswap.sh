@@ -61,7 +61,7 @@ deactivate() {
 			tell app "Google Chrome"
 				set miniaturized of every window where the title of the 1st tab contains "[%s]" to true
 			end tell
-		' "$repo" "$repo" | osascript
+		' "$repo" "$repo" "$jiranum" | osascript
 }
 
 close() {
@@ -79,5 +79,5 @@ close() {
 			tell app "Google Chrome"
 				close every window every window where the title of the 1st tab contains "[%s]"
 			end tell
-		' "$repo" "$repo" | osascript
+		' "$repo" "$repo" "$jiranum" | osascript
 }
