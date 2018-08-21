@@ -14,7 +14,7 @@ new() {
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3256, 387, 3841, 753}
 
-				activate front window whose custom title is "TaskBoard"
+				activate front window whose name contains " — TaskBoard — -bash"
 			end tell
 		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "$repo" | osascript
 }
@@ -25,7 +25,7 @@ activate() {
 
 	printf 'tell app "Terminal"
 				set index of every window whose name contains " — %s — -bash" to 1
-				activate front window whose custom title is "TaskBoard" 
+				activate front window whose name contains " — TaskBoard — -bash" 
 			end tell
 
 			tell app "Atom"
@@ -40,7 +40,7 @@ deactivate() {
 
 	printf 'tell app "Terminal"
 				set miniaturized of every window whose name contains " — %s — -bash" to true
-				activate front window whose custom title is "TaskBoard"
+				activate front window whose name contains " — TaskBoard — -bash"
 			end tell
 
 			tell app "Atom"
@@ -55,7 +55,7 @@ close() {
 
 	printf 'tell app "Terminal"
 				close every window whose name contains " — %s — -bash"
-				activate front window whose custom title is "TaskBoard"
+				activate front window whose name contains " — TaskBoard — -bash"
 			end tell
 
 			tell app "Atom"
