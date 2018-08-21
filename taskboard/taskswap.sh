@@ -77,7 +77,7 @@ close() {
 			end tell
 
 			tell app "Google Chrome"
-				close every window every window where the title of the 1st tab contains "[%s]"
+				close every window where the title of the 1st tab contains "[%s]"
 			end tell
 		' "$repo" "$repo" "$jiranum" | osascript
 }
