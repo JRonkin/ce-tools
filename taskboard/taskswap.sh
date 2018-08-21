@@ -28,6 +28,11 @@ activate() {
 				set index of every window whose name contains " — %s — -bash" to 1
 			end tell
 		' "$repo" | osascript
+
+	printf 'tell app "Atom"
+				set index of every window whose name contains "~/repo/%s" to 1
+			end tell
+		' "$repo" | osascript
 }
 
 deactivate() {
@@ -38,6 +43,11 @@ deactivate() {
 				set miniaturized of every window whose name contains " — %s — -bash" to true
 			end tell
 		' "$repo" | osascript
+
+	printf 'tell app "Atom"
+				set miniaturized of every window whose name contains "~/repo/%s" to true
+			end tell
+		' "$repo" | osascript
 }
 
 close() {
@@ -46,6 +56,11 @@ close() {
 
 	printf 'tell app "Terminal"
 				close every window whose name contains " — %s — -bash"
+			end tell
+		' "$repo" | osascript
+
+	printf 'tell app "Atom"
+				close every window whose name contains "~/repo/%s"
 			end tell
 		' "$repo" | osascript
 }
