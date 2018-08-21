@@ -13,6 +13,8 @@ new() {
 				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk; git branch"
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3256, 387, 3841, 753}
+
+				activate front window whose name contains "TaskBoard"
 			end tell
 		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "$repo" | osascript
 }
@@ -22,7 +24,8 @@ activate() {
 	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
-				set index of every window whose name contains " — %s — -bash" to 2
+				set index of every window whose name contains " — %s — -bash" to 1
+				activate front window whose name contains "TaskBoard" 
 			end tell
 
 			tell app "Atom"
@@ -37,6 +40,7 @@ deactivate() {
 
 	printf 'tell app "Terminal"
 				set miniaturized of every window whose name contains " — %s — -bash" to true
+				activate front window whose name contains "TaskBoard"
 			end tell
 
 			tell app "Atom"
@@ -51,6 +55,7 @@ close() {
 
 	printf 'tell app "Terminal"
 				close every window whose name contains " — %s — -bash"
+				activate front window whose name contains "TaskBoard"
 			end tell
 
 			tell app "Atom"
