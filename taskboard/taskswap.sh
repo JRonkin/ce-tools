@@ -14,8 +14,9 @@ new() {
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3256, 387, 3841, 753}
 			end tell
+		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "$repo" | osascript &
 
-			tell app "Google Chrome"
+	printf 'tell app "Google Chrome"
 				make new window
 				set the bounds of the front window to {189, 23, 1919, 1118}
 				set the URL of the active tab of the front window to "https://yexttest.atlassian.net/browse/%s"
@@ -25,7 +26,7 @@ new() {
 				set the URL of the active tab of the front window to "https://www.yext.com/pagesadmin/?query=%s"
 				set the active tab index of the front window to 1
 			end tell
-		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "$repo" "$jiranum" "$repo" "$repo" | osascript
+		' "$jiranum" "$repo" "$repo" | osascript &
 }
 
 activate() {
@@ -35,15 +36,17 @@ activate() {
 	printf 'tell app "Terminal"
 				set index of every window whose name contains " — %s — -bash" to 1
 			end tell
+		' "$repo" | osascript &
 
-			tell app "Atom"
+	printf 'tell app "Atom"
 				set index of every window whose name contains "~/repo/%s" to 1
 			end tell
+		' "$repo" | osascript &
 
-			tell app "Google Chrome"
+	printf 'tell app "Google Chrome"
 				set index of every window where the title of the 1st tab contains "[%s]" to 1
 			end tell
-		' "$repo" "$repo" "$jiranum" | osascript
+		' "$jiranum" | osascript &
 }
 
 deactivate() {
@@ -53,15 +56,17 @@ deactivate() {
 	printf 'tell app "Terminal"
 				set miniaturized of every window whose name contains " — %s — -bash" to true
 			end tell
+		' "$repo" | osascript &
 
-			tell app "Atom"
+	printf 'tell app "Atom"
 				set miniaturized of every window whose name contains "~/repo/%s" to true
 			end tell
+		' "$repo" | osascript &
 
-			tell app "Google Chrome"
+	printf 'tell app "Google Chrome"
 				set minimized of every window where the title of the 1st tab contains "[%s]" to true
 			end tell
-		' "$repo" "$repo" "$jiranum" | osascript
+		' "$jiranum" | osascript &
 }
 
 close() {
@@ -71,13 +76,15 @@ close() {
 	printf 'tell app "Terminal"
 				close every window whose name contains " — %s — -bash"
 			end tell
+		' "$repo" | osascript &
 
-			tell app "Atom"
+	printf 'tell app "Atom"
 				close every window whose name contains "~/repo/%s"
 			end tell
+		' "$repo" | osascript &
 
-			tell app "Google Chrome"
+	printf 'tell app "Google Chrome"
 				close every window where the title of the 1st tab contains "[%s]"
 			end tell
-		' "$repo" "$repo" "$jiranum" | osascript
+		' "$jiranum" | osascript &
 }
