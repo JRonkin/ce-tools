@@ -1,4 +1,4 @@
-osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"'
+osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"' &
 
 source taskswap.sh
 
@@ -60,13 +60,13 @@ done
 			tasks[${#tasks[*]}]="$jiranum   $repo"
 			if [ $active -gt -1 ]
 			then
-				deactivate "${tasks[$active]}"
+				deactivate "${tasks[$active]}" &
 			fi
 			active=$selected
 			;;
 
 		"X" )
-			close "${tasks[selected]}"
+			close "${tasks[selected]}" &
 			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [ $active = $selected ]
 			then
@@ -105,13 +105,13 @@ done
 		"" )
 			if [ $active -gt -1 ]
 			then
-				deactivate "${tasks[$active]}"
+				deactivate "${tasks[$active]}" &
 			fi
 			if [ $selected = $active ]
 			then
 				active=-1
 			else
-				activate "${tasks[$selected]}"
+				activate "${tasks[$selected]}" &
 				active=$selected
 			fi
 			;;
