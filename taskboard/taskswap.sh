@@ -34,7 +34,7 @@ activate() {
 	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
-				set index of every window whose name contains " — %s — -bash" to 1
+				set index of every window whose name contains " — %s — " to 1
 			end tell
 		' "$repo" | osascript &
 
@@ -54,7 +54,7 @@ deactivate() {
 	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
-				set miniaturized of every window whose name contains " — %s — -bash" to true
+				set miniaturized of every window whose name contains " — %s — " to true
 			end tell
 		' "$repo" | osascript &
 
@@ -74,7 +74,7 @@ close() {
 	jiranum=$(echo "$1" | cut -d " " -f 1)
 
 	printf 'tell app "Terminal"
-				close every window whose name contains " — %s — -bash"
+				close every window whose name contains " — %s — "
 			end tell
 		' "$repo" | osascript &
 
