@@ -37,6 +37,15 @@ done
 
 		"N" )
 			clear
+			read -p "JIRA URL: " jiraurl
+			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/]+).* ]]
+			then
+				jiranum=${BASH_REMATCH[1]}
+			else
+				printf "Invalid URL:\n$jiraurl\n\n> Return to TaskBoard"
+				read -n 1
+				continue
+			fi
 			read -p "GitHub URL: " giturl
 			if [[ "$giturl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 			then
@@ -46,15 +55,6 @@ done
 				read -n 1
 				continue
 			fi
-			read -p "JIRA URL: " jiraurl
-			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/]+).* ]]
-			then
-				jiranum=${BASH_REMATCH[1]}
-			else
-				printf "Invalid URL:\n$jiraurl\n\n> Return to TaskBoard"
-				read -n 1
-				continue
-			fi				
 			new "$repo" "$jiranum"
 			selected=${#tasks[*]}
 			tasks[${#tasks[*]}]="$jiranum   $repo"
