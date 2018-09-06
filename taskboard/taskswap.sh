@@ -8,11 +8,11 @@ new() {
 	printf 'tell app "Terminal"
 				do script "cd ~/repo/%s/src && if [ ! -d node_modules ]; then rm yarn.lock; yarn install; git co HEAD -- yarn.lock; bower install && bundle install; fi"
 				set the custom title of the front window to "%s"
-				set the bounds of the front window to {3255, 754, 3840, 1120}
+				set the bounds of the front window to {3255, 757, 3840, 1123}
 
 				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk; git branch"
 				set the custom title of the front window to "%s"
-				set the bounds of the front window to {3256, 387, 3841, 753}
+				set the bounds of the front window to {3255, 390, 3840, 756}
 			end tell
 		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "$repo" | osascript &
 
@@ -27,6 +27,12 @@ new() {
 				set the active tab index of the front window to 1
 			end tell
 		' "$jiranum" "$repo" "$repo" | osascript &
+
+	printf 'delay 5
+			tell app "Atom"
+				set the bounds of every window whose name contains "~/repo/%s" to {1920, 23, 3254, 1123}
+			end tell
+		' "$repo" | osascript &
 }
 
 activate() {
