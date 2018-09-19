@@ -38,7 +38,7 @@ done
 		"N" )
 			clear
 			read -p "JIRA URL: " jiraurl
-			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/]+).* ]]
+			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/#\?]+).* ]]
 			then
 				jiranum=${BASH_REMATCH[1]}
 			else
