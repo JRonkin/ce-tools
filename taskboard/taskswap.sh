@@ -28,11 +28,15 @@ new() {
 			end tell
 		' "$jiranum" "$repo" "$repo" | osascript &
 
-	printf 'delay 5
-			tell app "Atom"
+	printf 'tell app "Atom"
+				set timer to 0
+				repeat until the length of (get every window whose name contains "~/repo/%s") > 0 or timer > 20
+					delay 0.5
+					set timer to timer + 0.5
+				end repeat
 				set the bounds of every window whose name contains "~/repo/%s" to {1920, 23, 3254, 1123}
 			end tell
-		' "$repo" | osascript &
+		' "$repo" "$repo" | osascript &
 }
 
 activate() {
