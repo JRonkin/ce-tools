@@ -2,10 +2,7 @@ new() {
 	repo=$1
 	jiranum=$2
 
-	currentdir=$(pwd)
-	cd ~/repo
-	git clone "git@github.com:yext-pages/${repo}.git" || true
-	cd $currentdir
+	git clone "git@github.com:yext-pages/${repo}.git" ~/repo || true
 
 	printf 'tell app "Terminal"
 				do script "cd ~/repo/%s/src && if [ ! -d node_modules ]; then rm yarn.lock; yarn install; git co HEAD -- yarn.lock; bower install && bundle install; fi"
