@@ -1,5 +1,6 @@
 osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"' &
 
+cd $(dirname "${BASH_SOURCE[0]}")
 source taskswap.sh
 
 tasks=()
