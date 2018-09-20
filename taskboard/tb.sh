@@ -2,6 +2,7 @@ osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBo
 
 cd $(dirname "${BASH_SOURCE[0]}")
 source taskswap.sh
+mkdir -p ../appdata/taskboard
 
 tasks=()
 selected=0
@@ -59,6 +60,7 @@ done
 			new "$repo" "$jiranum"
 			selected=${#tasks[*]}
 			tasks[${#tasks[*]}]="$jiranum   $repo"
+			echo "$jiranum   $repo" >> ../appdata/taskboard/tasks
 			if [ $active -gt -1 ]
 			then
 				deactivate "${tasks[$active]}" &
@@ -67,7 +69,8 @@ done
 			;;
 
 		"X" )
-			close "${tasks[selected]}" &
+			close "${tasks[$selected]}" &
+			sed -i "" "/${tasks[$selected]}/d" ../appdata/taskboard/tasks
 			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [ $active = $selected ]
 			then
