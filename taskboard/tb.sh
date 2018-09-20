@@ -3,10 +3,17 @@ osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBo
 cd $(dirname "${BASH_SOURCE[0]}")
 source taskswap.sh
 mkdir -p ../appdata/taskboard
+touch ../appdata/taskboard/tasks
 
 tasks=()
 selected=0
 active=-1
+
+while read line
+do
+	tasks[${#tasks[*]}]="$line"
+	deactivate "$line" &
+done < ../appdata/taskboard/tasks
 
 while :
 do
