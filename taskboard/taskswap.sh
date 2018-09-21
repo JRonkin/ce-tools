@@ -13,7 +13,7 @@ new() {
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3255, 390, 3840, 756}
 			end tell
-		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "${repo//[Mm]aster[^A-Za-z0-9]}" | osascript &
+		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "$repo" | osascript &
 
 	printf 'tell app "Google Chrome"
 				make new window
@@ -25,7 +25,7 @@ new() {
 				set the URL of the active tab of the front window to "https://www.yext.com/pagesadmin/?query=%s"
 				set the active tab index of the front window to 1
 			end tell
-		' "$jiranum" "$repo" "$repo" | osascript &
+		' "$jiranum" "$repo" "${repo//[Mm]aster[^A-Za-z0-9]}" | osascript &
 
 	printf 'tell app "Atom"
 				set timer to 0
