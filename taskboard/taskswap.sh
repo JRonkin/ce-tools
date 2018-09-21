@@ -13,7 +13,7 @@ new() {
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3255, 390, 3840, 756}
 			end tell
-		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "$repo" | osascript &
+		' "$repo" "$repo" "$repo" "$jiranum" "$jiranum" "${repo//[Mm]aster[^A-Za-z0-9]}" | osascript &
 
 	printf 'tell app "Google Chrome"
 				make new window
