@@ -15,9 +15,13 @@ do
 	deactivate "$line" &
 done < ../appdata/taskboard/tasks
 
+tput smcup
+tput clear
+tput civis
+
 while :
 do
-	clear
+	tput home
 	printf "\
 =============================================================
 | Q: Quit TaskBoard | N: New Task       | X: Close Selected |
@@ -33,29 +37,33 @@ do
 " "$(echo "${tasks[i]}                                                       " | sed "s/\(.\{55\}\).*/\1/")"
 done
 	printf "\
-============================================================
+=============================================================
 "
 
+	tput el
 	read -n 1 input
+	tput el1
 	case "$( echo $input | tr a-z A-Z )" in
 
 		"Q" )
-			clear
 			break
 			;;
 
 		"N" )
 			clear
+			tput cnorm
 			read -p "JIRA URL: " jiraurl
 			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/#\?]+).* ]]
 			then
 				jiranum=${BASH_REMATCH[1]}
 			else
+				tput civis
 				printf "Invalid URL:\n$jiraurl\n\n> Return to TaskBoard"
 				read -n 1
 				continue
 			fi
 			read -p "GitHub URL: " giturl
+			tput civis
 			if [[ "$giturl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 			then
 				repo=${BASH_REMATCH[1]}
@@ -64,7 +72,10 @@ done
 				read -n 1
 				continue
 			fi
+			tput rmcup
 			new "$repo" "$jiranum"
+			tput smcup
+			tput clear
 			selected=${#tasks[*]}
 			tasks[${#tasks[*]}]="$jiranum   $repo"
 			echo "$jiranum   $repo" >> ../appdata/taskboard/tasks
@@ -93,6 +104,7 @@ done
 
 		"" )
 			read -n 2 -t 1 input2
+			tput el1
 			case $input2 in
 				"[A" )
 					if [ $selected -gt 0 ]
@@ -114,18 +126,24 @@ done
 			;;
 
 		"" )
-			if [ $active -gt -1 ]
+			if [ ${#tasks[*]} -gt 0 ]
 			then
-				deactivate "${tasks[$active]}" &
-			fi
-			if [ $selected = $active ]
-			then
-				active=-1
-			else
-				activate "${tasks[$selected]}" &
-				active=$selected
+				if [ $active -gt -1 ]
+				then
+					deactivate "${tasks[$active]}" &
+				fi
+				if [ $selected = $active ]
+				then
+					active=-1
+				else
+					activate "${tasks[$selected]}" &
+					active=$selected
+				fi
 			fi
 			;;
 
 	esac
 done
+
+tput rmcup
+tput cnorm
