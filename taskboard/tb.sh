@@ -91,7 +91,6 @@ done
 		"X" )
 			close "${tasks[$selected]}" &
 			sed -i "" "/${tasks[$selected]}/d" ../appdata/taskboard/tasks
-			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [ $active = $selected ]
 			then
 				../timelog/tl.sh "${tasks[$active]}" end
@@ -102,6 +101,7 @@ done
 					(( --active ))
 				fi
 			fi
+			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [ $selected = ${#tasks[*]} ]; then (( --selected )); fi
 			;;
 
