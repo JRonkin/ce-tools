@@ -46,8 +46,13 @@ done
 	case "$( echo $input | tr a-z A-Z )" in
 
 		"Q" )
+			if [ $active -gt -1 ]
+			then
+				deactivate "${tasks[$active]}" &
+				../timelog/tl.sh "${tasks[$active]}" end
+			fi
 			break
-			;;
+		;;
 
 		"N" )
 			clear
@@ -86,7 +91,7 @@ done
 			active=$selected
 			echo "${tasks[$active]}" >> ../appdata/taskboard/tasks
 			../timelog/tl.sh "${tasks[$active]}" start
-			;;
+		;;
 
 		"X" )
 			close "${tasks[$selected]}" &
@@ -103,7 +108,7 @@ done
 			fi
 			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [ $selected = ${#tasks[*]} ]; then (( --selected )); fi
-			;;
+		;;
 
 		"" )
 			read -n 2 -t 1 input2
@@ -124,9 +129,9 @@ done
 					else
 						selected=0
 					fi
-					;;
+				;;
 			esac
-			;;
+		;;
 
 		"" )
 			if [ ${#tasks[*]} -gt 0 ]
@@ -145,7 +150,7 @@ done
 					../timelog/tl.sh "${tasks[$active]}" start
 				fi
 			fi
-			;;
+		;;
 
 	esac
 done
