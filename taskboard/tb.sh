@@ -78,12 +78,14 @@ done
 			tput clear
 			selected=${#tasks[*]}
 			tasks[${#tasks[*]}]="$jiranum   $repo"
-			echo "$jiranum   $repo" >> ../appdata/taskboard/tasks
 			if [ $active -gt -1 ]
 			then
 				deactivate "${tasks[$active]}" &
+				../timelog/tl.sh "${tasks[$active]}" end
 			fi
 			active=$selected
+			echo "${tasks[$active]}" >> ../appdata/taskboard/tasks
+			../timelog/tl.sh "${tasks[$active]}" start
 			;;
 
 		"X" )
@@ -92,6 +94,7 @@ done
 			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
 			if [ $active = $selected ]
 			then
+				../timelog/tl.sh "${tasks[$active]}" end
 				active=-1
 			else
 				if [ $active -gt $selected ]
@@ -131,6 +134,7 @@ done
 				if [ $active -gt -1 ]
 				then
 					deactivate "${tasks[$active]}" &
+					../timelog/tl.sh "${tasks[$active]}" end
 				fi
 				if [ $selected = $active ]
 				then
@@ -138,6 +142,7 @@ done
 				else
 					activate "${tasks[$selected]}" &
 					active=$selected
+					../timelog/tl.sh "${tasks[$active]}" start
 				fi
 			fi
 			;;
