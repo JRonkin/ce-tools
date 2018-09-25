@@ -1,25 +1,5 @@
-formattime() {
-	if [[ "$1" =~ ^((0?|1)[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$ ]]
-	then
-		time="$1"
-		if [[ "$time" =~ ^.: ]]
-		then
-			time="0${time}"
-		fi
-		if ! [[ "$time" =~ :..: ]]
-		then
-			time="${time}:00"
-		fi
-	else
-		>&2 echo "Error: '$1' invalid time format. Time must be 24-hour in the format 15:04"
-		exit 1
-	fi
-
-	echo "$time"
-}
-
-
 cd $(dirname "${BASH_SOURCE[0]}")
+source timefuncs.sh
 mkdir -p ../appdata/timelog
 
 usage="Usage: tl [-h] (item) (command) [args]"
@@ -72,7 +52,7 @@ case "$command" in
 
 	"e" | "end" )
 		linenum="$(grep -Fn "$item" "$file" | grep -e "- $" | head -n 1 | cut -d : -f 1)"
-		if [[ linenum = "" ]]
+		if ! [ "$linenum" ]
 		then
 			echo "Error: no open start time found for '$item'"
 			exit 1
