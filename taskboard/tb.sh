@@ -71,7 +71,7 @@ do
 			read -p "JIRA URL: " jiraurl
 			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/#\?]+).* ]]
 			then
-				jiranum=${BASH_REMATCH[1]}
+				jiranum="${BASH_REMATCH[1]}"
 			else
 				tput civis
 				printf "Invalid URL:\n$jiraurl\n\n> Return to TaskBoard"
@@ -82,7 +82,7 @@ do
 			tput civis
 			if [[ "$giturl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 			then
-				repo=${BASH_REMATCH[1]}
+				repo="${BASH_REMATCH[1]}"
 			else
 				printf "Invalid URL:\n$giturl\n\n> Return to TaskBoard"
 				read -n 1
