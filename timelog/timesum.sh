@@ -61,7 +61,7 @@ totalhours=0
 for index in ${indices[@]}
 do
 	hours=$(bc <<< "scale=2; $(bc <<< "scale=0; ($(seconds2hours "${sums[$index]}") * 4 + 0.5) / 1") / 4")
-	echo "$(sed 's/^\./0\./' <<< $(sed 's/^0$/0.00/' <<< ${hours}) ) hours: ${messages[$index]}"
+	echo "$(sed 's/^\./0\./; s/^0$/0.00/' <<< ${hours}) hours: ${messages[$index]}"
 	totalhours=$(bc <<< "${totalhours} + ${hours}")
 done
 echo "${totalhours} hours total"
