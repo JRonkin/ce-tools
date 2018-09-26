@@ -1,9 +1,9 @@
 hours2seconds() {
-	bc <<< "scale = 0; (${1} * 3600) / 1"
+	bc <<< "scale = 0; ${1} * 3600 / 1"
 }
 
 seconds2hours() {
-	bc <<< "scale = 2; ${1} / 3600"
+	bc <<< "scale = 3; ${1} / 3600"
 }
 
 time2epoch() {

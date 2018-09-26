@@ -2,13 +2,12 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 mkdir -p ../appdata/timelog
 
-usage="Usage: tl [-h] (item) (command) [args]"
+usage="Usage: tl.sh [-h] (item) (command) [args]"
 command_start="s, start - args: [time] -- Log a start at a 24-hour time formatted as 15:04 (default to current time)"
 command_end="e, end - args: [time] -- Log an end at a 24-hour time formatted as 15:04 (default to current time)"
 command_from="f, from - args: (duration) [time] -- Log a duration of time, in hours, starting at a 24-hour time formatted as 15:04 (default to current time)"
 command_to="t, to - args: (duration) [time] -- Log a duration of time, in hours, ending at a 24-hour time formatted as 15:04 (default to current time)"
 definitions=("" "-h = help" "" "item = item for log (used for matching starts to ends)" "" "commands:" "${command_start}" "${command_end}" "${command_from}" "${command_to}")
-
 
 while getopts "h" opt
 do
@@ -17,7 +16,7 @@ do
 			echo "${usage}"
 				for i in "${definitions[@]}"
 				do
-					echo $i
+					echo "$i"
 				done
 			exit
 		;;
