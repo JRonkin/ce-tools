@@ -44,14 +44,17 @@ fi
 
 while read line
 do
-	message="${line:22}"
-	index="$(cksum <<< "$message" | cut -d " " -f 1)"
-	if ! [ "${messages[$index]}" ]
+	if [[ "$line" =~ ^[^\|]{20}\| ]]
 	then
-		indices[${#indices[*]}]=$index
-		messages[$index]="$message"
+		message="${line:22}"
+		index="$(cksum <<< "$message" | cut -d " " -f 1)"
+		if ! [ "${messages[$index]}" ]
+		then
+			indices[${#indices[*]}]=$index
+			messages[$index]="$message"
+		fi
+		sums[$index]="$(( "${sums[$index]}" + "$(timediff "$(echo "${line//-}" | cut -d "|" -f 1)")" ))"
 	fi
-	sums[$index]="$(( "${sums[$index]}" + "$(timediff "$(echo "${line//-}" | cut -d "|" -f 1)")" ))"
 done < "$file"
 
 for index in ${indices[@]}
@@ -60,4 +63,4 @@ do
 	echo "${hours} hours: ${messages[$index]}"
 	totalhours=$(( totalhours + hours ))
 done
-echo "${totalhours} total"
+echo "${totalhours} hours total"
