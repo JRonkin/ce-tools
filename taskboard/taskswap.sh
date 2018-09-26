@@ -5,7 +5,7 @@ new() {
 	git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true
 
 	printf 'tell app "Terminal"
-				do script "cd ~/repo/%s/src && if [ ! -d node_modules ]; then %s/../scripts/fix-yarn-modernizr.sh; yarn install; bower install && bundle install; fi"
+				do script "cd ~/repo/%s/src && if [ ! -d node_modules ]; then %s/../scripts/fix-yarn-modernizr.sh; yarn install; bower install; bundle install; fi"
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3255, 757, 3840, 1123}
 
