@@ -47,11 +47,11 @@ case "$command" in
 		else
 			time="$(formattime "$3")"
 		fi
-		echo "${item} ${time} - " >> "$file"
+		echo "${time} -  | ${item}" >> "$file"
 	;;
 
 	"e" | "end" )
-		linenum="$(grep -Fn "$item" "$file" | grep -e "- $" | head -n 1 | cut -d : -f 1)"
+		linenum="$(grep -Fn "$item" "$file" | egrep "^.+:.{11} " | head -n 1 | cut -d : -f 1)"
 		if ! [ "$linenum" ]
 		then
 			echo "Error: no open start time found for '$item'"
@@ -63,17 +63,41 @@ case "$command" in
 		else
 			time="$(formattime "$3")"
 		fi
-		sed -i "" "${linenum}s/\(.*\)/\1${time}/" "$file"
+		sed -i "" "${linenum}s/\(^..:..:.. - \)\(.*\)/\1${time}\2/" "$file"
 	;;
 
 	"f" | "from" )
-		echo "TODO: Implement 'from'"
-		exit
+		if [ "$#" -lt 3 ]
+		then
+			echo "Error: incorrect number of arguments."
+			echo "$command_from"
+			exit 1
+		fi
+		if [ "$#" -lt 4 ]
+		then
+			time="$(date +%T)"
+		else
+			time="$4"
+		fi
+		tl.sh "$item" start "$time"
+		tl.sh "$item" end "$(timeaddhours "$time" "$3")"
 	;;
 
 	"t" | "to" )
-		echo "TODO: Implement 'to'"
-		exit
+		if [ "$#" -lt 3 ]
+		then
+			echo "Error: incorrect number of arguments."
+			echo "$command_to"
+			exit 1
+		fi
+		if [ "$#" -lt 4 ]
+		then
+			time="$(date +%T)"
+		else
+			time="$4"
+		fi
+		tl.sh "$item" start "$(timeaddhours "$time" "-${3}")"
+		tl.sh "$item" end "$time"
 	;;
 
 	* )

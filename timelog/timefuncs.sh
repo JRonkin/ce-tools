@@ -29,3 +29,15 @@ epoch2datetime() {
 formattime() {
 	epoch2time "$(time2epoch "$1")"
 }
+
+timediff() {
+	echo "$(( $(time2epoch "$1") - $(time2epoch "$2") ))" | cut -d - -f 2
+}
+
+timeaddseconds() {
+	epoch2time "$(( $(time2epoch "$1") + "$2" ))"
+}
+
+timeaddhours() {
+	timeaddseconds "$1" "$(hours2seconds "$2")"
+}
