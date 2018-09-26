@@ -56,5 +56,8 @@ done < "$file"
 
 for index in ${indices[@]}
 do
-	echo "$(bc <<< "scale=2; $(bc <<< "scale=0; $(seconds2hours "${sums[$index]}") * 4 + 0.5") / 4") hours: ${messages[$index]}"
+	hours=$(bc <<< "scale=2; $(bc <<< "scale=0; ($(seconds2hours "${sums[$index]}") * 4 + 0.5) / 1") / 4")
+	echo "${hours} hours: ${messages[$index]}"
+	totalhours=$(( totalhours + hours ))
 done
+echo "${totalhours} total"
