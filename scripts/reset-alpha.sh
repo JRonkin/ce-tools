@@ -8,6 +8,7 @@ mv alpha alpha.bak
 
 # Clone alpha (REQUIRES SSH KEYS GENERATED AND DISTRIBUTED)
 git clone ssh://git@stash.office.yext.com:1234/y/alpha.git ~/alpha
+git checkout master
 
 # Set up commit-msg hook and use proper remote
 cd ~/alpha
@@ -15,6 +16,12 @@ cd ~/alpha
 git remote set-url origin ssh://$USER@gerrit.yext.com:29418/alpha
 git config --local --add include.path ../devops/git/config/aliases.inc
 git config --local --add include.path ../devops/git/config/commit.inc
+
+# Install standardized version of bazel
+PLEASE_INSTALL_BAZEL=1 ~/alpha/tools/bazel
+
+# Install Sequel Pro favorites
+yes | ~/alpha/tools/sequelpro/install.py
 
 # Set up alpha stuff: build.properties, keyfile.txt
 cd ~/alpha
