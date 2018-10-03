@@ -9,7 +9,7 @@ new() {
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3255, 757, 3840, 1123}
 
-				do script "cd ~/repo/%s && atom . && git co %s/trunk || git co -b %s/trunk; git branch"
+				do script "cd ~/repo/%s && atom . && git co %s/trunk || (git co master && git co -b %s/trunk); git branch"
 				set the custom title of the front window to "%s"
 				set the bounds of the front window to {3255, 390, 3840, 756}
 			end tell
