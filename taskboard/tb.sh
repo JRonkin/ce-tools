@@ -2,7 +2,7 @@
 osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"' &
 
 # Set up directory and files
-cd $(dirname "${BASH_SOURCE[0]}")
+cd "$(dirname "${BASH_SOURCE[0]}")"
 source taskswap.sh
 mkdir -p ../appdata/taskboard
 touch ../appdata/taskboard/tasks
@@ -32,7 +32,7 @@ do
 	printf "\
 =============================================================
 | Q: Quit TaskBoard | N: New Task       | X: Close Selected |
-| [Enter]: Activate/Deactivate Selected                     |
+| [Enter]: Activate/Deactivate Selected | M: More Options   |
 |-----------------------------------------------------------|
 "
 	for ((i = 0; i < ${#tasks[@]}; i++))
@@ -51,7 +51,33 @@ do
 	tput el
 	read -n 1 input
 	tput el1
-	case "$( echo $input | tr a-z A-Z )" in
+	case "$(echo "$input" | tr a-z A-Z)" in
+
+		# Arrow key
+		"" )
+			read -n 2 -t 1 input2
+			tput el1
+			case $input2 in
+				# Up arrow
+				"[A" )
+					if [ $selected -gt 0 ]
+					then
+						(( --selected ))
+					else
+						selected=$(( ${#tasks[*]} - 1 ))
+					fi
+					;;
+				# Down Arrow
+				"[B" )
+					if [ $selected -lt $(( ${#tasks[*]} - 1 )) ]
+					then
+						(( ++selected ))
+					else
+						selected=0
+					fi
+				;;
+			esac
+		;;
 
 		# Quit Taskboard
 		"Q" )
@@ -75,7 +101,7 @@ do
 			else
 				tput civis
 				printf "Invalid URL:\n$jiraurl\n\n> Return to TaskBoard"
-				read -n 1
+				read -sp ""
 				continue
 			fi
 			read -p "GitHub URL: " giturl
@@ -85,7 +111,7 @@ do
 				repo="${BASH_REMATCH[1]}"
 			else
 				printf "Invalid URL:\n$giturl\n\n> Return to TaskBoard"
-				read -n 1
+				read -sp ""
 				continue
 			fi
 			# Start new task
@@ -129,32 +155,6 @@ do
 			if [ $selected = ${#tasks[*]} ]; then (( --selected )); fi
 		;;
 
-		# Arrow key
-		"" )
-			read -n 2 -t 1 input2
-			tput el1
-			case $input2 in
-				# Up arrow
-				"[A" )
-					if [ $selected -gt 0 ]
-					then
-						(( --selected ))
-					else
-						selected=$(( ${#tasks[*]} - 1 ))
-					fi
-					;;
-				# Down Arrow
-				"[B" )
-					if [ $selected -lt $(( ${#tasks[*]} - 1 )) ]
-					then
-						(( ++selected ))
-					else
-						selected=0
-					fi
-				;;
-			esac
-		;;
-
 		# Enter
 		"" )
 			# Deactivate active task and activate selected task
@@ -174,6 +174,34 @@ do
 					../timelog/tl.sh "${tasks[$active]}" start
 				fi
 			fi
+		;;
+
+		# More Options
+		"M" )
+			clear
+			printf "\
+[Enter]: Return to TaskBoard
+S: Set Current Window Positions as Default
+"
+			tput el
+			read -n 1 input
+			tput el1
+			case "$(echo "$input" | tr a-z A-Z)" in
+				# Set Current Window Positions as Default 
+				"S" )
+					if [ $active -gt -1 ]
+					then
+						save-window-bounds "${tasks[$active]}"
+						clear
+						printf "The current window positions and sizes have been set as default.\n\n> Return to TaskBoard"
+						read -sp ""
+					else
+						clear
+						printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
+						read -sp ""
+					fi
+				;;
+			esac
 		;;
 
 	esac
