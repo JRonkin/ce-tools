@@ -20,8 +20,8 @@ new() {
 	mkdir -p "$dir"
 	touch "${dir}/windowbounds"
 
-	local terminal1Bounds="0, 347, 571, 700"
-	local terminal2Bounds="0, 698, 571, 1050"
+	local terminal1Bounds="0, 698, 571, 1050"
+	local terminal2Bounds="0, 347, 571, 700"
 	local chromeBounds="268, 23, 1599, 1050"
 	local atomBounds="268, 23, 1599, 1050"
 
