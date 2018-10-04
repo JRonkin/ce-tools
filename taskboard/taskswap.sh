@@ -5,10 +5,10 @@ save-window-bounds() {
 	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 	mkdir -p "$dir"
 
-	echo "terminal1Bounds=$(printf 'tell app "Terminal" to get the bounds of the 1st window whose custom title is "%s"' "$repo" | osascript)" > "${dir}/taskswap.config"
-	echo "terminal2Bounds=$(printf 'tell app "Terminal" to get the bounds of the 2nd window whose custom title is "%s"' "$repo" | osascript)" >> "${dir}/taskswap.config"
-	echo "chromeBounds=$(printf 'tell app "Google Chrome" to get the bounds of the 1st window where the title of the 1st tab contains "[%s]"' "$jiranum" | osascript)" >> "${dir}/taskswap.config"
-	echo "atomBounds=$(printf 'tell app "Atom" to get the bounds of the 1st window whose name contains "~/repo/%s"' "$repo" | osascript)" >> "${dir}/taskswap.config"
+	echo "terminal1Bounds=$(printf 'tell app "Terminal" to get the bounds of the 1st window whose custom title is "%s"' "$repo" | osascript)" > "${dir}/windowbounds"
+	echo "terminal2Bounds=$(printf 'tell app "Terminal" to get the bounds of the 2nd window whose custom title is "%s"' "$repo" | osascript)" >> "${dir}/windowbounds"
+	echo "chromeBounds=$(printf 'tell app "Google Chrome" to get the bounds of the 1st window where the title of the 1st tab contains "[%s]"' "$jiranum" | osascript)" >> "${dir}/windowbounds"
+	echo "atomBounds=$(printf 'tell app "Atom" to get the bounds of the 1st window whose name contains "~/repo/%s"' "$repo" | osascript)" >> "${dir}/windowbounds"
 }
 
 new() {
@@ -18,7 +18,7 @@ new() {
 	# Load window bounds
 	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 	mkdir -p "$dir"
-	touch "${dir}/taskswap.config"
+	touch "${dir}/windowbounds"
 
 	local terminal1Bounds="0, 347, 571, 700"
 	local terminal2Bounds="0, 698, 571, 1050"
@@ -41,7 +41,7 @@ new() {
 				atomBounds="$(echo "$line" | cut -d "=" -f 2)"
 			;;
 		esac
-	done < "$dir/taskswap.config"
+	done < "$dir/windowbounds"
 
 	# Set up new task
 	git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true
