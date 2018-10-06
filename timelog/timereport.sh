@@ -2,10 +2,14 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 mkdir -p ../appdata/timelog
 
-usage="Usage: timesum.sh [-h] [date]"
-definitions=("" "-h = help" "" "date = date to summarize, in yyyy-mm-dd format")
+usage="Usage: timesum.sh [-hu] [-d (decimals)] [-r (roundto)] [date]"
+definitions=("" "-d (decimals) = number of decimal places to show (default 2)" "-r (roundto) = round to the nearest multiple of roundto (default 0.25)" "-h = help" "-u = use unrounded times for total (displayed times may not sum to total)" "" "date = date to summarize, in yyyy-mm-dd format")
 
-while getopts "h" opt
+unrounded=""
+decimals=2
+roundto=0.25
+
+while getopts "hud:r:" opt
 do
 	case "$opt" in
 		"h" )
@@ -17,16 +21,42 @@ do
 			exit
 		;;
 
+		"u" )
+			unrounded=true
+		;;
+
+		"d" )
+			decimals="$OPTARG"
+			if [[ ! "$decimals" =~ ^[0-9]+$ ]]
+			then
+				echo "Error: invalid number of decimal places"
+				timereport.sh -h
+				exit 1
+			fi
+		;;
+
+		"r" )
+			roundto="$OPTARG"
+			if [[ ! "$roundto" =~ ^[0-9]*\.?[0-9]*$ ]] || [[ "$roundto" =~ ^0*\.?0*$ ]]
+			then
+				echo "Error: invalid 'roundto' value"
+				timereport.sh -h
+				exit 1
+			fi
+		;;
+
 		* )
 			exit 1
 		;;
 	esac
 done
 
+shift $((OPTIND-1))
+
 if [ "$1" ]
 then
 	date="$(date -ju -f "%Y-%m-%d" "$1" "+%Y-%m-%d")"
-	if ! [ "$date" ]
+	if [ ! "$date" ]
 	then
 		echo "Error: invalid date. Date must be in the format yyyy-mm-dd"
 		exit 1
@@ -36,7 +66,7 @@ else
 fi
 
 file="../appdata/timelog/${date}.log"
-if ! [ -f "$file" ]
+if [ ! -f "$file" ]
 then
 	echo "Error: no time log found for ${date}"
 	exit 1
@@ -48,7 +78,7 @@ do
 	then
 		message="${line:22}"
 		index="$(cksum <<< "$message" | cut -d " " -f 1)"
-		if ! [ "${messages[$index]}" ]
+		if [ ! "${messages[$index]}" ]
 		then
 			indices[${#indices[*]}]=$index
 			messages[$index]="$message"
@@ -60,8 +90,14 @@ done < "$file"
 totalhours=0
 for index in ${indices[@]}
 do
-	hours=$(bc <<< "scale=2; $(bc <<< "scale=0; ($(seconds2hours "${sums[$index]}") * 4 + 0.5) / 1") / 4")
-	echo "$(sed 's/^\./0\./; s/^0$/0.00/' <<< ${hours}) hours: ${messages[$index]}"
-	totalhours=$(bc <<< "${totalhours} + ${hours}")
+	hours=$(seconds2hours "${sums[$index]}")
+	roundedHours=$(round $hours $roundto $decimals)
+	echo "${roundedHours} hours: ${messages[$index]}"
+	if [ $unrounded ]
+	then
+		totalhours=$(bc <<< "${totalhours} + ${hours}")
+	else
+		totalhours=$(bc <<< "${totalhours} + ${roundedHours}")
+	fi
 done
-echo "${totalhours} hours total"
+sed 's/^\./0\./' <<< "${totalhours} hours total"

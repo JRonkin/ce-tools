@@ -25,6 +25,7 @@ new() {
 	local chromeBounds="268, 23, 1599, 1050"
 	local atomBounds="268, 23, 1599, 1050"
 
+	local line
 	while read line
 	do
 		case "$(echo "$line" | cut -d "=" -f 1)" in

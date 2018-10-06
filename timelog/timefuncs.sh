@@ -41,3 +41,7 @@ timeaddseconds() {
 timeaddhours() {
 	timeaddseconds "$1" "$(hours2seconds "$2")"
 }
+
+round() {
+	bc <<< "x = .5 * (2 * ${1} + ${2-1}) / ${2-1}; scale = ${3-$(bc <<< "scale(${2-1})")}; x * ${2-1} / 1" | sed 's/^\./0\./'
+}
