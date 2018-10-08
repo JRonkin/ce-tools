@@ -104,7 +104,10 @@ for index in ${indices[@]}
 do
 	hours=$(seconds2hours "${sums[$index]}")
 	roundedHours=$(round $hours $roundto $decimals)
-	echo "${roundedHours} hours: ${messages[$index]}"
+	if [ ! $roundedHours = 0 ]
+	then
+		echo "${roundedHours} hours: ${messages[$index]}"
+	fi
 	if [ $unrounded ]
 	then
 		totalhours=$(bc <<< "${totalhours} + ${hours}")
