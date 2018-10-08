@@ -10,6 +10,10 @@ time2epoch() {
 	date -ju -f "%H:%M:%S" "$1" "+%s" || date -ju -f "%H:%M" "$1" "+%s"
 }
 
+date2epoch() {
+	date -ju -f "%Y-%m-%d" "$1" "+%s"
+}
+
 datetime2epoch() {
 	date -ju -f "%Y-%m-%d %H:%M:%S" "$1" "+%s"
 }

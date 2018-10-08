@@ -2,8 +2,8 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 mkdir -p ../appdata/timelog
 
-usage="Usage: timesum.sh [-hu] [-d (decimals)] [-r (roundto)] [date]"
-definitions=("" "-d (decimals) = number of decimal places to show (default 2)" "-r (roundto) = round to the nearest multiple of roundto (default 0.25)" "-h = help" "-u = use unrounded times for total (displayed times may not sum to total)" "" "date = date to summarize, in yyyy-mm-dd format")
+usage="Usage: timesum.sh [-hu] [-d (decimals)] [-r (roundto)] [date] [end date]"
+definitions=("" "-d (decimals) = number of decimal places to show (default 2)" "-r (roundto) = round to the nearest multiple of roundto (default 0.25)" "-h = help" "-u = use unrounded times for total (displayed times may not sum to total)" "" "date = date to summarize, in yyyy-mm-dd format (default today)" "end date = end of range to summarize (leave out for single date)")
 
 unrounded=""
 decimals=2
@@ -65,27 +65,39 @@ else
 	date="$(date "+%Y-%m-%d")"
 fi
 
-file="../appdata/timelog/${date}.log"
-if [ ! -f "$file" ]
+if [ "$2" ]
 then
-	echo "Error: no time log found for ${date}"
-	exit 1
+	endDate="$(date -ju -f "%Y-%m-%d" "$2" "+%Y-%m-%d")"
+	if [ ! "$endDate" ]
+	then
+		echo "Error: invalid date. Date must be in the format yyyy-mm-dd"
+		exit 1
+	fi
+else
+	endDate="$date"
 fi
 
-while read line
-do
-	if [[ "$line" =~ ^[^\|]{20}\| ]]
+while read -d " " epoch
+do 
+	file="../appdata/timelog/$(epoch2date $epoch).log"
+	if [ -f "$file" ]
 	then
-		message="${line:22}"
-		index="$(cksum <<< "$message" | cut -d " " -f 1)"
-		if [ ! "${messages[$index]}" ]
-		then
-			indices[${#indices[*]}]=$index
-			messages[$index]="$message"
-		fi
-		sums[$index]=$(( ${sums[$index]} + $(timediff $(echo "${line//-}" | cut -d "|" -f 1) ) ))
+		while read line
+		do
+			if [[ "$line" =~ ^[^\|]{20}\| ]]
+			then
+				message="${line:22}"
+				index="$(cksum <<< "$message" | cut -d " " -f 1)"
+				if [ ! "${messages[$index]}" ]
+				then
+					indices[${#indices[*]}]=$index
+					messages[$index]="$message"
+				fi
+				sums[$index]=$(( ${sums[$index]} + $(timediff $(echo "${line//-}" | cut -d "|" -f 1) ) ))
+			fi
+		done < "$file"
 	fi
-done < "$file"
+done <<< $(seq -f %f $(date2epoch $date) 86400 $(date2epoch 2018-10-08) | cut -d . -f 1)
 
 totalhours=0
 for index in ${indices[@]}
