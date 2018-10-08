@@ -1,6 +1,6 @@
 cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
-mkdir -p ../appdata/timelog
+mkdir -p ../appdata/timelog/logs
 
 usage="Usage: timesum.sh [-hu] [-d (decimals)] [-r (roundto)] [date] [end date]"
 definitions=("" "-d (decimals) = number of decimal places to show (default 2)" "-r (roundto) = round to the nearest multiple of roundto (default 0.25)" "-h = help" "-u = use unrounded times for total (displayed times may not sum to total)" "" "date = date to summarize, in yyyy-mm-dd format (default today)" "end date = end of range to summarize (leave out for single date)")
@@ -79,7 +79,7 @@ fi
 
 while read -d " " epoch
 do 
-	file="../appdata/timelog/$(epoch2date $epoch).log"
+	file="../appdata/timelog/logs/$(epoch2date $epoch).log"
 	if [ -f "$file" ]
 	then
 		while read line

@@ -1,6 +1,6 @@
 cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
-mkdir -p ../appdata/timelog
+mkdir -p ../appdata/timelog/logs
 
 usage="Usage: tl.sh [-h] (item) (command) [args]"
 command_start="s, start - args: [time] -- Log a start at a 24-hour time formatted as 15:04 (default to current time)"
@@ -36,7 +36,7 @@ fi
 
 item="$1"
 command="$2"
-file="../appdata/timelog/$(date +%Y-%m-%d).log"
+file="../appdata/timelog/logs/$(date +%Y-%m-%d).log"
 
 case "$command" in
 	"s" | "start" )
