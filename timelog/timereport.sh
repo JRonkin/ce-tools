@@ -97,7 +97,7 @@ do
 			fi
 		done < "$file"
 	fi
-done <<< $(seq -f %f $(date2epoch $date) 86400 $(date2epoch 2018-10-08) | cut -d . -f 1)
+done <<< "$(seq -f %f $(date2epoch $date) 86400 $(date2epoch $endDate) | cut -d . -f 1) "
 
 totalhours=0
 for index in ${indices[@]}
