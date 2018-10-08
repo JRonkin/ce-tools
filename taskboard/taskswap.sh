@@ -15,6 +15,9 @@ new() {
 	local repo=$1
 	local jiranum=$2
 
+	# Clone repo, suppressing error if repo already exists
+	git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true &
+
 	# Load window bounds
 	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 	mkdir -p "$dir"
@@ -24,6 +27,15 @@ new() {
 	local terminal2Bounds="0, 347, 571, 700"
 	local chromeBounds="268, 23, 1599, 1050"
 	local atomBounds="268, 23, 1599, 1050"
+
+	# If more than one monitor, use dual monitor window defaults
+	if [ $(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial") -gt 1 ]
+	then
+		terminal1Bounds="3255, 757, 3840, 1123"
+		terminal2Bounds="3255, 390, 3840, 756"
+		chromeBounds="189, 23, 1919, 1118"
+		atomBounds="1920, 23, 3254, 1123"
+	fi
 
 	local line
 	while read line
@@ -44,9 +56,10 @@ new() {
 		esac
 	done < "$dir/windowbounds"
 
-	# Set up new task
-	git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true
+	# Wait for git clone parallel process to finish
+	wait
 
+	# Set up new task
 	printf 'tell app "Terminal"
 				do script "cd ~/repo/%s/src && if [ ! -d node_modules ]; then %s/../scripts/fix-yarn-modernizr.sh; yarn install; bower install; bundle install; fi"
 				set the custom title of the front window to "%s"
@@ -68,7 +81,7 @@ new() {
 				set the URL of the active tab of the front window to "https://www.yext.com/pagesadmin/?query=%s"
 				set the active tab index of the front window to 1
 			end tell
-		' "$chromeBounds" "$jiranum" "$repo" "${repo//[Mm]aster[^A-Za-z0-9]}" | osascript &
+		' "$chromeBounds" "$jiranum" "$repo" "$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)" | osascript &
 
 	printf 'tell app "Atom"
 				set timer to 0
