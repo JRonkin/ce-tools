@@ -49,13 +49,13 @@ do
 
 	# Wait for input
 	tput el
-	read -n 1 input
+	read -sn 1 input
 	tput el1
 	case "$(echo "$input" | tr a-z A-Z)" in
 
 		# Arrow key
 		"" )
-			read -n 2 -t 1 input2
+			read -sn 2 -t 1 input2
 			tput el1
 			case $input2 in
 				# Up arrow
@@ -184,7 +184,7 @@ do
 S: Set Current Window Positions as Default
 "
 			tput el
-			read -n 1 input
+			read -sn 1 input
 			tput el1
 			case "$(echo "$input" | tr a-z A-Z)" in
 				# Set Current Window Positions as Default 
