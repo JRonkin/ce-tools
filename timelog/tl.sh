@@ -78,8 +78,8 @@ case "$command" in
 		else
 			time="$4"
 		fi
-		tl.sh "$item" start "$time"
-		tl.sh "$item" end "$(timeaddhours "$time" "$3")"
+		./tl.sh "$item" start "$time"
+		./tl.sh "$item" end "$(timeaddhours "$time" "$3")"
 	;;
 
 	"t" | "to" )
@@ -95,8 +95,8 @@ case "$command" in
 		else
 			time="$4"
 		fi
-		tl.sh "$item" start "$(timeaddhours "$time" "-${3}")"
-		tl.sh "$item" end "$time"
+		./tl.sh "$item" start "$(timeaddhours "$time" "-${3}")"
+		./tl.sh "$item" end "$time"
 	;;
 
 	* )

@@ -2,8 +2,8 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
-usage="Usage: timesum.sh [-hu] [-d (decimals)] [-r (roundto)] [date] [end date]"
-definitions=("" "-d (decimals) = number of decimal places to show (default 2)" "-r (roundto) = round to the nearest multiple of roundto (default 0.25)" "-h = help" "-u = use unrounded times for total (displayed times may not sum to total)" "" "date = date to summarize, in yyyy-mm-dd format (default today)" "end date = end of range to summarize (leave out for single date)")
+usage="Usage: timesum.sh [-hu] [-d decimals] [-r round_to] [date] [end date]"
+definitions=("" "-h = help" "-u = use unrounded times for total (displayed times may not sum to total)" "-d decimals = number of decimal places to show (default 2)" "-r round_to = round to the nearest multiple of roundto (default 0.25)" "" "date = date to summarize, in yyyy-mm-dd format (default today)" "end date = end of range to summarize (leave out for single date)")
 
 unrounded=""
 decimals=2
@@ -30,7 +30,7 @@ do
 			if [[ ! "$decimals" =~ ^[0-9]+$ ]]
 			then
 				echo "Error: invalid number of decimal places"
-				timereport.sh -h
+				./timereport.sh -h
 				exit 1
 			fi
 		;;
@@ -40,7 +40,7 @@ do
 			if [[ ! "$roundto" =~ ^[0-9]*\.?[0-9]*$ ]] || [[ "$roundto" =~ ^0*\.?0*$ ]]
 			then
 				echo "Error: invalid 'roundto' value"
-				timereport.sh -h
+				./timereport.sh -h
 				exit 1
 			fi
 		;;
