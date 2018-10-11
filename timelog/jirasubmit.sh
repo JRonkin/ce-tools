@@ -1,13 +1,14 @@
 cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 
-usage="Usage: jirasubmit.sh [-h] [-u username] [-t api_token] jira_number hours [date]"
-definitions=("" "-h = help" "-u username = JIRA username (your Yext email address)" "-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens" "" "jira_number = issue to log time to -- format: PC-XXXXX" "hours = time in hours to log (15 minutes = 0.25 hours)" "date = date to log hours on -- format: yyyy-mm-dd (default today)")
+usage="Usage: jirasubmit.sh [-hq] [-u username] [-t api_token] jira_number hours [date]"
+definitions=("" "-h = help" "-q = quiet (suppress non-error messages)" "-u username = JIRA username (your Yext email address)" "-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens" "" "jira_number = issue to log time to -- format: PC-XXXXX" "hours = time in hours to log (15 minutes = 0.25 hours)" "date = date to log hours on -- format: yyyy-mm-dd (default today)")
 
+quiet=""
 username=""
 apiToken=""
 
-while getopts "ht:u:" opt
+while getopts "hqt:u:" opt
 do
 	case "$opt" in
 		"h" )
@@ -17,6 +18,10 @@ do
 					echo "$i"
 				done
 			exit
+		;;
+
+		"q" )
+			quiet=true
 		;;
 
 		"t" )
@@ -72,7 +77,13 @@ then
 	read -sp "API Token: " apiToken
 fi
 
-curl --request POST \
+if [ ! $quiet ]
+then
+	echo "Logging ${hours} hours to issue ${jiranum} as ${username}..."
+fi
+
+response=$(curl -so /dev/null -w '%{http_code}' \
+  --request POST \
   --url https://yexttest.atlassian.net/rest/api/3/issue/${jiranum}/worklog \
   --user ${username}:${apiToken} \
   --header 'Accept: application/json' \
@@ -95,4 +106,31 @@ curl --request POST \
   },
   \"started\": \"${date}T00:00:00.000+0000\",
   \"timeSpentSeconds\": $(hours2seconds $hours)
-}"
+}")
+
+case "$response" in
+	2* )
+		echo "Succeeded with response code ${response}"
+	;;
+
+	400 )
+		echo "Error (400): Input is invalid (missing or invalid fields)"
+		exit 1
+	;;
+
+	403 )
+		echo "Error (403): User does not have permission to add to worklog"
+		exit 1
+	;;
+
+	4*|5* )
+		echo "Error: Failed with response code ${response}"
+		exit 1
+	;;
+
+	* )
+		echo "Error: Received unexpected response '${response}'"
+		exit 1
+	;;
+esac
+
