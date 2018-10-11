@@ -2,16 +2,35 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
-usage="Usage: timesum.sh [-hu] [-d decimals] [-r round_to] [date] [end date]"
-definitions=("" "-h = help" "-u = use unrounded times for total (displayed times may not sum to total)" "-d decimals = number of decimal places to show (default 2)" "-r round_to = round to the nearest multiple of roundto (default 0.25)" "" "date = date to summarize, in yyyy-mm-dd format (default today)" "end date = end of range to summarize (leave out for single date)")
+usage="Usage: timesum.sh [-hn] [-d decimals] [-r round_to] [-j [-t jira_token] [-u jira_user]] [date] [end date]"
+definitions=(""
+	"-j = log time to JIRA (log messages must start with JIRA number, e.g. PC-12345)"
+	"-h = help"
+	"-n = no intermediate rounding (displayed times may not sum to total)"
+	"-d decimals = number of decimal places to show (default 2)"
+	"-r round_to = round to the nearest multiple of roundto (default 0.25)"
+	""
+	"-t jira_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
+	"-u jira_user = JIRA username (your Yext email address)"
+	""
+	"date = date to summarize, in yyyy-mm-dd format (default today)"
+	"end date = end of range to summarize (leave out for single date)"
+"")
 
+jira=""
+apiToken=""
+username=""
 unrounded=""
 decimals=2
 roundto=0.25
 
-while getopts "hud:r:" opt
+while getopts "hntud:r:" opt
 do
 	case "$opt" in
+		"j" )
+			jira="-j"
+		;;
+
 		"h" )
 			echo "${usage}"
 				for i in "${definitions[@]}"
@@ -21,8 +40,16 @@ do
 			exit
 		;;
 
+		"n" )
+			unrounded="-n"
+		;;
+
+		"t" )
+			apiToken="$OPTARG"
+		;;
+
 		"u" )
-			unrounded=true
+			username="$OPTARG"
 		;;
 
 		"d" )
@@ -116,3 +143,42 @@ do
 	fi
 done
 sed 's/^\./0\./' <<< "${totalhours} hours total"
+
+if [ ! "$jira" ]
+then
+	read -p "Log to JIRA? (y/N)" jira
+	if [[ ! "$jira" =~ ^[Yy]([Ee][Ss])?$ ]]
+	then
+		jira=""
+	fi
+fi
+
+if [ "$jira" ]
+then
+	if [ ! "$username" ]
+	then
+		read -p "JIRA Username: " username
+	fi
+	if [ ! "$apiToken" ]
+	then
+		read -sp "JIRA API Token: " apiToken
+	fi
+
+	if [ "$endDate" = "$date" ]
+	then
+		for index in ${indices[@]}
+		do
+			roundedHours=$(round $(seconds2hours "${sums[$index]}") $roundto $decimals)
+			jiranum=$(echo "${messages[$index]}" | cut -d " " -f 1)
+			if [ ! $roundedHours = 0 ] && [[ "$jiranum" =~ ^[A-Z]+-[0-9]+$ ]]
+			then
+				./jirasubmit.sh -t "$apiToken" -u "$username" "$jiranum" "$roundedHours" "$date"
+			fi
+		done
+	else
+		while read -d " " epoch
+		do
+			./timereport $unrounded -d "$decimals" -r "$roundto" -j -t "$token" -u "$username" "$(epoch2date $epoch)"
+		done <<< "$(seq -f %f $(date2epoch $date) 86400 $(date2epoch $endDate) | cut -d . -f 1) "
+	fi
+fi

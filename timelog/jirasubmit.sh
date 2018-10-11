@@ -1,8 +1,17 @@
 cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 
-usage="Usage: jirasubmit.sh [-hq] [-u username] [-t api_token] jira_number hours [date]"
-definitions=("" "-h = help" "-q = quiet (suppress non-error messages)" "-u username = JIRA username (your Yext email address)" "-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens" "" "jira_number = issue to log time to -- format: PC-XXXXX" "hours = time in hours to log (15 minutes = 0.25 hours)" "date = date to log hours on -- format: yyyy-mm-dd (default today)")
+usage="Usage: jirasubmit.sh [-hq] [-t api_token] [-u username] jira_number hours [date]"
+definitions=(""
+	"-h = help"
+	"-q = quiet (suppress non-error messages)"
+	"-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
+	"-u username = JIRA username (your Yext email address)"
+	""
+	"jira_number = issue to log time to -- format: PC-XXXXX"
+	"hours = time in hours to log (15 minutes = 0.25 hours)"
+	"date = date to log hours on -- format: yyyy-mm-dd (default today)"
+"")
 
 quiet=""
 username=""
@@ -21,7 +30,7 @@ do
 		;;
 
 		"q" )
-			quiet=true
+			quiet="-q"
 		;;
 
 		"t" )
@@ -119,7 +128,7 @@ case "$response" in
 	;;
 
 	403 )
-		echo "Error (403): User does not have permission to add to worklog"
+		echo "Error (403): User does not have permission to add to this issue's worklog"
 		exit 1
 	;;
 
