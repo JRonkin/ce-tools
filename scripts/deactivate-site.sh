@@ -1,3 +1,5 @@
+die() { echo "$@" >&2; exit 1; }
+
 printf "
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                      !
@@ -32,13 +34,13 @@ else
 	echo "Invalid GitHub URL:\n${giturl}"
 	exit 1
 fi
-git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || (echo "Cloning repo failed. Exiting script."; exit 1)
+git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || die "Cloning repo failed. Exiting script."
 (
 	cd "${HOME}/repo/${repo}"
 	git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
 	git fetch --all
 	git pull --all
-) || (echo "Cloning repo failed. Exiting script."; exit 1)
+) || die "Cloning repo failed. Exiting script."
 
 echo ""
 echo "All branches of repo cloned successfully."
@@ -46,7 +48,6 @@ echo "All branches of repo cloned successfully."
 echo ""
 echo "Copy this repo name:"
 echo "$repo"
-echo ""
 echo "Then press Enter to continue."
 read -p ""
 
@@ -62,10 +63,10 @@ echo "Press Enter once the new Stash repo has been created."
 read -p ""
 
 (
-	git remote set-url origin "https://stash.office.yext.com/scm/pa/${repo}.git" &&
+	git remote set-url origin "ssh://git@stash.office.yext.com:1234/pa/${repo}.git" &&
 	git push --all &&
 	git push --tags
-) || (echo "Pushing to Stash failed. Please push manually. Exiting script."; exit 1)
+) || die "Pushing to Stash failed. Please push manually. Exiting script."
 
 echo ""
 echo "Source code archive complete. Starting site files archive..."
@@ -78,10 +79,10 @@ read -p ""
 
 echo ""
 echo "Getting temporary AWS credentials..."
-awscli sts get-caller-identity || (echo "Failed to get AWS credentials. Exiting script."; exit 1)
+awscli sts get-caller-identity || die "Failed to get AWS credentials. Exiting script."
 
-git clone "ssh://git@stash.office.yext.com:1234/con/freezeray.git" "${HOME}/repo/freezeray" || (echo "Cloning freezeray failed. Exiting script."; exit 1)
-(cd "${HOME}/repo/freezeray/cloner" && npm install) || (echo "Failed to install node modules to cloner. Exiting script."; exit 1)
+git clone "ssh://git@stash.office.yext.com:1234/con/freezeray.git" "${HOME}/repo/freezeray" || die "Cloning freezeray failed. Exiting script."
+(cd "${HOME}/repo/freezeray/cloner" && npm install) || die "Failed to install node modules to cloner. Exiting script."
 mkdir files
 
 echo ""
@@ -96,7 +97,7 @@ fi
 
 echo ""
 echo "Cloning site files..."
-$(npm bin)/coffee index.coffee || (echo "Failed to install node modules to cloner. Exiting script."; exit 1)
+$(npm bin)/coffee index.coffee || die "Failed to install node modules to cloner. Exiting script."
 
 echo ""
 echo "Done."
