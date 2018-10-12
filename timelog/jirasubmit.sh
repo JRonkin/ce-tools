@@ -113,7 +113,7 @@ response=$(curl -so /dev/null -w '%{http_code}' \
       }
     ]
   },
-  \"started\": \"${date}T00:00:00.000$(date +%z)\",
+  \"started\": \"${date}T12:00:00.000$(date +%z)\",
   \"timeSpentSeconds\": $(hours2seconds $hours)
 }")
 
