@@ -146,7 +146,7 @@ sed 's/^\./0\./' <<< "${totalhours} hours total"
 
 if [ ! "$jira" ]
 then
-	read -p "Log to JIRA? (y/N)" jira
+	read -p "Log to JIRA? You can edit on JIRA after submitting. (y/N) " jira
 	if [[ ! "$jira" =~ ^[Yy]([Ee][Ss])?$ ]]
 	then
 		jira=""
@@ -162,6 +162,7 @@ then
 	if [ ! "$apiToken" ]
 	then
 		read -sp "JIRA API Token: " apiToken
+		echo ""
 	fi
 
 	if [ "$endDate" = "$date" ]
