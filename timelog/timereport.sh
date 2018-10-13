@@ -161,8 +161,7 @@ then
 	fi
 	if [ ! "$apiToken" ]
 	then
-		read -sp "JIRA API Token: " apiToken
-		echo ""
+		apiToken="$(./get-jira-api-token "$username")"
 	fi
 
 	if [ "$endDate" = "$date" ]

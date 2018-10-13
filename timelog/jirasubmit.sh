@@ -83,7 +83,7 @@ then
 fi
 if [ ! "$apiToken" ]
 then
-	read -sp "API Token: " apiToken
+	apiToken="$(./get-jira-api-token "$username")"
 fi
 
 if [ ! $quiet ]
