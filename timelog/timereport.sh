@@ -1,4 +1,5 @@
 cd $(dirname "${BASH_SOURCE[0]}")
+source jira-auth.sh
 source timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
@@ -155,14 +156,7 @@ fi
 
 if [ "$jira" ]
 then
-	if [ ! "$username" ]
-	then
-		read -p "JIRA Username: " username
-	fi
-	if [ ! "$apiToken" ]
-	then
-		apiToken="$(./get-jira-api-token "$username")"
-	fi
+	jira-auth "$username" "$apiToken"
 
 	if [ "$endDate" = "$date" ]
 	then

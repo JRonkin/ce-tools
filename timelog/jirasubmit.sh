@@ -1,4 +1,5 @@
 cd $(dirname "${BASH_SOURCE[0]}")
+source jira-auth.sh
 source timefuncs.sh
 
 usage="Usage: jirasubmit.sh [-hq] [-t api_token] [-u username] jira_number hours [date]"
@@ -77,14 +78,7 @@ else
 	date="$(date "+%Y-%m-%d")"
 fi
 
-if [ ! "$username" ]
-then
-	read -p "Username: " username
-fi
-if [ ! "$apiToken" ]
-then
-	apiToken="$(./get-jira-api-token "$username")"
-fi
+jira-auth "$username" "$apiToken"
 
 if [ ! $quiet ]
 then
