@@ -186,6 +186,7 @@ do
 [Enter]: Return to TaskBoard
 E: Enable/Disable TaskSwap
 S: Set Current Window Positions as Default
+T: TimeReport
 "
 			tput el
 			read -sn 1 input
@@ -243,6 +244,31 @@ S: Set Current Window Positions as Default
 						printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
 						read -sp ""
 					fi
+				;;
+
+				# Run TimeReport
+				"T" )
+					clear
+					tput cnorm
+					read -p "Start Date (format yyyy-mm-dd; leave blank for today): " date
+					read -p "End Date (format yyyy-mm-dd; leave blank for same as start): " endDate
+
+					if [ $active -gt -1 ]
+					then
+						../timelog/tl.sh "${tasks[$active]}" end
+					fi
+
+					../timelog/timereport.sh "$date" "$endDate"
+
+					if [ $active -gt -1 ]
+					then
+						../timelog/tl.sh "${tasks[$active]}" start
+					fi
+
+					tput civis
+					printf "\n\n> Return to TaskBoard"
+					read -sp ""
+					tput clear
 				;;
 			esac
 		;;
