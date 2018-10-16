@@ -1,4 +1,4 @@
-cd $ALPHA/gocode/src && git pull && glock sync yext && make binaries &
+cd $ALPHA/gocode/src/yext && git pull && glock sync yext && make binaries &
 
 brew upgrade &
 
