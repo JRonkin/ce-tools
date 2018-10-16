@@ -119,7 +119,7 @@ do
 			fi
 			# Start new task
 			tput rmcup
-			new "$repo" "$jiranum"
+			new "$jiranum" "$repo"
 			tput smcup
 			tput clear
 			# Add new task to list
