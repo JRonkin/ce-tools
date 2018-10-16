@@ -7,6 +7,9 @@ source taskswap.sh
 mkdir -p ../appdata/taskboard
 touch ../appdata/taskboard/tasks
 
+# Read TaskSwap settings from config file
+load-config
+
 # Initialize tasks
 tasks=()
 selected=0
@@ -55,9 +58,9 @@ do
 
 		# Arrow key
 		"" )
-			read -sn 2 -t 1 input2
+			read -sn 2 -t 1 input
 			tput el1
-			case $input2 in
+			case "$input" in
 				# Up arrow
 				"[A" )
 					if [ $selected -gt 0 ]
@@ -181,12 +184,52 @@ do
 			clear
 			printf "\
 [Enter]: Return to TaskBoard
+E: Enable/Disable TaskSwap
 S: Set Current Window Positions as Default
 "
 			tput el
 			read -sn 1 input
 			tput el1
 			case "$(echo "$input" | tr a-z A-Z)" in
+				# Options for TaskBoard to Enable or Disable Apps
+				"E" )
+					while :
+					do
+						clear
+						printf "\
+[Enter]: Return to TaskBoard
+1: %s Atom
+2: %s Chrome
+3: %s Terminal
+" "$(sed 's/^$/Enable/;s/^true$/Disable/' <<< "$enableAtom")" "$(sed 's/^$/Enable/;s/^true$/Disable/' <<< "$enableChrome")" "$(sed 's/^$/Enable/;s/^true$/Disable/' <<< "$enableTerminal")"
+					
+						tput el
+						read -sn 1 input
+						tput el1
+						case "$input" in
+							"1" )
+								enableAtom="$(sed 's/^true$/false/;s/^$/true/;s/^false$//' <<< "$enableAtom")"
+							;;
+
+							"2" )
+								enableChrome="$(sed 's/^true$/false/;s/^$/true/;s/^false$//' <<< "$enableChrome")"
+							;;
+
+							"3" )
+								enableTerminal="$(sed 's/^true$/false/;s/^$/true/;s/^false$//' <<< "$enableTerminal")"
+							;;
+
+							* )
+								break
+							;;
+						esac
+					done
+
+					echo "enableAtom=$(sed 's/^$/false/' <<< "$enableAtom")" > ../appdata/taskboard/taskswap.conifg
+					echo "enableChrome=$(sed 's/^$/false/' <<< "$enableChrome")" >> ../appdata/taskboard/taskswap.conifg
+					echo "enableTerminal=$(sed 's/^$/false/' <<< "$enableTerminal")" >> ../appdata/taskboard/taskswap.conifg
+				;;
+
 				# Set Current Window Positions as Default 
 				"S" )
 					if [ $active -gt -1 ]
@@ -203,7 +246,6 @@ S: Set Current Window Positions as Default
 				;;
 			esac
 		;;
-
 	esac
 done
 
