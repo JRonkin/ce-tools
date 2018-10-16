@@ -107,15 +107,13 @@ do
 				read -sp ""
 				continue
 			fi
-			read -p "GitHub URL: " giturl
+			read -p "GitHub URL or Message: " gitOrMsg
 			tput civis
-			if [[ "$giturl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
+			if [[ "$gitOrMsg" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 			then
 				repo="${BASH_REMATCH[1]}"
 			else
-				printf "Invalid URL:\n$giturl\n\n> Return to TaskBoard"
-				read -sp ""
-				continue
+				message=" $gitOrMsg"
 			fi
 			# Start new task
 			tput rmcup
@@ -124,7 +122,7 @@ do
 			tput clear
 			# Add new task to list
 			selected=${#tasks[*]}
-			tasks[${#tasks[*]}]="$jiranum   $repo"
+			tasks[${#tasks[*]}]="${jiranum}   ${repo}${message}"
 			# Switch active task to new task
 			if [ $active -gt -1 ]
 			then
