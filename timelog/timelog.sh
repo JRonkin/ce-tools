@@ -2,7 +2,7 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
-usage="Usage: tl.sh [-h] (item) (command) [args]"
+usage="Usage: timelog.sh [-h] (item) (command) [args]"
 command_start="s, start - args: [time] -- Log a start at a 24-hour time formatted as 15:04 (default to current time)"
 command_end="e, end - args: [time] -- Log an end at a 24-hour time formatted as 15:04 (default to current time)"
 command_from="f, from - args: (duration) [time] -- Log a duration of time, in hours, starting at a 24-hour time formatted as 15:04 (default to current time)"
@@ -78,8 +78,8 @@ case "$command" in
 		else
 			time="$4"
 		fi
-		./tl.sh "$item" start "$time"
-		./tl.sh "$item" end "$(timeaddhours "$time" "$3")"
+		./timelog.sh "$item" start "$time"
+		./timelog.sh "$item" end "$(timeaddhours "$time" "$3")"
 	;;
 
 	"t" | "to" )
@@ -95,8 +95,8 @@ case "$command" in
 		else
 			time="$4"
 		fi
-		./tl.sh "$item" start "$(timeaddhours "$time" "-${3}")"
-		./tl.sh "$item" end "$time"
+		./timelog.sh "$item" start "$(timeaddhours "$time" "-${3}")"
+		./timelog.sh "$item" end "$time"
 	;;
 
 	* )

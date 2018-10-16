@@ -87,7 +87,7 @@ do
 			if [ $active -gt -1 ]
 			then
 				deactivate "${tasks[$active]}" &
-				../timelog/tl.sh "${tasks[$active]}" end
+				../timelog/timelog.sh "${tasks[$active]}" end
 			fi
 			break
 		;;
@@ -127,12 +127,12 @@ do
 			if [ $active -gt -1 ]
 			then
 				deactivate "${tasks[$active]}" &
-				../timelog/tl.sh "${tasks[$active]}" end
+				../timelog/timelog.sh "${tasks[$active]}" end
 			fi
 			active=$selected
 			# Save task and start timelog
 			echo "${tasks[$active]}" >> ../appdata/taskboard/tasks
-			../timelog/tl.sh "${tasks[$active]}" start
+			../timelog/timelog.sh "${tasks[$active]}" start
 		;;
 
 		# Close Selected
@@ -143,7 +143,7 @@ do
 			# If closing active task, end timelog and unset active; else adjust active
 			if [ $active = $selected ]
 			then
-				../timelog/tl.sh "${tasks[$active]}" end
+				../timelog/timelog.sh "${tasks[$active]}" end
 				active=-1
 			else
 				if [ $active -gt $selected ]
@@ -164,7 +164,7 @@ do
 				if [ $active -gt -1 ]
 				then
 					deactivate "${tasks[$active]}" &
-					../timelog/tl.sh "${tasks[$active]}" end
+					../timelog/timelog.sh "${tasks[$active]}" end
 				fi
 				if [ $selected = $active ]
 				then
@@ -172,7 +172,7 @@ do
 				else
 					activate "${tasks[$selected]}" &
 					active=$selected
-					../timelog/tl.sh "${tasks[$active]}" start
+					../timelog/timelog.sh "${tasks[$active]}" start
 				fi
 			fi
 		;;
@@ -253,14 +253,14 @@ T: TimeReport
 
 					if [ $active -gt -1 ]
 					then
-						../timelog/tl.sh "${tasks[$active]}" end
+						../timelog/timelog.sh "${tasks[$active]}" end
 					fi
 
 					../timelog/timereport.sh "$date" "$endDate"
 
 					if [ $active -gt -1 ]
 					then
-						../timelog/tl.sh "${tasks[$active]}" start
+						../timelog/timelog.sh "${tasks[$active]}" start
 					fi
 
 					tput civis
