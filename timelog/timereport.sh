@@ -110,19 +110,32 @@ do
 	file="../appdata/timelog/logs/$(epoch2date $epoch).log"
 	if [ -f "$file" ]
 	then
+		linetype="msg"
 		while read line
 		do
-			if [[ "$line" =~ ^[^\|]{20}\| ]]
-			then
-				message="${line:22}"
-				index="$(cksum <<< "$message" | cut -d " " -f 1)"
-				if [ ! "${messages[$index]}" ]
-				then
-					indices[${#indices[*]}]=$index
-					messages[$index]="$message"
-				fi
-				sums[$index]=$(( ${sums[$index]} + $(timediff $(echo "${line//-}" | cut -d "|" -f 1) ) ))
-			fi
+			case "$linetype" in
+				"msg" )
+					index="$(cksum <<< "$line" | cut -d " " -f 1)"
+					if [ ! "${messages[$index]}" ]
+					then
+						indices[${#indices[*]}]=$index
+						messages[$index]="$line"
+					fi
+					linetype="time"
+				;;
+
+				"time" )
+					while read -d " " period
+					do
+						sums[$index]=$(( ${sums[$index]} + $(timediff ${period/-/ }) ))
+					done <<< "${line} "
+					linetype="skip"
+				;;
+
+				"skip" )
+					linetype="msg"
+				;;
+			esac
 		done < "$file"
 	fi
 done <<< "$(seq -f %f $(date2epoch $date) 86400 $(date2epoch $endDate) | cut -d . -f 1) "

@@ -46,11 +46,19 @@ case "$command" in
 		else
 			time="$(formattime "$3")"
 		fi
-		echo "${time} -  | ${item}" >> "$file"
+		linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
+		if [ "$linenum" ]
+		then
+			sed -i "" "$(($linenum + 1))s/ \$/ ${time}-/" "$file"
+		else
+			echo "$item" >> "$file"
+			echo "${time}-" >> "$file"
+			echo "" >> "$file"
+		fi
 	;;
 
 	"e" | "end" )
-		linenum="$(grep -Fn "$item" "$file" | egrep "^.+:.{11} " | head -n 1 | cut -d : -f 1)"
+		linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
 		if ! [ "$linenum" ]
 		then
 			echo "Error: no open start time found for '$item'"
@@ -62,7 +70,7 @@ case "$command" in
 		else
 			time="$(formattime "$3")"
 		fi
-		sed -i "" "${linenum}s/\(^..:..:.. - \)\(.*\)/\1${time}\2/" "$file"
+		sed -i "" "$(($linenum + 1))s/-\$/-${time} /" "$file"
 	;;
 
 	"f" | "from" )
