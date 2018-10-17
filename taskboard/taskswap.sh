@@ -149,7 +149,7 @@ activate() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						set index of every window whose custom title is "%s" to 1
+						set index of every window whose name contains " — %s — " to 1
 					end tell
 				' "$repo" | osascript &
 		fi
@@ -181,7 +181,7 @@ deactivate() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						set miniaturized of every window whose custom title is "%s" to true
+						set miniaturized of every window whose name contains " — %s — " to true
 					end tell
 				' "$repo" | osascript &
 		fi
@@ -213,7 +213,7 @@ close() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						close every window whose custom title is "%s"
+						close every window whose name contains " — %s — "
 					end tell
 				' "$repo" | osascript &
 		fi
