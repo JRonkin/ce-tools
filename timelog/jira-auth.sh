@@ -29,6 +29,7 @@ jira-auth() {
 		then
 			apiToken="$savedToken"
 		else
+			echo ""
 			echo "Enter your JIRA API token for ${username}"
 			echo "If you haven't created a token yet, create one here:"
 			echo "https://id.atlassian.com/manage/api-tokens"
