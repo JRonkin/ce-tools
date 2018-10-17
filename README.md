@@ -3,7 +3,7 @@
 
 ### INSTALL INSTRUCTIONS:
 1. Clone this repo
-2. Run install.sh (or 'source' it to skip step 3)
+2. Run install.sh (or `source` it to skip step 3)
 3. Restart your terminal
 4. Shortcuts are now installed and ready to run
 
