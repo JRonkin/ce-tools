@@ -1,13 +1,12 @@
 A repository for scripts and automation tools related to Yext Consulting Engineering
 
-INSTALL INSTRUCTIONS:
+## INSTALL INSTRUCTIONS:
 1. Clone this repo
 2. Run install.sh (or 'source' it to skip step 3)
 3. Restart your terminal
 4. Shortcuts are now installed and ready to run
 
-TaskBoard
-Shortcut: tb.sh
+### TaskBoard -- Shortcut: tb.sh
 - Easily create and switch between tasks through a terminal GUI
 - Automatically track time per item with option to submit to JIRA
 - Assign tasks a JIRA number and GitHub repo or message
@@ -16,20 +15,18 @@ Shortcut: tb.sh
 - Integration with TimeLog to track time spent on each task
 - Integration with TimeReport to submit time to JIRA
 
-TimeLog
-Shortcut: tl.sh
+### TimeLog -- Shortcut: tl.sh
 - Keep track of time spent on a task
 - Supports multiple tasks running concurrently
 - Log time using commands "start" and "end" with matching messages
 - Or log time using commands "from" and "to" to log a duration from a start time or to an end time
 
-TimeReport
-Shortcut: tr.sh
+### TimeReport -- Shortcut: tr.sh
 - Get a report of time spent on each task
 - See time on a single day or in a range of days
 - Submit time to JIRA, logged individually for each item on each day
 
-Scripts
+### Scripts
 - add-dns.sh: step-through automation of adding a yext-cdn DNS entry (bridge domain)
 - bulku-pr-checker: created to partially automate checking of bulku PRs during Crumbageddon
 - deactivate-site: step through the process of deactivating a Pages site
