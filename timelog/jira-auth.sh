@@ -17,7 +17,7 @@ jira-auth() {
 		if [ "$savedToken" ] && [ ! "$2" = "$savedToken" ]
 		then
 			echo "The given API token does not match the saved token for '${username}'."
-			if [[ "$(read -p "Update saved token? (y/N) ")" =~ ^[Yy]([Ee][Ss])?$ ]]
+			if [[ "$(read -p "Update saved token? (y/N) " ans; echo $ans)" =~ ^[Yy]([Ee][Ss])?$ ]]
 			then
 				security add-generic-password -s "TimeLog" -a "$username" -l "JIRA API token" -p "$apiToken" -U
 			fi
@@ -40,7 +40,7 @@ jira-auth() {
 				echo ""
 			done
 
-			if [[ "$(read -p "Save your token in Keychain? (y/N) ")" =~ ^[Yy]([Ee][Ss])?$ ]]
+			if [[ "$(read -p "Save your token in Keychain? (y/N) " ans; echo $ans)" =~ ^[Yy]([Ee][Ss])?$ ]]
 			then
 				security add-generic-password -s "TimeLog" -a "$username" -l "JIRA API token" -p "$apiToken" -U
 			fi
