@@ -2,12 +2,12 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source jira-auth.sh
 source timefuncs.sh
 
-usage="Usage: jirasubmit.sh [-hq] [-t api_token] [-u username] jira_number hours [date]"
+usage="Usage: jirasubmit.sh [-hq] [-u username [-t api_token]] jira_number hours [date]"
 definitions=(""
 	"-h = help"
 	"-q = quiet (suppress non-error messages)"
-	"-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
 	"-u username = JIRA username (your Yext email address)"
+	"-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
 	""
 	"jira_number = issue to log time to -- format: PC-XXXXX"
 	"hours = time in hours to log (15 minutes = 0.25 hours)"
@@ -34,12 +34,12 @@ do
 			quiet="-q"
 		;;
 
-		"t" )
-			apiToken="$OPTARG"
-		;;
-
 		"u" )
 			username="$OPTARG"
+		;;
+
+		"t" )
+			apiToken="$OPTARG"
 		;;
 
 		* )
@@ -47,6 +47,11 @@ do
 		;;
 	esac
 done
+
+if [ ! "$username" ]
+then
+	apiToken=""
+fi
 
 shift $((OPTIND-1))
 

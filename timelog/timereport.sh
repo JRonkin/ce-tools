@@ -3,16 +3,16 @@ source jira-auth.sh
 source timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
-usage="Usage: timesum.sh [-hn] [-d decimals] [-r round_to] [-j [-t jira_token] [-u jira_user]] [date] [end date]"
+usage="Usage: timesum.sh [-hn] [-d decimals] [-r round_to] [-j [-u jira_user [-t jira_token]]] [date] [end date]"
 definitions=(""
-	"-j = log time to JIRA (log messages must start with JIRA number, e.g. PC-12345)"
 	"-h = help"
 	"-n = no intermediate rounding (displayed times may not sum to total)"
 	"-d decimals = number of decimal places to show (default 2)"
 	"-r round_to = round to the nearest multiple of roundto (default 0.25)"
 	""
-	"-t jira_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
+	"-j = log time to JIRA (log messages must start with JIRA number, e.g. PC-12345)"
 	"-u jira_user = JIRA username (your Yext email address)"
+	"-t jira_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
 	""
 	"date = date to summarize, in yyyy-mm-dd format (default today)"
 	"end date = end of range to summarize (leave out for single date)"
@@ -45,12 +45,12 @@ do
 			unrounded="-n"
 		;;
 
-		"t" )
-			apiToken="$OPTARG"
-		;;
-
 		"u" )
 			username="$OPTARG"
+		;;
+
+		"t" )
+			apiToken="$OPTARG"
 		;;
 
 		"d" )
@@ -78,6 +78,11 @@ do
 		;;
 	esac
 done
+
+if [ ! "$username" ]
+then
+	apiToken=""
+fi
 
 shift $((OPTIND-1))
 
