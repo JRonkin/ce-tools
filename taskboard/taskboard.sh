@@ -8,7 +8,9 @@ mkdir -p ../appdata/taskboard
 touch ../appdata/taskboard/tasks
 
 # Read TaskSwap settings from config file
-load-config
+touch ../appdata/taskboard/taskswap.config
+source ../appdata/taskboard/taskswap.config
+cat ../appdata/taskboard/taskswap.config
 
 # Initialize tasks
 tasks=()
@@ -224,9 +226,9 @@ T: TimeReport
 						esac
 					done
 
-					echo "enableAtom=$(sed 's/^$/false/' <<< "$enableAtom")" > ../appdata/taskboard/taskswap.conifg
-					echo "enableChrome=$(sed 's/^$/false/' <<< "$enableChrome")" >> ../appdata/taskboard/taskswap.conifg
-					echo "enableTerminal=$(sed 's/^$/false/' <<< "$enableTerminal")" >> ../appdata/taskboard/taskswap.conifg
+					echo "enableAtom='$enableAtom'" > ../appdata/taskboard/taskswap.config
+					echo "enableChrome='$enableChrome'" >> ../appdata/taskboard/taskswap.config
+					echo "enableTerminal='$enableTerminal'" >> ../appdata/taskboard/taskswap.config
 				;;
 
 				# Set Current Window Positions as Default 

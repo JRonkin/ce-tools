@@ -5,31 +5,13 @@ save-window-bounds() {
 	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 	mkdir -p "$dir"
 
-	echo "chromeBounds=$(printf 'tell app "Google Chrome" to get the bounds of the 1st window where the title of the 1st tab contains "[%s]"' "$jiranum" | osascript)" >> "${dir}/windowbounds"
-	echo "terminal1Bounds=$(printf 'tell app "Terminal" to get the bounds of the 1st window whose custom title is "%s"' "$repo" | osascript)" > "${dir}/windowbounds"
-	echo "terminal2Bounds=$(printf 'tell app "Terminal" to get the bounds of the 2nd window whose custom title is "%s"' "$repo" | osascript)" >> "${dir}/windowbounds"
-	echo "atomBounds=$(printf 'tell app "Atom" to get the bounds of the 1st window whose name contains "~/repo/%s"' "$repo" | osascript)" >> "${dir}/windowbounds"
-}
-
-load-config() {
-	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
-	mkdir -p "$dir"
-	touch "$dir/taskswap.conifg"
-
-	while read line
-	do
-		case "$(echo "$line" | cut -d "=" -f 1)" in
-			"enableChrome" )
-				enableChrome="$(echo "$line" | cut -d "=" -f 2 | sed 's/^false$//;s/..*/true/')"
-			;;
-			"enableTerminal" )
-				enableTerminal="$(echo "$line" | cut -d "=" -f 2 | sed 's/^false$//;s/..*/true/')"
-			;;
-			"enableAtom" )
-				enableAtom="$(echo "$line" | cut -d "=" -f 2 | sed 's/^false$//;s/..*/true/')"
-			;;
-		esac
-	done < "$dir/taskswap.conifg"
+	(
+		echo "atomBounds='$(osascript -e "tell app \"Atom\" to get the bounds of the 1st window whose name contains \"~/repo/${repo}\"")'" &
+		echo "chromeBounds='$(osascript -e "tell app \"Google Chrome\" to get the bounds of the 1st window where the title of the 1st tab contains \"[${jiranum}]\"")'" &
+		echo "terminal1Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 1st window whose name contains \"${repo}\"")'" &
+		echo "terminal2Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 2nd window whose name contains \"${repo}\"")'" &
+		wait
+	) | sort > "${dir}/windowbounds"
 }
 
 new() {
@@ -62,24 +44,7 @@ new() {
 	fi
 
 	touch "$dir/windowbounds"
-	local line
-	while read line
-	do
-		case "$(echo "$line" | cut -d "=" -f 1)" in
-			"chromeBounds" )
-				chromeBounds="$(echo "$line" | cut -d "=" -f 2)"
-			;;
-			"terminal1Bounds" )
-				terminal1Bounds="$(echo "$line" | cut -d "=" -f 2)"
-			;;
-			"terminal2Bounds" )
-				terminal2Bounds="$(echo "$line" | cut -d "=" -f 2)"
-			;;
-			"atomBounds" )
-				atomBounds="$(echo "$line" | cut -d "=" -f 2)"
-			;;
-		esac
-	done < "$dir/windowbounds"
+	source "$dir/windowbounds"
 
 	# Wait for git clone parallel process to finish
 	wait
