@@ -72,11 +72,11 @@ new() {
 			printf 'tell app "Terminal"
 						do script "cd ~/repo/%s/src && if [ ! -d node_modules ]; then %s/../scripts/fix-yarn-modernizr.sh; yarn install; bower install; bundle install; fi"
 						set the custom title of the front window to "%s"
-						set the bounds of the front window whose custom title is "%s" to {%s}
+						set the bounds of the front window whose name contains "%s" to {%s}
 
 						do script "cd ~/repo/%s && git co %s/trunk || (git co master && git co -b %s/trunk); git branch"
 						set the custom title of the front window to "%s"
-						set the bounds of the front window whose custom title is "%s" to {%s}
+						set the bounds of the front window whose name contains "%s" to {%s}
 					end tell
 				' "$repo" "$(pwd)" "$repo" "$repo" "$terminal1Bounds" "$repo" "$jiranum" "$jiranum" "$repo" "$repo" "$terminal2Bounds" | osascript &
 		fi
