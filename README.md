@@ -14,10 +14,10 @@
 - Easily create and switch between tasks through a terminal GUI
 - Automatically track time per item with option to submit to JIRA
 - Assign tasks a JIRA number and GitHub repo or message
-- Automatically clone repo and install node modules (enable Terminal in settings)
-- Open Atom to repo and Chrome to JIRA, GitHub, and Storm for the site (enable in settings)
+- Automatically clone repo and install node modules (enable Terminal in More Options)
+- Open Atom to repo and Chrome to JIRA, GitHub, and Storm for the site (enable in More Options)
 - Integration with TimeLog to track time spent on each task
-- Integration with TimeReport to submit time to JIRA
+- Integration with TimeReport to submit time to JIRA (in More Options)
 
 ### TimeLog
 *Shortcut: tl.sh*
@@ -33,6 +33,7 @@
 - Submit time to JIRA, logged individually for each item on each day
 
 ### Scripts
+*Shortcut: sc/[SCRIPT]*
 - add-dns.sh: step-through automation of adding a yext-cdn DNS entry (bridge domain)
 - bulku-pr-checker: created to partially automate checking of bulku PRs during Crumbageddon
 - deactivate-site: step through the process of deactivating a Pages site
