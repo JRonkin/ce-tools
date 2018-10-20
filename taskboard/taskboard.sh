@@ -1,3 +1,23 @@
+# Save terminal state
+original_tty_state="$(stty -g)"
+
+clean_exit() {
+	# Remove custom title
+	osascript -e 'tell app "Terminal" to set custom title of every window whose name contains "TaskBoard" to ""' &
+
+	# Restore the screen and cursor
+	tput rmcup
+	tput cnorm
+
+	# Restore Terminal state
+	stty $original_tty_state
+
+	exit
+}
+
+# Run clean_exit if interrupted
+trap clean_exit EXIT INT SIGHUP SIGINT SIGQUIT SIGTERM
+
 # Set window title
 osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"' &
 
@@ -279,7 +299,3 @@ T: TimeReport
 		;;
 	esac
 done
-
-# Restore the screen and cursor
-tput rmcup
-tput cnorm
