@@ -33,7 +33,6 @@
 - Submit time to JIRA, logged individually for each item on each day
 
 ### Scripts
-*Shortcut: sc/[SCRIPT]*
 - add-dns.sh: step-through automation of adding a yext-cdn DNS entry (bridge domain)
 - bulku-pr-checker: created to partially automate checking of bulku PRs during Crumbageddon
 - deactivate-site: step through the process of deactivating a Pages site
