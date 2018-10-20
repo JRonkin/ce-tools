@@ -37,6 +37,7 @@ fi
 item="$1"
 command="$2"
 file="../appdata/timelog/logs/$(date +%Y-%m-%d).log"
+touch "$file"
 
 case "$command" in
 	"s" | "start" )
