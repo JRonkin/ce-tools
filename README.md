@@ -14,8 +14,8 @@
 - Easily create and switch between tasks through a terminal GUI
 - Automatically track time per item with option to submit to JIRA
 - Assign tasks a JIRA number and GitHub repo or message
-- Automatically clone repo and install node modules
-- Open Atom to repo and Chrome to JIRA, GitHub, and Storm for the site
+- Automatically clone repo and install node modules (enable Terminal in settings)
+- Open Atom to repo and Chrome to JIRA, GitHub, and Storm for the site (enable in settings)
 - Integration with TimeLog to track time spent on each task
 - Integration with TimeReport to submit time to JIRA
 
