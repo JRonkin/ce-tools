@@ -10,7 +10,7 @@
 ### How to Use TaskBoard:
 1. After following the install instructions, run tb.sh to launch TaskBoard
 2. In TaskBoard, press N to start a new task
-3. Enter the URL of the JIRA item's page (open issue and copy from address bar)
+3. Enter the JIRA number or the URL of the JIRA item's page
 4. Enter the GitHub URL of the repo for the item or a custom message
 5. Time is counted for the active task, denoted by *
 6. Switch between tasks with arrows and Enter
