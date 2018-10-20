@@ -99,15 +99,20 @@ do
 			# Get input
 			clear
 			tput cnorm
-			read -p "JIRA URL: " jiraurl
+			read -p "JIRA URL or Number: " jiraurl
 			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/#\?]+).* ]]
 			then
 				jiranum="${BASH_REMATCH[1]}"
 			else
-				tput civis
-				printf "Invalid URL:\n$jiraurl\n\n> Return to TaskBoard"
-				read -sp ""
-				continue
+				if [[ "$jiraurl" =~ ^[A-Za-z]+-[0-9]+$ ]]
+				then
+					jiranum="$jiraurl"
+				else
+					tput civis
+					printf "Invalid URL or JIRA Number:\n$jiraurl\n\n> Return to TaskBoard"
+					read -sp ""
+					continue
+				fi
 			fi
 			read -p "GitHub URL or Message: " gitOrMsg
 			tput civis
