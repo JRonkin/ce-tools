@@ -14,7 +14,7 @@
 4. Enter the GitHub URL of the repo for the item or a custom message
 5. Time is counted for the active task, denoted by *
 6. Switch between tasks with arrows and Enter
-7. See time worked and log to JIRA in More Options > TimeReport
+7. See time worked per item and log to JIRA in More Options > TimeReport
 8. Optionally enable automatic Chrome, Terminal, and/or Atom window switching in More Options > Enable/Disable TaskSwap
 
 ## Contents
