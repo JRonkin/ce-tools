@@ -271,6 +271,7 @@ T: TimeReport
 						printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
 						read -sp ""
 					fi
+					clear
 				;;
 
 				# Run TimeReport

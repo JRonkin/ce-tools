@@ -83,7 +83,7 @@ new() {
 
 		if [ "$enableAtom" ]
 		then
-			atom "$HOME/repo/${repo}" && sleep 3 &&
+			atom "$HOME/repo/${repo}" && sleep 2 &&
 			printf 'tell app "Atom"
 						set timer to 0
 						repeat until the length of (get every window whose name contains "~/repo/%s") > 0 or timer > 15
