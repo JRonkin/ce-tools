@@ -135,6 +135,8 @@ do
 			fi
 			read -p "GitHub URL or Message: " gitOrMsg
 			tput civis
+			repo=""
+			message=""
 			if [[ "$gitOrMsg" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 			then
 				repo="${BASH_REMATCH[1]}"
