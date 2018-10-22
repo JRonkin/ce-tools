@@ -33,7 +33,7 @@ source ../appdata/taskboard/taskswap.config
 
 # Initialize tasks
 tasks=()
-selected=0
+selected=-1
 active=-1
 
 # Read in saved tasks from file
@@ -163,23 +163,26 @@ do
 
 		# Close Selected
 		"X" )
-			close "${tasks[$selected]}" &
-			# Remove task from saved task list
-			sed -i "" "/${tasks[$selected]}/d" ../appdata/taskboard/tasks
-			# If closing active task, end timelog and unset active; else adjust active
-			if [ $active = $selected ]
+			if [ ${#tasks[*]} -gt 0 ]
 			then
-				../timelog/timelog.sh "${tasks[$active]}" end
-				active=-1
-			else
-				if [ $active -gt $selected ]
+				close "${tasks[$selected]}" &
+				# Remove task from saved task list
+				sed -i "" "/${tasks[$selected]}/d" ../appdata/taskboard/tasks
+				# If closing active task, end timelog and unset active; else adjust active
+				if [ $active = $selected ]
 				then
-					(( --active ))
+					../timelog/timelog.sh "${tasks[$active]}" end
+					active=-1
+				else
+					if [ $active -gt $selected ]
+					then
+						(( --active ))
+					fi
 				fi
+				# Remove task and adjust selected
+				tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
+				if [ $selected = ${#tasks[*]} ]; then (( --selected )); fi
 			fi
-			# Remove task and adjust selected
-			tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
-			if [ $selected = ${#tasks[*]} ]; then (( --selected )); fi
 		;;
 
 		# Enter
