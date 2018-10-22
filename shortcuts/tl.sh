@@ -1,1 +1,1 @@
-"$(dirname "${BASH_SOURCE[0]}")"/../timelog/timelog.sh
+"$(dirname "${BASH_SOURCE[0]}")"/../timelog/timelog.sh $@

@@ -1,1 +1,1 @@
-"$(dirname "${BASH_SOURCE[0]}")"/../taskboard/taskboard.sh
+"$(dirname "${BASH_SOURCE[0]}")"/../taskboard/taskboard.sh $@
