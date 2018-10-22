@@ -33,7 +33,7 @@ source ../appdata/taskboard/taskswap.config
 
 # Initialize tasks
 tasks=()
-selected=-1
+selected=0
 active=-1
 
 # Read in saved tasks from file
