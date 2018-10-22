@@ -72,11 +72,11 @@ new() {
 			printf 'tell app "Terminal"
 						do script "cd ~/repo/%s/src && if [ ! -d node_modules ]; then %s/../scripts/fix-yarn-modernizr.sh; yarn install; bower install; bundle install; fi"
 						set the custom title of the front window to "%s"
-						set the bounds of the front window whose name contains "%s" to {%s}
+						set the bounds of the front window whose name contains "%s — " to {%s}
 
 						do script "cd ~/repo/%s && git co %s/trunk || (git co master && git co -b %s/trunk); git branch"
 						set the custom title of the front window to "%s"
-						set the bounds of the front window whose name contains "%s" to {%s}
+						set the bounds of the front window whose name contains "%s — " to {%s}
 					end tell
 				' "$repo" "$(pwd)" "$repo" "$repo" "$terminal1Bounds" "$repo" "$jiranum" "$jiranum" "$repo" "$repo" "$terminal2Bounds" | osascript &
 		fi
@@ -114,7 +114,7 @@ activate() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						set index of every window whose name contains " — %s — " to 1
+						set index of every window whose name contains "%s — " to 1
 					end tell
 				' "$repo" | osascript &
 		fi
@@ -146,7 +146,7 @@ deactivate() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						set miniaturized of every window whose name contains " — %s — " to true
+						set miniaturized of every window whose name contains "%s — " to true
 					end tell
 				' "$repo" | osascript &
 		fi
@@ -178,7 +178,7 @@ close() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						close every window whose name contains " — %s — "
+						close every window whose name contains "%s — "
 					end tell
 				' "$repo" | osascript &
 		fi
