@@ -29,10 +29,10 @@ new() {
 	mkdir -p "$dir"
 	touch "${dir}/windowbounds"
 
-	local chromeBounds="273, 23, 1604, 1050"
+	local chromeBounds="279, 23, 1610, 1050"
 	local terminal1Bounds="0, 698, 571, 1050"
 	local terminal2Bounds="0, 347, 571, 700"
-	local atomBounds="273, 23, 1604, 1050"
+	local atomBounds="279, 23, 1610, 1050"
 
 	# If more than one monitor, use dual monitor window defaults
 	if [ $(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial") -gt 1 ]
@@ -53,14 +53,14 @@ new() {
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
-					make new window
-					set the bounds of the front window to {%s}
-					set the URL of the active tab of the front window to "https://yexttest.atlassian.net/browse/%s"
-					make new tab in the front window
-					set the URL of the active tab of the front window to "https://github.com/yext-pages/%s"
-					make new tab in the front window
-					set the URL of the active tab of the front window to "https://www.yext.com/pagesadmin/?query=%s"
-					set the active tab index of the front window to 1
+					set new_window to (make new window)
+					set the bounds of new_window to {%s}
+					set the URL of the 1st tab of new_window to "https://yexttest.atlassian.net/browse/%s"
+					make new tab in new_window
+					set the URL of the active tab of new_window to "https://github.com/yext-pages/%s"
+					make new tab in new_window
+					set the URL of the active tab of new_window to "https://www.yext.com/pagesadmin/?query=%s"
+					set the active tab index of new_window to 1
 				end tell
 			' "$chromeBounds" "$jiranum" "$repo" "$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)" | osascript &
 	fi
@@ -83,10 +83,10 @@ new() {
 
 		if [ "$enableAtom" ]
 		then
-			atom "$HOME/repo/${repo}" &&
+			atom "$HOME/repo/${repo}" && sleep 3 &&
 			printf 'tell app "Atom"
 						set timer to 0
-						repeat until the length of (get every window whose name contains "~/repo/%s") > 0 or timer > 20
+						repeat until the length of (get every window whose name contains "~/repo/%s") > 0 or timer > 15
 							delay 0.5
 							set timer to timer + 0.5
 						end repeat

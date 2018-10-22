@@ -30,7 +30,6 @@ touch ../appdata/taskboard/tasks
 # Read TaskSwap settings from config file
 touch ../appdata/taskboard/taskswap.config
 source ../appdata/taskboard/taskswap.config
-cat ../appdata/taskboard/taskswap.config
 
 # Initialize tasks
 tasks=()
