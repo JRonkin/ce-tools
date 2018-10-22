@@ -5,7 +5,7 @@
 1. Clone this repo
 2. Run install.sh (or `source` it to skip step 3)
 3. Restart your terminal
-4. Shortcuts are now installed and ready to run
+4. Done! To use, run shortcuts in Terminal (e.g. run `tb.sh` for TaskBoard)
 
 ### How to Use TaskBoard:
 1. After following the install instructions, run tb.sh to launch TaskBoard
