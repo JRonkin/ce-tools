@@ -110,8 +110,8 @@ else
 	endDate="$date"
 fi
 
-while read -d " " epoch
-do 
+while read epoch
+do
 	file="../appdata/timelog/logs/$(epoch2date $epoch).log"
 	if [ -f "$file" ]
 	then
@@ -188,9 +188,9 @@ then
 			fi
 		done
 	else
-		while read -d " " epoch
+		while read epoch
 		do
-			./timereport $unrounded -d "$decimals" -r "$roundto" -j -t "$token" -u "$username" "$(epoch2date $epoch)"
+			./timereport $unrounded -d "$decimals" -r "$roundto" -j -u "$username" -t "$token" "$(epoch2date $epoch)"
 		done <<< "$(seq -f %f $(date2epoch $date) 86400 $(date2epoch $endDate) | cut -d . -f 1) "
 	fi
 fi
