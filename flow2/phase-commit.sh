@@ -4,7 +4,7 @@ assert_git_repo
 group="$(get_current_group)"
 message="$@"
 
-if [ "$message" ] && [[ "$group" =~ "$jira_regex" ]]
+if [ "$message" ] && [[ "$group" =~ $jira_regex ]]
 then
 	message="${1} ${message}"
 fi
