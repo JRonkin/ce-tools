@@ -12,15 +12,25 @@ assert_git_repo() {
   fi
 }
 
+# Returns the name of the current branch
+get_current_branch() {
+  set -e
+
+  assert_git_repo
+  branch_name="$(git symbolic-ref HEAD 2>/dev/null)" ||
+  branch_name="(no branch name)"
+  branch_name=${branch_name##refs/heads/}
+
+  echo "$branch_name"
+}
+
 # Returns the group of the current branch, defined by being before
 # the first forward slash -- dies if no group is found
 get_current_group() {
   set -e
 
   group_regex="([^\/]*)/"
-  branch_name="$(git symbolic-ref HEAD 2>/dev/null)" ||
-  branch_name="(no branch name)"
-  branch_name=${branch_name##refs/heads/}
+  branch_name="$(get_current_branch)"
   if [[ $branch_name =~ $group_regex ]]; then
     name="${BASH_REMATCH[1]}"
     echo "${name}"
