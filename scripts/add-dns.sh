@@ -70,6 +70,7 @@ mv octodns/yext-cdn.com.yaml.tmp octodns/yext-cdn.com.yaml
 echo "Creating new commit for octodns/yext-cdn.com.yaml..."
 git add octodns/yext-cdn.com.yaml
 
+echo ""
 echo "COMMIT MESSAGE FORMAT:"
 echo "'yext-cdn octodns: Add BRAND_NAME'"
 echo "Replace 'BRAND_NAME' with the name of the brand you're adding."
