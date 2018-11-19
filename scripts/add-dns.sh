@@ -23,6 +23,12 @@ then
 fi
 
 read -p "Site Domain (format: 'locations.yext.com'): " domain
+if [ "$(grep "^${domain//./\.}:$" octodns/yext-cdn.com.yaml)" ]
+then
+	echo "'${domain}' is already on record."
+	exit
+fi
+
 read -p "ttl (leave blank to not include): " ttl
 read -p "type (leave blank for default 'CNAME'): " type
 read -p "value (leave blank for default 'cloudflare.sitescdn.net.'): " value
