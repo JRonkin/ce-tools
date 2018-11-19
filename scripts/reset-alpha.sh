@@ -69,6 +69,7 @@ cd $GOSRC
 echo "moved to $(pwd)"
 git clone ssh://$(whoami)@gerrit.yext.com:29418/congo
 cd $CONGO
+./install-git-hooks.sh
 make symlink
 make setup
 glock sync congo
