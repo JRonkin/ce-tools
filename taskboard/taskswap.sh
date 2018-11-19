@@ -37,7 +37,7 @@ new() {
 	# If more than one monitor, use dual monitor window defaults
 	if [ $(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial") -gt 1 ]
 	then
-		chromeBounds="189, 23, 1919, 1118"
+		chromeBounds="232, 23, 1919, 1118"
 		terminal1Bounds="3255, 757, 3840, 1123"
 		terminal2Bounds="3255, 390, 3840, 756"
 		atomBounds="1920, 23, 3254, 1123"
