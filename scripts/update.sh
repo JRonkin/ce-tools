@@ -1,4 +1,4 @@
-cd $ALPHA/gocode/src/yext && git pull && glock sync yext && make protos && make binaries &
+cd $ALPHA/gocode/src/yext && git pull && glock save yext && glock sync yext && make protos && make binaries &
 
 cd $CONGO && git pull && glock sync yext && make protos && make binaries &
 
