@@ -1,6 +1,10 @@
-cd $ALPHA/gocode/src/yext && git pull && glock save yext && glock sync yext && make protos && make binaries &
-
-cd $CONGO && git pull && glock save yext && glock sync yext && make protos && make binaries &
+(
+	cd $YEXT && git pull && glock save yext && glock sync yext &
+	cd $CONGO && git pull && glock save yext && glock sync yext &
+	wait
+	cd $YEXT && make protos && make binaries &
+	cd $CONGO && make protos && make binaries &
+) &
 
 cd ~/repo/generator-ysp && git pull &
 
