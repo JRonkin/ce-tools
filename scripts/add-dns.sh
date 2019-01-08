@@ -4,7 +4,7 @@ echo "Current directory: $(pwd)"
 branch_name="$(git symbolic-ref HEAD 2>/dev/null)" || branch_name="(no branch name)"
 branch_name=${branch_name##refs/heads/}
 
-if ! [ $branch_name = "master" ]
+if ! [ "$branch_name" = "master" ]
 then
 	echo "Error: alpha must be on branch 'master' to continue."
 	exit 1
