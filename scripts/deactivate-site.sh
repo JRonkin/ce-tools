@@ -63,10 +63,11 @@ echo "Press Enter once the new Stash repo has been created."
 read -p ""
 
 (
+	cd "${HOME}/repo/${repo}"
 	git remote set-url origin "ssh://git@stash.office.yext.com:1234/pa/${repo}.git" &&
 	git push --all &&
 	git push --tags
-) || die "Pushing to Stash failed. Please push manually. Exiting script."
+) || die "Pushing to Stash failed. Exiting script. Please push manually: git remote set-url origin \"ssh://git@stash.office.yext.com:1234/pa/${repo}.git\" && git push --all && git push --tags"
 
 echo ""
 echo "Source code archive complete. Starting site files archive..."
@@ -87,12 +88,12 @@ mkdir files
 
 echo ""
 read -p "Is the site adaptive? (Y/n)" adaptive
-if [ $(echo "$adaptive" | tr A-Z a-z) = "y" ] || [ $(echo "$adaptive" | tr A-Z a-z) = "yes" ]
+if [ $(echo "$adaptive" | tr A-Z a-z) = "n" ] || [ $(echo "$adaptive" | tr A-Z a-z) = "no" ]
 then
+	echo "Site is NOT adaptive."
+else
 	echo "Site IS adaptive."
 	sed -i "" 's/PREFIX = domain \+ "\/prod\/desktop\/"PREFIX = domain \+ "\/prod\//' < index.coffee
-else
-	echo "Site is NOT adaptive."
 fi
 
 echo ""
