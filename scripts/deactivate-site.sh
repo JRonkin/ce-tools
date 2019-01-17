@@ -70,47 +70,8 @@ read -p ""
 ) || die "Pushing to Stash failed. Exiting script. Please push manually: git remote set-url origin \"ssh://git@stash.office.yext.com:1234/pa/${repo}.git\" && git push --all && git push --tags"
 
 echo ""
-echo "Source code archive complete. Starting site files archive..."
-echo ""
-echo "Visit this page if you have not set up AWSCLI:"
-echo "https://sites.google.com/yext.com/consulting-engineering/engineering/3-10-aws/aws-cli-setup"
-echo ""
-echo "Once AWSCLI is set up, press Enter."
-read -p ""
-
-echo ""
-echo "Getting temporary AWS credentials..."
-awscli sts get-caller-identity || die "Failed to get AWS credentials. Exiting script."
-
-git clone "ssh://git@stash.office.yext.com:1234/con/freezeray.git" "${HOME}/repo/freezeray" || die "Cloning freezeray failed. Exiting script."
-(cd "${HOME}/repo/freezeray/cloner" && npm install) || die "Failed to install node modules to cloner. Exiting script."
-mkdir files
-
-echo ""
-read -p "Is the site adaptive? (Y/n)" adaptive
-if [ $(echo "$adaptive" | tr A-Z a-z) = "n" ] || [ $(echo "$adaptive" | tr A-Z a-z) = "no" ]
-then
-	echo "Site is NOT adaptive."
-else
-	echo "Site IS adaptive."
-	sed -i "" 's/PREFIX = domain \+ "\/prod\/desktop\/"PREFIX = domain \+ "\/prod\//' < index.coffee
-fi
-
-echo ""
-echo "Cloning site files..."
-$(npm bin)/coffee index.coffee || die "Failed to install node modules to cloner. Exiting script."
-
-echo ""
-echo "Done."
-
-echo ""
-echo 'Zipping site files into "${HOME}/repo/freezeray/cloner/files.zip"...'
-zip -rX files.zip files
-echo "Done."
-echo ""
-echo "Delete the folder ${HOME}/repo/freezeray/cloner AFTER you have copied out the site files."
-echo "Press Enter to continue."
-read -p ""
+echo "Source code archive complete. Starting site files download..."
+$(dirname "${BASH_SOURCE[0]}")/download-site.sh || die "Downloading site files failed. Exiting script."
 
 echo ""
 echo "FINAL STEP: Delete the site"
