@@ -1,10 +1,6 @@
-(
-	(cd $YEXT && git pull && glock sync yext) &
-	(cd $CONGO && git pull && glock sync congo && glock sync yext) &
-	wait
-	(cd $YEXT && make protos && make binaries) &
-	(cd $CONGO && make) &
-) &
+cd $YEXT && git pull && glock sync yext && make &
+
+cd $CONGO && git pull && glock sync congo && glock sync yext && make &
 
 cd ~/repo/generator-ysp && git pull &
 
@@ -17,6 +13,8 @@ cd ~/repo/yext-ce-tools && git pull &
 brew upgrade &
 
 npm i -g npm &
+
+npm i -g bower &
 
 pip install --upgrade pip --user &
 
