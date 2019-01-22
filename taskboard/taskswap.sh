@@ -21,7 +21,15 @@ new() {
 	if [ "$repo" ]
 	then
 		# Clone repo, suppressing error if repo already exists
+		mkdir -p "${HOME}/repo/${repo}" 2>/dev/null
 		git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true &
+		clonePID=$!
+
+		# Additional tabs for Chrome
+		chromeCmds="make new tab in new_window
+					set the URL of the active tab of new_window to \"https://github.com/yext-pages/${repo}\"
+					make new tab in new_window
+					set the URL of the active tab of new_window to \"https://www.yext.com/pagesadmin/?query=$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)\""
 	fi
 
 	# Load window bounds
@@ -43,72 +51,66 @@ new() {
 		atomBounds="1920, 23, 3254, 1123"
 	fi
 
-	touch "$dir/windowbounds"
-	source "$dir/windowbounds"
-
-	# Wait for git clone parallel process to finish
-	wait
-
-	if [ "$repo" ]
-	then
-		chromeCmds="make new tab in new_window
-					set the URL of the active tab of new_window to \"https://github.com/yext-pages/${repo}\"
-					make new tab in new_window
-					set the URL of the active tab of new_window to \"https://www.yext.com/pagesadmin/?query=$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)\""
-	fi
+	source "${dir}/windowbounds"
 
 	# Set up new task
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
 					set new_window to (make new window)
-					set the bounds of new_window to {%s}
-					set the URL of the 1st tab of new_window to "https://yexttest.atlassian.net/browse/%s"
-					%s
+					set the bounds of new_window to {'"$chromeBounds"'}
+					set the URL of the 1st tab of new_window to "https://yexttest.atlassian.net/browse/'"$jiranum"'"
+					'"$chromeCmds"'
 					set the active tab index of new_window to 1
 				end tell
-			' "$chromeBounds" "$jiranum" "$chromeCmds" | osascript &
+			' | osascript &
 	fi
 
 	if [ "$repo" ]
 	then
-		if [ "$enableTerminal" ]
-		then
-			printf 'tell app "Terminal"
-						do script "J=%s; cd ~/repo/%s/src && if [ ! -d node_modules ]; then %s/../scripts/fix-yarn-modernizr.sh; yarn install; bower install; bundle install; fi"
-						set the custom title of the front window to "%s"
-						set the bounds of the front window whose name contains "%s — " to {%s}
-
-						do script "J=%s; cd ~/repo/%s && git co %s/trunk || (git co master && git co -b %s/trunk); git branch"
-						set the custom title of the front window to "%s"
-						set the bounds of the front window whose name contains "%s — " to {%s}
-					end tell
-				' "$jiranum" "$repo" "$(pwd)" "$jiranum" "$jiranum" "$terminal1Bounds" "$jiranum" "$repo" "$jiranum" "$jiranum" "$jiranum" "$jiranum" "$terminal2Bounds" | osascript &
-		fi
-
 		if [ "$enableAtom" ]
 		then
-			atom "$HOME/repo/${repo}" && sleep 2 &&
+			atom "${HOME}/repo/${repo}" && sleep 2 &&
 			printf 'tell app "Atom"
 						set timer to 0
-						repeat until the length of (get every window whose name contains "~/repo/%s") > 0 or timer > 15
+						repeat until the length of (get every window whose name contains "~/repo/'"$repo"'") > 0 or timer > 15
 							delay 0.5
 							set timer to timer + 0.5
 						end repeat
-						set the bounds of every window whose name contains "~/repo/%s" to {%s}
+						set the bounds of every window whose name contains "~/repo/'"$repo"'" to {'"$atomBounds"'}
 					end tell
-				' "$repo" "$repo" "$atomBounds" | osascript &
+				' | osascript &
+		fi
+
+		# Wait for git clone parallel process to finish
+		wait $clonePID
+
+		if [ "$enableTerminal" ]
+		then
+			printf 'tell app "Terminal"
+						do script "J='"$jiranum"'; cd ~/repo/'"$repo"'/src && if [ ! -d node_modules ]; then '"$(pwd)"'/../scripts/fix-yarn-modernizr.sh; yarn install; bower install; bundle install; fi"
+						set the custom title of the front window to "'"$jiranum"'"
+						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal1Bounds"'}
+
+						do script "J='"$jiranum"'; cd ~/repo/'"$repo"' && git co '"$jiranum"'/trunk || (git co master && git co -b '"$jiranum"'/trunk); git branch"
+						set the custom title of the front window to "'"$jiranum"'"
+						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal2Bounds"'}
+					end tell
+				' | osascript &
 		fi
 	else
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						do script "J=%s"
-						set the custom title of the front window to "%s"
-						set the bounds of the front window whose name contains "%s — " to {%s}
+						do script "J='"$jiranum"'"
+						set the custom title of the front window to "'"$jiranum"'"
+						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal2Bounds"'}
 					end tell
-				' "$jiranum" "$jiranum" "$jiranum" "$terminal2Bounds" | osascript &
+				' | osascript &
 		fi
+
+		# Wait for git clone parallel process to finish
+		wait $clonePID
 	fi
 }
 
@@ -119,28 +121,27 @@ activate() {
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
-					set index of every window where the title of the 1st tab contains "[%s]" to 1
+					set index of every window where the title of the 1st tab contains "['"$jiranum"']" to 1
 				end tell
-			' "$jiranum" | osascript &
+			' | osascript &
 	fi
 
 	if [ "$enableTerminal" ]
 	then
 		printf 'tell app "Terminal"
-					set index of every window whose name contains "%s — " to 1
+					set index of every window whose name contains "'"$jiranum"' — " to 1
 				end tell
-			' "$jiranum" | osascript &
+			' | osascript &
 	fi
 
 	if [ "$repo" ]
 	then
-
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						set index of every window whose name contains "~/repo/%s" to 1
+						set index of every window whose name contains "~/repo/'"$repo"'" to 1
 					end tell
-				' "$repo" | osascript &
+				' | osascript &
 		fi
 	fi
 }
@@ -152,28 +153,27 @@ deactivate() {
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
-					set minimized of every window where the title of the 1st tab contains "[%s]" to true
+					set minimized of every window where the title of the 1st tab contains "['"$jiranum"']" to true
 				end tell
-			' "$jiranum" | osascript &
+			' | osascript &
 	fi
 
 	if [ "$enableTerminal" ]
 	then
 		printf 'tell app "Terminal"
-					set miniaturized of every window whose name contains "%s — " to true
+					set miniaturized of every window whose name contains "'"$jiranum"' — " to true
 				end tell
-			' "$jiranum" | osascript &
+			' | osascript &
 	fi
 
 	if [ "$repo" ]
 	then
-
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						set miniaturized of every window whose name contains "~/repo/%s" to true
+						set miniaturized of every window whose name contains "~/repo/'"$repo"'" to true
 					end tell
-				' "$repo" | osascript &
+				' | osascript &
 		fi
 	fi
 }
@@ -185,28 +185,27 @@ close() {
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
-					close every window where the title of the 1st tab contains "[%s]"
+					close every window where the title of the 1st tab contains "['"$jiranum"']"
 				end tell
-			' "$jiranum" | osascript &
+			' | osascript &
 	fi
 
 	if [ "$enableTerminal" ]
 	then
 		printf 'tell app "Terminal"
-					close every window whose name contains "%s — "
+					close every window whose name contains "'"$jiranum"' — "
 				end tell
-			' "$jiranum" | osascript &
+			' | osascript &
 	fi
 
 	if [ "$repo" ]
 	then
-
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						close every window whose name contains "~/repo/%s"
+						close every window whose name contains "~/repo/'"$repo"'"
 					end tell
-				' "$repo" | osascript &
+				' | osascript &
 		fi
 	fi
 }
