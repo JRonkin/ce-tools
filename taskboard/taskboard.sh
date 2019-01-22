@@ -90,7 +90,7 @@ do
 					else
 						selected=$(( ${#tasks[*]} - 1 ))
 					fi
-					;;
+				;;
 				# Down Arrow
 				"[B" )
 					if [ $selected -lt $(( ${#tasks[*]} - 1 )) ]

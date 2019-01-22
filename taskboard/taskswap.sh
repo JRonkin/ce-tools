@@ -14,6 +14,24 @@ save-window-bounds() {
 	) | sort > "${dir}/windowbounds"
 }
 
+selector() {
+	local app="$1"
+	local jiranum="$2"
+	local repo="$3"
+
+	case "$app" in
+		"Atom" )
+			echo 'every window whose name contains "~/repo/'"$repo"'"'
+		;;
+		"Google Chrome" )
+			echo 'every window where the title of the 1st tab contains "['"$jiranum"']"'
+		;;
+		"Terminal" )
+			echo 'every window whose name contains "'"$jiranum"' — "'
+		;;
+	esac
+}
+
 new() {
 	local jiranum="$1"
 	local repo="$2"
