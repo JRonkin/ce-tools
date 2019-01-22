@@ -64,7 +64,7 @@ do
 		if [ $selected = $i ]; then s=">"; else s=" "; fi
 		if [ $active = $i ]; then a="*"; else a=" "; fi
 		printf "\
-| $s$a%s |
+| $s$a%s |    
 " "$(echo "${tasks[i]}                                                       " | sed "s/\(.\{55\}\).*/\1/")"
 	done
 	printf "\
