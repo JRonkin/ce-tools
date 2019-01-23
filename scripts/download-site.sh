@@ -9,7 +9,7 @@ read -p ""
 
 echo ""
 echo "Getting temporary AWS credentials..."
-echo "Choose okta-3 when prompted."
+echo "Choose Legacy-Consulting when prompted."
 export AWS_PROFILE=''
 awscli logout && awscli sts get-caller-identity || die "Failed to get AWS credentials. Exiting script."
 
@@ -22,7 +22,7 @@ read -p "Enter the site domain to be downloaded: " domain
 
 echo ""
 read -p "Is the site adaptive? (Y/n)" adaptive
-if [ $(echo "$adaptive" | tr A-Z a-z) = "n" ] || [ $(echo "$adaptive" | tr A-Z a-z) = "no" ]
+if [ "$(echo "$adaptive" | tr A-Z a-z)" = "n" ] || [ "$(echo "$adaptive" | tr A-Z a-z)" = "no" ]
 then
 	echo "Site is NOT adaptive."
 	sed -i "" 's/PREFIX = domain \+ "\/prod\/desktop\/"/PREFIX = domain \+ "\/prod\/"/' index.coffee
