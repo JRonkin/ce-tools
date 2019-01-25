@@ -106,7 +106,7 @@ new() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						do script "J='"$jiranum"'; cd ~/repo/'"$repo"'/src && if [ ! -d node_modules ]; then '"$(pwd)"'/../scripts/fix-yarn-modernizr.sh; yarn install; bower install; bundle install; fi"
+						do script "J='"$jiranum"'; cd ~/repo/'"$repo"'/src && if [ ! -d node_modules ]; then '"$(pwd)"'/../scripts/repo-fixes.sh; yarn install; bower install; bundle install; fi"
 						set the custom title of the front window to "'"$jiranum"'"
 						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal1Bounds"'}
 

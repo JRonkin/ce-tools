@@ -44,9 +44,12 @@
 
 ### Scripts
 *Shortcut: yts [SCRIPTNAME]*
-- add-dns.sh: step-through automation of adding a yext-cdn DNS entry (bridge domain)
+- add-dns: step-through automation of adding a yext-cdn DNS entry (bridge domain)
+- custom-field-audit: find all the custom fields used in a site
 - deactivate-site: step through the process of deactivating a Pages site
-- fix-yarn-modernizr: fix yarn install errors by correcting bad modernizr hash in yarn.lock
-- reset-alpha.sh: reset the local repo of alpha by re-cloning, re-installing, and re-making binaries
+- pager: run old pager (json pager)
+- repo-fixes: fix yarn install errors, README location, and node version < 5
+- reset-alpha: reset the local repo of alpha by re-cloning, re-installing, and re-making binaries
+- s3-download: download site files from S3
 - sites-pager-helper: start sites-pager for a site
-- update.sh: update alpha, generator-ysp, pages-builder, pages-tools, yext-ce-tools, and homebrew
+- update: update alpha, generator-ysp, pages-builder, pages-tools, yext-ce-tools, and homebrew
