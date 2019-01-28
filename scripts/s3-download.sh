@@ -36,6 +36,11 @@ MAX_CONCURRENT=10
 # Working directory for this script
 cwd="$(pwd)"
 
+# Authenticate with AWS
+echo "Getting AWS credentials..."
+
+awscli sts get-caller-identity
+
 
 # Download files to temporary directory
 # Files whose names are the same as directories will be skipped, and their names saved in $conflicts
