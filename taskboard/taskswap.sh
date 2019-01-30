@@ -41,10 +41,10 @@ new() {
 		# Clone repo, suppressing error if repo already exists
 		mkdir -p "${HOME}/repo/${repo}" 2>/dev/null
 		git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true &
-		clonePID=$!
+		local clonePID=$!
 
 		# Additional tabs for Chrome
-		chromeCmds="make new tab in new_window
+		local chromeCmds="make new tab in new_window
 					set the URL of the active tab of new_window to \"https://github.com/yext-pages/${repo}\"
 					make new tab in new_window
 					set the URL of the active tab of new_window to \"https://www.yext.com/pagesadmin/?query=$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)\""

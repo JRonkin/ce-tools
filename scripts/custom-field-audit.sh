@@ -4,15 +4,15 @@ then
 	exit 1
 fi
 
-soy="$(grep -R -e '[^ ]customByName' src/templates |
+soy="$([ -d src/templates ] && grep -R -e '[^ ]customByName' src/templates |
 	sed $'s/customByName\?*/\\\n:/g' |
 	grep -e '^:[.[]' |
 	sed 's/^:\.\([0-9A-Za-z_]*\).*/\1/g; s/^:\[\([^][]*\)\].*/\1/g; s/^:\[\(.*\)\].*/\1/g' |
 	sort -u)"
 
-js="$(grep -R 'customByName' src/js)"
+js="$([ -d src/js ] && grep -R 'customByName' src/js)"
 
-coffee="$(grep -R 'customByName' src/coffee)"
+coffee="$([ -d src/coffee ] && grep -R 'customByName' src/coffee)"
 
 [ -f CustomFieldAudit.txt ] && rm CustomFieldAudit.txt
 
