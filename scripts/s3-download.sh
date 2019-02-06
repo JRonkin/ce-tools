@@ -112,4 +112,13 @@ then
 fi
 
 
+# Zip files
+echo "Compressing files into '${domain}.zip'..."
+cd "${domain}_files"
+zip -qrX "${domain}.zip" $(ls)
+mv "${domain}.zip" ..
+cd ..
+rm -R "${domain}_files"
+
+
 echo "Done!"
