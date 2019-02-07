@@ -10,7 +10,7 @@ MAX_CONCURRENT=10
 # Function to encode file name
 # Alternate encoding that escapes more characters:
 # php -r "echo urlencode(\"$@\");"
-encode-filename () {
+encode-filename() {
 	echo "$@" | sed 's/\//%2F/g; s/@/%40/g'
 }
 
