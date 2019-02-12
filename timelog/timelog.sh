@@ -1,4 +1,4 @@
-cd $(dirname "${BASH_SOURCE[0]}")
+cd "$(dirname "${BASH_SOURCE[0]}")"
 source timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
