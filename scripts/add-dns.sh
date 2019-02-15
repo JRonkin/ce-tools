@@ -57,8 +57,8 @@ do
 			echo "  ttl: ${ttl}" >> octodns/yext-cdn.com.yaml.tmp
 		fi
 		echo "  type: ${type}" >> octodns/yext-cdn.com.yaml.tmp
-        echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
-        inserted=true
+		echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
+		inserted=true
 	fi
 	echo "$line" >> octodns/yext-cdn.com.yaml.tmp
 
@@ -68,7 +68,7 @@ if [ ! $inserted ]
 then
 	echo "${domain}:" >> octodns/yext-cdn.com.yaml.tmp
 	echo "  type: ${type}" >> octodns/yext-cdn.com.yaml.tmp
-    echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
+	echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
 fi
 
 mv octodns/yext-cdn.com.yaml.tmp octodns/yext-cdn.com.yaml
