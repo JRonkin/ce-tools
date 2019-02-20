@@ -70,8 +70,6 @@ read -p ""
 echo
 echo "Source code archive complete. Starting site files download..."
 $(dirname "${BASH_SOURCE[0]}")/s3-download.sh || die "Downloading site files failed. Exiting script."
-echo "Zipping site files into '${HOME}/repo/${domain}.zip'..."
-zip -qrX "${domain}.zip" "${domain}_files"
 
 echo
 echo "FINAL STEP: Delete the site"
