@@ -22,56 +22,68 @@ then
 	exit 1
 fi
 
-read -p "Site Domain (format: 'locations.yext.com'): " domain
-if [ "$(grep "^${domain//./\.}:$" octodns/yext-cdn.com.yaml)" ]
-then
-	echo "'${domain}' is already on record."
-	exit
-fi
-
-read -p "ttl (leave blank to not include): " ttl
-read -p "type (leave blank for default 'CNAME'): " type
-read -p "value (leave blank for default 'cloudflare.sitescdn.net.'): " value
-if ! [ "$type" ]
-then
-	type="CNAME"
-fi
-if ! [ "$value" ]
-then
-	value="cloudflare.sitescdn.net."
-fi
-
 echo "Pulling alpha..."
 git pull
 
-echo "Inserting new domain into ${ALPHA}/octodns/yext-cdn.com.yaml..."
->octodns/yext-cdn.com.yaml.tmp
-inserted=""
-while IFS= read line
+done=''
+while [ ! "$done" ]
 do
-	if [[ ! "$line" == "  "* ]] && [ ! $inserted ] && [[ "$domain" < "$line" ]]
+	read -p "Site Domain (format: 'locations.yext.com'): " domain
+	if [ "$(grep "^${domain//./\.}:$" octodns/yext-cdn.com.yaml)" ]
+	then
+		echo "'${domain}' is already on record."
+		exit
+	fi
+
+	read -p "ttl (leave blank to not include): " ttl
+	read -p "type (leave blank for default 'CNAME'): " type
+	read -p "value (leave blank for default 'cloudflare.sitescdn.net.'): " value
+	if ! [ "$type" ]
+	then
+		type="CNAME"
+	fi
+	if ! [ "$value" ]
+	then
+		value="cloudflare.sitescdn.net."
+	fi
+
+	echo "Inserting new domain into ${ALPHA}/octodns/yext-cdn.com.yaml..."
+	>octodns/yext-cdn.com.yaml.tmp
+	inserted=""
+	while IFS= read line
+	do
+		if [[ ! "$line" == "  "* ]] && [ ! $inserted ] && [[ "$domain" < "$line" ]]
+		then
+			echo "${domain}:" >> octodns/yext-cdn.com.yaml.tmp
+			if [ "$ttl" ]
+			then
+				echo "  ttl: ${ttl}" >> octodns/yext-cdn.com.yaml.tmp
+			fi
+			echo "  type: ${type}" >> octodns/yext-cdn.com.yaml.tmp
+			echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
+			inserted=true
+		fi
+		echo "$line" >> octodns/yext-cdn.com.yaml.tmp
+
+	done < octodns/yext-cdn.com.yaml
+
+	if [ ! $inserted ]
 	then
 		echo "${domain}:" >> octodns/yext-cdn.com.yaml.tmp
-		if [ "$ttl" ]
-		then
-			echo "  ttl: ${ttl}" >> octodns/yext-cdn.com.yaml.tmp
-		fi
 		echo "  type: ${type}" >> octodns/yext-cdn.com.yaml.tmp
 		echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
-		inserted=true
 	fi
-	echo "$line" >> octodns/yext-cdn.com.yaml.tmp
 
-done < octodns/yext-cdn.com.yaml
+	mv octodns/yext-cdn.com.yaml.tmp octodns/yext-cdn.com.yaml
 
-if [ ! $inserted ]
-then
-	echo "${domain}:" >> octodns/yext-cdn.com.yaml.tmp
-	echo "  type: ${type}" >> octodns/yext-cdn.com.yaml.tmp
-	echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
-fi
-
-mv octodns/yext-cdn.com.yaml.tmp octodns/yext-cdn.com.yaml
+	read -p "Add another? (y/N)" done
+	if [ "$(echo "$done" | tr "A-Z" "a-z")" = "y" ] || [ "$(echo "$done" | tr "A-Z" "a-z")" = "yes" ]
+	then
+		done=''
+	else
+		done='true'
+	fi
+done
 
 echo "Creating new commit for octodns/yext-cdn.com.yaml..."
 git add octodns/yext-cdn.com.yaml
@@ -79,8 +91,9 @@ git add octodns/yext-cdn.com.yaml
 echo ""
 echo "COMMIT MESSAGE FORMAT:"
 echo "'yext-cdn octodns: Add BRAND_NAME'"
+echo "'J=JIRA_NUMBER'"
 echo "Replace 'BRAND_NAME' with the name of the brand you're adding."
-echo "Once your message is saved, you will be prompted for a JIRA number."
+echo "Replace 'JIRA_NUMBER' with the JIRA number for the item, e.g. 'PC-12345'."
 read -p "Press Enter to continue...
 "
 git commit
