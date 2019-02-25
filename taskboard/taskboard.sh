@@ -54,10 +54,11 @@ do
 	# Draw GUI
 	tput home
 	printf "\
-=============================================================
-| Q: Quit TaskBoard | N: New Task       | X: Close Selected |
-| [Enter]: Activate/Deactivate Selected | M: More Options   |
-|-----------------------------------------------------------|
+==============================================================
+| Q: Quit TaskBoard | N: New Task       | X: Close Selected  |
+| [Enter]: Activate/Deactivate Selected | R: Reload Selected |
+| M: More Options                                            |
+|------------------------------------------------------------|
 "
 	for ((i = 0; i < ${#tasks[@]}; i++))
 	do
@@ -65,10 +66,10 @@ do
 		if [ $active = $i ]; then a="*"; else a=" "; fi
 		printf "\
 | $s$a%s |    
-" "$(echo "${tasks[i]}                                                       " | sed "s/\(.\{55\}\).*/\1/")"
+" "$(echo "${tasks[i]}                                                        " | sed "s/\(.\{56\}\).*/\1/")"
 	done
 	printf "\
-=============================================================
+==============================================================
 "
 
 	# Wait for input
@@ -187,7 +188,7 @@ do
 			fi
 		;;
 
-		# Enter
+		# Activate/Deactivate Selected
 		"" )
 			# Deactivate active task and activate selected task
 			if [ ${#tasks[*]} -gt 0 ]
@@ -205,6 +206,23 @@ do
 					active=$selected
 					../timelog/timelog.sh "${tasks[$active]}" start
 				fi
+			fi
+		;;
+
+		# Reload
+		"R" )
+			# Deactivate active task and reload selected task
+			if [ ${#tasks[*]} -gt 0 ]
+			then
+				if [ $active -gt -1 ] && [ ! $selected = $active ]
+				then
+					deactivate "${tasks[$active]}" &
+					../timelog/timelog.sh "${tasks[$active]}" end
+				fi
+				close "${tasks[$selected]}"
+				new "$(echo "${tasks[$selected]}" | cut -d " " -f 1)" "$(echo "${tasks[$selected]}" | cut -d " " -f 4)" &
+				active=$selected
+				../timelog/timelog.sh "${tasks[$active]}" start
 			fi
 		;;
 

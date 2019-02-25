@@ -1,6 +1,6 @@
 cd $(dirname "${BASH_SOURCE[0]}")
 source jira-auth.sh
-source timefuncs.sh
+source ../common/timefuncs.sh
 
 usage="Usage: jirasubmit.sh [-hq] [-u username [-t api_token]] jira_number hours [date]"
 definitions=(""

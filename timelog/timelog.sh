@@ -1,5 +1,5 @@
 cd "$(dirname "${BASH_SOURCE[0]}")"
-source timefuncs.sh
+source ../common/timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
 usage="Usage: timelog.sh [-h] (item) (command) [args]"

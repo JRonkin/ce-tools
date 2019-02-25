@@ -1,9 +1,9 @@
 cd "$(dirname "${BASH_SOURCE[0]}")"
 source jira-auth.sh
-source timefuncs.sh
+source ../common/timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
-usage="Usage: timesum.sh [-hn] [-d decimals] [-r round_to] [-j [-u jira_user [-t jira_token]]] [date] [end date]"
+usage="Usage: timesum.sh [-hn] [-d decimals] [-r round_to] [-j [-u jira_user [-t jira_token]]] [date] [end_date]"
 definitions=(""
 	"-h = help"
 	"-n = no intermediate rounding (displayed times may not sum to total)"
@@ -15,7 +15,7 @@ definitions=(""
 	"-t jira_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
 	""
 	"date = date to summarize, in yyyy-mm-dd format (default today)"
-	"end date = end of range to summarize (leave out for single date)"
+	"end_date = end of range to summarize (leave out for single date)"
 "")
 
 jira=""
