@@ -76,12 +76,6 @@ then
 	output_directory="$3"
 fi
 
-if [ "$(ls "$output_directory" 2&>/dev/null)" ]
-then
-	echo "Error: ${output_directory} already exists and is not an empty directory."
-	exit 1
-fi
-
 
 # Authenticate with AWS
 echo 'Getting AWS credentials...'
@@ -94,6 +88,8 @@ cd "$output_directory"
 
 # Working directory for this script
 cwd="$(pwd)"
+
+rm -rf "${cwd}/temp"
 
 while read epoch
 do
