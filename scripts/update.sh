@@ -4,7 +4,7 @@
 	cd $ALPHA && git co master && git pull && make
 ) &
 
-cd ~/repo/generator-ysp && git pull &
+cd ~/repo/generator-ysp && git co master && git pull && yarn install && yarn link &
 
 cd ~/repo/pages-builder && git pull &
 
