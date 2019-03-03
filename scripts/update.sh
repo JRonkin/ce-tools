@@ -10,8 +10,6 @@ cd ~/repo/pages-builder && git pull &
 
 cd ~/repo/pages-tools && git pull &
 
-cd ~/repo/yext-ce-tools && git pull &
-
 brew upgrade &
 
 (
@@ -20,5 +18,7 @@ brew upgrade &
 ) &
 
 pip install --upgrade pip --user &
+
+cd ~/repo/yext-ce-tools && git pull &
 
 wait
