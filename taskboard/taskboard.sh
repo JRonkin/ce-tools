@@ -52,8 +52,7 @@ tput civis
 while :
 do
 	# Draw GUI
-	tput home
-	printf "\
+	display="$(printf "\033[2J\
 ==============================================================
 | Q: Quit TaskBoard | N: New Task       | X: Close Selected  |
 | [Enter]: Activate/Deactivate Selected | R: Reload Selected |
@@ -70,7 +69,9 @@ do
 	done
 	printf "\
 ==============================================================
-"
+")"
+	tput home
+	echo "$display"
 
 	# Wait for input
 	tput el
