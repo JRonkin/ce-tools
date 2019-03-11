@@ -37,14 +37,28 @@ awscli sts get-caller-identity
 spath="s3://${BUCKET}/${domain}/prod/"
 allfolders="$(awscli s3 ls "s3://${BUCKET}/${domain}/prod/" | grep PRE | sed 's/^ *PRE \([^\/]*\).*/\1/')"
 
-while [ ! "$(echo "$allfolders" | grep -e '^'"$folder"'$')" ]
-do
-	echo "Found the following folders:"
-	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	echo "$allfolders"
-	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	read -p "Type the name of the folder to download: " folder
-done
+echo "$allfolders" | wc -l | tr -d ' '
+
+if [ ! "$allfolders" ]
+then
+	echo 'No folders found to download. Exiting script.'
+	exit 1
+else
+	if [ "$(echo "$allfolders" | wc -l | tr -d ' ')" -eq 1 ]
+	then
+		echo "Found one folder: ${allfolders}"
+		folder="$allfolders"
+	else
+		while [ ! "$(echo "$allfolders" | grep -e "^${folder}\$")" ]
+		do
+			echo "Found the following folders:"
+			echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+			echo "$allfolders"
+			echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+			read -p "Type the name of the folder to download: " folder
+		done
+	fi
+fi
 
 spath="${spath}${folder}/"
 
