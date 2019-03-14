@@ -20,7 +20,10 @@ then
 		npm i -g bower
 	) &
 
-	pip install --upgrade pip --user &
+	(
+		pip install --upgrade pip --user
+		pip install --upgrade awscli --user
+	) &
 
 	cd ~/repo/yext-ce-tools && git pull &
 
@@ -45,7 +48,10 @@ else
 		npm i -g bower
 	)
 
-	pip install --upgrade pip --user
+	(
+		pip install --upgrade pip --user
+		pip install --upgrade awscli --user
+	)
 
 	cd ~/repo/yext-ce-tools && git pull
 fi
