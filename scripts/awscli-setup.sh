@@ -1,14 +1,21 @@
+# install AWS-CLI
 AWS_ACCOUNT_NUM='940787264688'
 AWS_ACCOUNT_ROLE='prod-ReadOnly'
+okta_username="$(basename $HOME)"
+aws_account="${AWS_ACCOUNT_NUM}/${AWS_ACCOUNT_ROLE}/${okta_username}@yext.com"
 
+mkdir "${HOME}/.okta"
 
-cd "$(dirname "${BASH_SOURCE[0]}")"
+curl -L -o "${HOME}/.okta/oktaawscli.jar" 'https://github.com/oktadeveloper/okta-aws-cli-assume-role/releases/download/v1.0.10/okta-aws-cli-1.0.10.jar'
 
-read -p 'Okta username (without "@yext.com"): ' username
-aws_account="${AWS_ACCOUNT_NUM}/${AWS_ACCOUNT_ROLE}/${username}@yext.com"
+echo 'cd "${BASH_SOURCE%/*}" || exit
+java -classpath .:oktaawscli.jar com.okta.tools.awscli $@' > "${HOME}/.okta/awscli"
+chmod +x "${HOME}/.okta/awscli"
 
-cp -Rf files/okta-aws-cli/ "$HOME/.okta-aws-cli"
-echo "OKTA_USERNAME=${username}" >> "${HOME}/.okta-aws-cli/config.properties"
+echo "OKTA_ORG=yext.okta.com
+OKTA_AWS_APP_URL=https://yext.okta.com/home/amazon_aws/0oa1ekflhqejxdJ391d8/272
+OKTA_STS_DURATION=43200
+OKTA_USERNAME=${okta_username}" > "${HOME}/.okta/config.properties"
 
 mkdir "${HOME}/.aws"
 echo "[default]
@@ -25,23 +32,16 @@ region = us-east-1
 pip install awscli --upgrade --user
 
 echo >> "${HOME}/.bash_profile"
-cat "${HOME}/.bash_profile" | 
+cat "${HOME}/.bash_profile" |
 	grep -v '# AWS-CLI' |
 	grep -v "export PATH=\$PATH:${HOME}/Library/Python/2.7/bin" |
-	grep -v "export PATH=\$PATH:${HOME}/.okta-aws-cli" | 
+	grep -v "export PATH=\$PATH:${HOME}/.okta" |
 	grep -v 'export AWS_DEFAULT_PROFILE=' |
 	uniq > "${HOME}/.bash_profile.tmp" &&
 	mv "${HOME}/.bash_profile.tmp" "${HOME}/.bash_profile"
 
 echo "# AWS-CLI
 export PATH=\$PATH:${HOME}/Library/Python/2.7/bin
-export PATH=\$PATH:${HOME}/.okta-aws-cli
+export PATH=\$PATH:${HOME}/.okta
 export AWS_DEFAULT_PROFILE=${aws_account}
 " >> "${HOME}/.bash_profile"
-
-export PATH=$PATH:${HOME}/Library/Python/2.7/bin
-export PATH=$PATH:${HOME}/.okta-aws-cli
-export AWS_DEFAULT_PROFILE=${aws_account}
-
-awscli logout
-awscli sts get-caller-identity
