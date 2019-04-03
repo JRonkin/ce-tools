@@ -40,7 +40,7 @@ new() {
 	then
 		# Clone repo, suppressing error if repo already exists
 		mkdir -p "${HOME}/repo/${repo}" 2>/dev/null
-		git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true &
+		git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true &
 		local clonePID=$!
 
 		# Additional tabs for Chrome
