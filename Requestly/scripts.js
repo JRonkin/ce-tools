@@ -9,15 +9,15 @@ const scripts = [
 
 
 for (let script of scripts) {
-  if (window.location.href.indexOf(script.site) == 0) {
-    script.exec();
+  if (window.location.href.startsWith(script.site)) {
+    window.addEventListener('load', () => script.exec());
   }
 }
 
 
 function Auto_GitHub_SSO() {
   const form = document.querySelector('form');
-  if (form && form.action.indexOf('https://github.com/orgs/yext/saml/initiate') == 0) {
+  if (form && form.action.startsWith('https://github.com/orgs/yext/saml/initiate')) {
     form.submit();
   }
 }
