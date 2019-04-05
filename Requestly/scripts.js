@@ -1,26 +1,45 @@
 (() => {
 
+  // Rules
   const scripts = [
-    { exec: Auto_GitHub_SSO, site: 'https://github.com' },
-    { exec: Auto_Login_Admin2, site: 'https://www.yext.com/users/accessdenied' },
-    { exec: Auto_Login_Okta, site: 'https://yext.okta.com/login/login.htm' },
-    { exec: Auto_Login_Smartling, site: 'https://sso.smartling.com/auth/realms/Smartling/protocol/openid-connect/auth' },
-    { exec: Fix_Pages_Admin_Query, site: 'https://www.yext.com/pagesadmin' },
-    { exec: No_JIRA_Notification_Badge, site: 'https://yexttest.atlassian.net' }
+    { exec: Auto_GitHub_SSO, site: 'https://github.com', timing: DOM_Loaded },
+    { exec: Auto_Login_Admin2, site: 'https://www.yext.com/users/accessdenied', timing: DOM_Loaded },
+    { exec: Auto_Login_Okta, site: 'https://yext.okta.com/login/login.htm', timing: DOM_Loaded },
+    { exec: Auto_Login_Smartling, site: 'https://sso.smartling.com/auth/realms/Smartling/protocol/openid-connect/auth', timing: DOM_Loaded },
+    { exec: Fix_Pages_Admin_Query, site: 'https://www.yext.com/pagesadmin', timing: DOM_Loaded },
+    { exec: No_JIRA_Notification_Badge, site: 'https://yexttest.atlassian.net', timing: Immediately }
   ];
 
 
   for (let script of scripts) {
     if (window.location.href.startsWith(script.site)) {
-      if (['loaded', 'interactive', 'complete'].includes(document.readyState)) {
-        script.exec();
-      } else {
-        window.addEventListener('DOMContentLoaded', () => script.exec());
-      }
+      script.timing(script.exec);
+    }
+  }
+
+  // Timing Functions
+  function Immediately(cb) {
+    cb();
+  }
+
+  function DOM_Loaded(cb) {
+    if (['loaded', 'interactive', 'complete'].includes(document.readyState)) {
+      cb();
+    } else {
+      window.addEventListener('DOMContentLoaded', cb);
+    }
+  }
+
+  function Page_Loaded(cb) {
+    if (document.readyState == 'complete') {
+      cb();
+    } else {
+      window.addEventListener('load', cb);
     }
   }
 
 
+  // Scripts
   function Auto_GitHub_SSO() {
     const form = document.querySelector('form');
     if (form && form.action.startsWith('https://github.com/orgs/yext/saml/initiate')) {
@@ -35,12 +54,12 @@
 
 
   function Auto_Login_Okta() {
-    const i = setInterval(() => {
-      if (document.getElementById('okta-signin-password').value) {
-        document.getElementById('okta-signin-submit').click();
-        clearInterval(i);
-      }
-    }, 200);
+    const pwInput = document.getElementById('okta-signin-password');
+    if (pwInput.value) {
+      document.getElementById('okta-signin-submit').click();
+    } else {
+      pwInput.addEventListener('change', () => document.getElementById('okta-signin-submit').click());
+    }
   }
 
 
