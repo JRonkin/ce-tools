@@ -12,10 +12,10 @@
 
   for (let script of scripts) {
     if (window.location.href.startsWith(script.site)) {
-      if (document.readyState == 'complete') {
-        script.exec()
+      if (['loaded', 'interactive', 'complete'].includes(document.readyState)) {
+        script.exec();
       } else {
-        window.addEventListener('load', () => script.exec());
+        window.addEventListener('DOMContentLoaded', () => script.exec());
       }
     }
   }
