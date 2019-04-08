@@ -38,6 +38,21 @@
     }
   }
 
+  function Element_Loaded(querySelector, cb) {
+    if (document.querySelector(querySelector)) {
+      cb();
+    } else {
+      function elementInsertedListener(e) {
+        if (e.target.webkitMatchesSelector(querySelector)) {
+          window.removeEventListener('DOMNodeInserted', elementInsertedListener);
+          cb();
+        }
+      }
+
+      window.addEventListener('DOMNodeInserted', elementInsertedListener);
+    }
+  }
+
 
   // Scripts
   function Auto_GitHub_SSO() {
