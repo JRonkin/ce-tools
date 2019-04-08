@@ -4,7 +4,7 @@
   const scripts = [
     { exec: Auto_GitHub_SSO, site: 'https://github.com', timing: DOM_Loaded },
     { exec: Auto_Login_Admin2, site: 'https://www.yext.com/users/accessdenied', timing: DOM_Loaded },
-    { exec: Auto_Login_Okta, site: 'https://yext.okta.com/login/login.htm', timing: DOM_Loaded },
+    { exec: Auto_Login_Okta, site: 'https://yext.okta.com/login/login.htm', timing: Element_Loaded.bind(this, '#okta-signin-password') },
     { exec: Auto_Login_Smartling, site: 'https://sso.smartling.com/auth/realms/Smartling/protocol/openid-connect/auth', timing: DOM_Loaded },
     { exec: Fix_Pages_Admin_Query, site: 'https://www.yext.com/pagesadmin', timing: DOM_Loaded },
     { exec: No_JIRA_Notification_Badge, site: 'https://yexttest.atlassian.net', timing: Immediately }
@@ -42,13 +42,18 @@
     if (document.querySelector(querySelector)) {
       cb();
     } else {
+      window.nodes = [];
+
       function elementInsertedListener(e) {
-        if (e.target.webkitMatchesSelector(querySelector)) {
+        window.nodes.push(e.target);
+        if (e.target && ((e.target.matches && e.target.matches(querySelector)) || (e.target.querySelector && e.target.querySelector(querySelector)))) {
+          console.log('******* Match found!');
           window.removeEventListener('DOMNodeInserted', elementInsertedListener);
           cb();
         }
       }
 
+      console.log('Adding DOM listener');
       window.addEventListener('DOMNodeInserted', elementInsertedListener);
     }
   }
@@ -71,9 +76,13 @@
   function Auto_Login_Okta() {
     const pwInput = document.getElementById('okta-signin-password');
     if (pwInput.value) {
-      document.getElementById('okta-signin-submit').click();
+      setTimeout(() => pwInput.form.dispatchEvent(new Event('submit')), 100);
     } else {
-      pwInput.addEventListener('change', () => document.getElementById('okta-signin-submit').click());
+      pwInput.addEventListener('change', () => {
+        if (pwInput.value) {
+          setTimeout(() => pwInput.form.dispatchEvent(new Event('submit')), 100);
+        }
+      });
     }
   }
 
