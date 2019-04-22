@@ -139,7 +139,7 @@ fi
 # Zip files
 echo "Compressing files into '${domain}.zip'..."
 cd "${domain}_files"
-zip -qrX "${domain}.zip" $(ls)
+zip -qrX "${domain}.zip" *
 mv "${domain}.zip" ..
 cd ..
 rm -R "${domain}_files"
