@@ -1,8 +1,10 @@
+DNS_FILE="octodns/yext-cdn.com.yaml"
+
 cd $ALPHA
 echo "Current directory: $(pwd)"
 
 branch_name="$(git symbolic-ref HEAD 2>/dev/null)" || branch_name="(no branch name)"
-branch_name=${branch_name##refs/heads/}
+branch_name="${branch_name##refs/heads/}"
 
 if ! [ "$branch_name" = "master" ]
 then
@@ -10,15 +12,15 @@ then
 	exit 1
 fi
 
-if [ $(git diff head) ]
+if [ "$(git diff head)" ]
 then
 	echo "Error: unsaved changes on branch 'master' of alpha. Commit or stash your changes to continue."
 	exit 1
 fi
 
-if ! [ -f octodns/yext-cdn.com.yaml ]
+if ! [ -f $DNS_FILE ]
 then
-	echo "Error: cannot find file ${ALPHA}/octodns/yext-cdn.com.yaml"
+	echo "Error: cannot find file ${ALPHA}/${DNS_FILE}"
 	exit 1
 fi
 
@@ -29,7 +31,7 @@ done=''
 while [ ! "$done" ]
 do
 	read -p "Site Domain (format: 'locations.yext.com'): " domain
-	if [ "$(grep "^${domain//./\.}:$" octodns/yext-cdn.com.yaml)" ]
+	if [ "$(grep "^${domain//./\.}:$" ${DNS_FILE})" ]
 	then
 		echo "'${domain}' is already on record."
 		exit
@@ -47,34 +49,34 @@ do
 		value="cloudflare.sitescdn.net."
 	fi
 
-	echo "Inserting new domain into ${ALPHA}/octodns/yext-cdn.com.yaml..."
-	>octodns/yext-cdn.com.yaml.tmp
+	echo "Inserting new domain into ${ALPHA}/${DNS_FILE}..."
+	>${DNS_FILE}.tmp
 	inserted=""
 	while IFS= read line
 	do
 		if [[ ! "$line" == "  "* ]] && [ ! $inserted ] && [[ "$domain" < "$line" ]]
 		then
-			echo "${domain}:" >> octodns/yext-cdn.com.yaml.tmp
+			echo "${domain}:" >> ${DNS_FILE}.tmp
 			if [ "$ttl" ]
 			then
-				echo "  ttl: ${ttl}" >> octodns/yext-cdn.com.yaml.tmp
+				echo "  ttl: ${ttl}" >> ${DNS_FILE}.tmp
 			fi
-			echo "  type: ${type}" >> octodns/yext-cdn.com.yaml.tmp
-			echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
+			echo "  type: ${type}" >> ${DNS_FILE}.tmp
+			echo "  value: ${value}" >> ${DNS_FILE}.tmp
 			inserted=true
 		fi
-		echo "$line" >> octodns/yext-cdn.com.yaml.tmp
+		echo "$line" >> ${DNS_FILE}.tmp
 
-	done < octodns/yext-cdn.com.yaml
+	done < ${DNS_FILE}
 
 	if [ ! $inserted ]
 	then
-		echo "${domain}:" >> octodns/yext-cdn.com.yaml.tmp
-		echo "  type: ${type}" >> octodns/yext-cdn.com.yaml.tmp
-		echo "  value: ${value}" >> octodns/yext-cdn.com.yaml.tmp
+		echo "${domain}:" >> ${DNS_FILE}.tmp
+		echo "  type: ${type}" >> ${DNS_FILE}.tmp
+		echo "  value: ${value}" >> ${DNS_FILE}.tmp
 	fi
 
-	mv octodns/yext-cdn.com.yaml.tmp octodns/yext-cdn.com.yaml
+	mv ${DNS_FILE}.tmp ${DNS_FILE}
 
 	read -p "Add another? (y/N)" done
 	if [ "$(echo "$done" | tr "A-Z" "a-z")" = "y" ] || [ "$(echo "$done" | tr "A-Z" "a-z")" = "yes" ]
@@ -85,8 +87,8 @@ do
 	fi
 done
 
-echo "Creating new commit for octodns/yext-cdn.com.yaml..."
-git add octodns/yext-cdn.com.yaml
+echo "Creating new commit for ${DNS_FILE}..."
+git add ${DNS_FILE}
 
 echo ""
 echo "COMMIT MESSAGE FORMAT:"
