@@ -6,10 +6,10 @@ save-window-bounds() {
 	mkdir -p "$dir"
 
 	(
-		echo "atomBounds='$(osascript -e "tell app \"Atom\" to get the bounds of the 1st window whose name contains \"~/repo/${repo}\"")'" &
+		echo "atomBounds='$(osascript -e "tell app \"Atom\" to get the bounds of the 1st window whose name contains \"/${jiranum}/\"")'" &
 		echo "chromeBounds='$(osascript -e "tell app \"Google Chrome\" to get the bounds of the 1st window where the title of the 1st tab contains \"[${jiranum}]\"")'" &
-		echo "terminal1Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 1st window whose name contains \"${repo}\"")'" &
-		echo "terminal2Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 2nd window whose name contains \"${repo}\"")'" &
+		echo "terminal1Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 1st window whose name contains \"$jiranum — \"")'" &
+		echo "terminal2Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 2nd window whose name contains \"$jiranum — \"")'" &
 		wait
 	) | sort > "${dir}/windowbounds"
 }
@@ -35,12 +35,13 @@ selector() {
 new() {
 	local jiranum="$1"
 	local repo="$2"
+	local folder="${HOME}/repo/${jiranum}"
 
 	if [ "$repo" ]
 	then
 		# Clone repo, suppressing error if repo already exists
-		mkdir -p "${HOME}/repo/${repo}" 2>/dev/null
-		git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || true &
+		mkdir -p "$folder" 2>/dev/null
+		git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${folder}/${repo}" || true &
 		local clonePID=$!
 
 		# Additional tabs for Chrome
@@ -88,14 +89,14 @@ new() {
 	then
 		if [ "$enableAtom" ]
 		then
-			atom "${HOME}/repo/${repo}" && sleep 2 &&
+			atom "${folder}/${repo}" && sleep 2 &&
 			printf 'tell app "Atom"
 						set timer to 0
-						repeat until the length of (get every window whose name contains "~/repo/'"$repo"'") > 0 or timer > 15
+						repeat until the length of (get every window whose name contains "/'"${folder}/${repo}"'/") > 0 or timer > 15
 							delay 0.5
 							set timer to timer + 0.5
 						end repeat
-						set the bounds of every window whose name contains "~/repo/'"$repo"'" to {'"$atomBounds"'}
+						set the bounds of every window whose name contains "/'"${folder}/${repo}"'/" to {'"$atomBounds"'}
 					end tell
 				' | osascript &
 		fi
@@ -106,11 +107,11 @@ new() {
 		if [ "$enableTerminal" ]
 		then
 			printf 'tell app "Terminal"
-						do script "J='"$jiranum"'; cd ~/repo/'"$repo"'/src && if [ ! -d node_modules ]; then '"$(pwd)"'/../scripts/repo-fixes.sh; yarn install; bower install; bundle install; fi"
+						do script "J='"$jiranum"'; cd '"${folder}/${repo}"'/src && if [ ! -d node_modules ]; then '"$(pwd)"'/../scripts/repo-fixes.sh; yarn install; bower install; bundle install; fi"
 						set the custom title of the front window to "'"$jiranum"'"
 						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal1Bounds"'}
 
-						do script "J='"$jiranum"'; cd ~/repo/'"$repo"' && git co '"$jiranum"'/trunk || (git co master && git co -b '"$jiranum"'/trunk); git branch"
+						do script "J='"$jiranum"'; cd '"${folder}/${repo}"' && git co '"$jiranum"'/trunk || (git co master && git co -b '"$jiranum"'/trunk); git branch"
 						set the custom title of the front window to "'"$jiranum"'"
 						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal2Bounds"'}
 					end tell
@@ -157,7 +158,7 @@ activate() {
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						set index of every window whose name contains "~/repo/'"$repo"'" to 1
+						set index of every window whose name contains "/'"$jiranum"'/" to 1
 					end tell
 				' | osascript &
 		fi
@@ -189,7 +190,7 @@ deactivate() {
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						set miniaturized of every window whose name contains "~/repo/'"$repo"'" to true
+						set miniaturized of every window whose name contains "/'"$jiranum"'/" to true
 					end tell
 				' | osascript &
 		fi
@@ -221,7 +222,7 @@ close() {
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						close every window whose name contains "~/repo/'"$repo"'"
+						close every window whose name contains "/'"$jiranum"'/"
 					end tell
 				' | osascript &
 		fi
