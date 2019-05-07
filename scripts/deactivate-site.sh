@@ -69,7 +69,12 @@ read -p ""
 
 echo
 echo "Source code archive complete. Starting site files download..."
-$(dirname "${BASH_SOURCE[0]}")/s3-download.sh || die "Downloading site files failed. Exiting script."
+read -p "Enter the site domain to be downloaded: " domain
+$(dirname "${BASH_SOURCE[0]}")/s3-download.sh "$domain" || die "Downloading site files failed. Exiting script."
+
+echo
+echo "Removing DNS entry for '{$domain}'..."
+$(dirname "${BASH_SOURCE[0]}")/remove-dns.sh "$domain" || die "Removing DNS entry failed. Exiting script."
 
 echo
 echo "FINAL STEP: Delete the site"
