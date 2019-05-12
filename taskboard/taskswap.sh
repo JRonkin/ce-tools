@@ -21,21 +21,22 @@ selector() {
 
 	case "$app" in
 		"Atom" )
-			echo 'every window whose name contains "~/repo/'"$repo"'"'
+			echo "window whose name contains \"/${jiranum}/${repo}\""
 		;;
 		"Google Chrome" )
-			echo 'every window where the title of the 1st tab contains "['"$jiranum"']"'
+			echo "window where the title of the 1st tab contains \"[${jiranum}]\""
 		;;
 		"Terminal" )
-			echo 'every window whose name contains "'"$jiranum"' — "'
+			echo "window whose name contains \"${jiranum} — \""
 		;;
 	esac
 }
 
 new() {
 	local jiranum="$1"
-	local repo="$2"
-	local folder="${HOME}/repo/${jiranum}"
+	local name="$2"
+	local repo="$3"
+	local folder="${HOME}/items/${jiranum}"
 
 	if [ "$repo" ]
 	then
@@ -73,6 +74,8 @@ new() {
 	source "${dir}/windowbounds"
 
 	# Set up new task
+	echo -e "\nname=${name}\nsymbol='*'" > "${dir}/.taskboard"
+
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
@@ -92,11 +95,11 @@ new() {
 			atom "${folder}/${repo}" && sleep 2 &&
 			printf 'tell app "Atom"
 						set timer to 0
-						repeat until the length of (get every window whose name contains "/'"${folder}/${repo}"'/") > 0 or timer > 15
+						repeat until the length of (get every '"$(selector 'Atom' "$jiranum" "$repo")"') > 0 or timer > 15
 							delay 0.5
 							set timer to timer + 0.5
 						end repeat
-						set the bounds of every window whose name contains "/'"${folder}/${repo}"'/" to {'"$atomBounds"'}
+						set the bounds of every '"$(selector 'Atom' "$jiranum" "$repo")"' to {'"$atomBounds"'}
 					end tell
 				' | osascript &
 		fi
@@ -109,11 +112,11 @@ new() {
 			printf 'tell app "Terminal"
 						do script "J='"$jiranum"'; cd '"${folder}/${repo}"'/src && if [ ! -d node_modules ]; then '"$(pwd)"'/../scripts/repo-fixes.sh; yarn install; bower install; bundle install; fi"
 						set the custom title of the front window to "'"$jiranum"'"
-						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal1Bounds"'}
+						set the bounds of the front '"$(selector 'Terminal' "$jiranum" "$repo")"' to {'"$terminal1Bounds"'}
 
 						do script "J='"$jiranum"'; cd '"${folder}/${repo}"' && git co '"$jiranum"'/trunk || (git co master && git co -b '"$jiranum"'/trunk); git branch"
 						set the custom title of the front window to "'"$jiranum"'"
-						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal2Bounds"'}
+						set the bounds of the front '"$(selector 'Terminal' "$jiranum" "$repo")"' to {'"$terminal2Bounds"'}
 					end tell
 				' | osascript &
 		fi
@@ -123,7 +126,7 @@ new() {
 			printf 'tell app "Terminal"
 						do script "J='"$jiranum"'"
 						set the custom title of the front window to "'"$jiranum"'"
-						set the bounds of the front window whose name contains "'"$jiranum"' — " to {'"$terminal2Bounds"'}
+						set the bounds of the front '"$(selector 'Terminal' "$jiranum" "$repo")"' to {'"$terminal2Bounds"'}
 					end tell
 				' | osascript &
 		fi
@@ -140,7 +143,7 @@ activate() {
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
-					set index of every window where the title of the 1st tab contains "['"$jiranum"']" to 1
+					set index of every '"$(selector 'Google Chrome' "$jiranum" "$repo")"' to 1
 				end tell
 			' | osascript &
 	fi
@@ -148,7 +151,7 @@ activate() {
 	if [ "$enableTerminal" ]
 	then
 		printf 'tell app "Terminal"
-					set index of every window whose name contains "'"$jiranum"' — " to 1
+					set index of every '"$(selector 'Terminal' "$jiranum" "$repo")"' to 1
 				end tell
 			' | osascript &
 	fi
@@ -158,7 +161,7 @@ activate() {
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						set index of every window whose name contains "/'"$jiranum"'/" to 1
+						set index of every '"$(selector 'Atom' "$jiranum" "$repo")"' to 1
 					end tell
 				' | osascript &
 		fi
@@ -172,7 +175,7 @@ deactivate() {
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
-					set minimized of every window where the title of the 1st tab contains "['"$jiranum"']" to true
+					set minimized of every '"$(selector 'Google Chrome' "$jiranum" "$repo")"' to true
 				end tell
 			' | osascript &
 	fi
@@ -180,7 +183,7 @@ deactivate() {
 	if [ "$enableTerminal" ]
 	then
 		printf 'tell app "Terminal"
-					set miniaturized of every window whose name contains "'"$jiranum"' — " to true
+					set miniaturized of every '"$(selector 'Terminal' "$jiranum" "$repo")"' to true
 				end tell
 			' | osascript &
 	fi
@@ -190,7 +193,7 @@ deactivate() {
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						set miniaturized of every window whose name contains "/'"$jiranum"'/" to true
+						set miniaturized of every '"$(selector 'Atom' "$jiranum" "$repo")"' to true
 					end tell
 				' | osascript &
 		fi
@@ -204,7 +207,7 @@ close() {
 	if [ "$enableChrome" ]
 	then
 		printf 'tell app "Google Chrome"
-					close every window where the title of the 1st tab contains "['"$jiranum"']"
+					close every '"$(selector 'Google Chrome' "$jiranum" "$repo")"'
 				end tell
 			' | osascript &
 	fi
@@ -212,7 +215,7 @@ close() {
 	if [ "$enableTerminal" ]
 	then
 		printf 'tell app "Terminal"
-					close every window whose name contains "'"$jiranum"' — "
+					close every '"$(selector 'Terminal' "$jiranum" "$repo")"'
 				end tell
 			' | osascript &
 	fi
@@ -222,7 +225,7 @@ close() {
 		if [ "$enableAtom" ]
 		then
 			printf 'tell app "Atom"
-						close every window whose name contains "/'"$jiranum"'/"
+						close every '"$(selector 'Atom' "$jiranum" "$repo")"'
 					end tell
 				' | osascript &
 		fi
