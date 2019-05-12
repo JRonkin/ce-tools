@@ -1,17 +1,18 @@
-save-window-bounds() {
-	local jiranum=$(echo "$1" | cut -d " " -f 1)
-	local repo=$(echo "$1" | cut -d " " -f 4)
+apps="\
+Atom
+Google Chrome
+Terminal"
 
-	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
-	mkdir -p "$dir"
+enableApp() {
+	[ "$1" ] && enabledApps[$(cksum <<< "$1" | cut -d ' ' -f 1)]=true
+}
 
-	(
-		echo "atomBounds='$(osascript -e "tell app \"Atom\" to get the bounds of the 1st window whose name contains \"/${jiranum}/\"")'" &
-		echo "chromeBounds='$(osascript -e "tell app \"Google Chrome\" to get the bounds of the 1st window where the title of the 1st tab contains \"[${jiranum}]\"")'" &
-		echo "terminal1Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 1st window whose name contains \"$jiranum — \"")'" &
-		echo "terminal2Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 2nd window whose name contains \"$jiranum — \"")'" &
-		wait
-	) | sort > "${dir}/windowbounds"
+disableApp() {
+	[ "$1" ] && enabledApps[$(cksum <<< "$1" | cut -d ' ' -f 1)]=
+}
+
+appEnabled() {
+	[ "$1" ] && echo ${enabledApps[$(cksum <<< "$1" | cut -d ' ' -f 1)]}
 }
 
 selector() {
@@ -32,9 +33,25 @@ selector() {
 	esac
 }
 
+save-window-bounds() {
+	local jiranum=$(echo "$1" | cut -d " " -f 1)
+	local repo=$(echo "$1" | cut -d " " -f 4)
+
+	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
+	mkdir -p "$dir"
+
+	(
+		echo "atomBounds='$(osascript -e "tell app \"Atom\" to get the bounds of the 1st $(selector 'Atom' "$jiranum" "$repo")")'" &
+		echo "chromeBounds='$(osascript -e "tell app \"Google Chrome\" to get the bounds of the 1st $(selector 'Google Chrome' "$jiranum" "$repo")")'" &
+		echo "terminal1Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 1st $(selector 'Terminal' "$jiranum" "$repo")")'" &
+		echo "terminal2Bounds='$(osascript -e "tell app \"Terminal\" to get the bounds of the 2nd $(selector 'Terminal' "$jiranum" "$repo")")'" &
+		wait
+	) | sort > "${dir}/windowbounds"
+}
+
 new() {
-	local jiranum="$1"
-	local name="$2"
+	local name="$1"
+	local jiranum="$2"
 	local repo="$3"
 	local folder="${HOME}/items/${jiranum}"
 
@@ -74,9 +91,9 @@ new() {
 	source "${dir}/windowbounds"
 
 	# Set up new task
-	echo -e "\nname=${name}\nsymbol='*'" > "${dir}/.taskboard"
+	echo -e "name=${name}\nsymbol='*'" > "${dir}/.taskboard"
 
-	if [ "$enableChrome" ]
+	if [ $(appEnabled 'Google Chrome') ]
 	then
 		printf 'tell app "Google Chrome"
 					set new_window to (make new window)
@@ -90,7 +107,7 @@ new() {
 
 	if [ "$repo" ]
 	then
-		if [ "$enableAtom" ]
+		if [ $(appEnabled 'Atom') ]
 		then
 			atom "${folder}/${repo}" && sleep 2 &&
 			printf 'tell app "Atom"
@@ -107,7 +124,7 @@ new() {
 		# Wait for git clone parallel process to finish
 		wait $clonePID
 
-		if [ "$enableTerminal" ]
+		if [ $(appEnabled 'Terminal') ]
 		then
 			printf 'tell app "Terminal"
 						do script "J='"$jiranum"'; cd '"${folder}/${repo}"'/src && if [ ! -d node_modules ]; then '"$(pwd)"'/../scripts/repo-fixes.sh; yarn install; bower install; bundle install; fi"
@@ -121,7 +138,7 @@ new() {
 				' | osascript &
 		fi
 	else
-		if [ "$enableTerminal" ]
+		if [ $(appEnabled 'Terminal') ]
 		then
 			printf 'tell app "Terminal"
 						do script "J='"$jiranum"'"
@@ -140,94 +157,32 @@ activate() {
 	local jiranum=$(echo "$1" | cut -d " " -f 1)
 	local repo=$(echo "$1" | cut -d " " -f 4)
 
-	if [ "$enableChrome" ]
-	then
-		printf 'tell app "Google Chrome"
-					set index of every '"$(selector 'Google Chrome' "$jiranum" "$repo")"' to 1
-				end tell
-			' | osascript &
-	fi
-
-	if [ "$enableTerminal" ]
-	then
-		printf 'tell app "Terminal"
-					set index of every '"$(selector 'Terminal' "$jiranum" "$repo")"' to 1
-				end tell
-			' | osascript &
-	fi
-
-	if [ "$repo" ]
-	then
-		if [ "$enableAtom" ]
-		then
-			printf 'tell app "Atom"
-						set index of every '"$(selector 'Atom' "$jiranum" "$repo")"' to 1
-					end tell
-				' | osascript &
-		fi
-	fi
+	while read app
+	do
+		[ $(appEnabled "$app") ] && osascript -e "tell app \"${app}\" to set index of every $(selector "$app" "$jiranum" "$repo") to 1" &
+	done <<< "$apps"
 }
 
 deactivate() {
 	local jiranum=$(echo "$1" | cut -d " " -f 1)
 	local repo=$(echo "$1" | cut -d " " -f 4)
 
-	if [ "$enableChrome" ]
-	then
-		printf 'tell app "Google Chrome"
-					set minimized of every '"$(selector 'Google Chrome' "$jiranum" "$repo")"' to true
-				end tell
-			' | osascript &
-	fi
-
-	if [ "$enableTerminal" ]
-	then
-		printf 'tell app "Terminal"
-					set miniaturized of every '"$(selector 'Terminal' "$jiranum" "$repo")"' to true
-				end tell
-			' | osascript &
-	fi
-
-	if [ "$repo" ]
-	then
-		if [ "$enableAtom" ]
+	while read app
+	do
+		if [ $(appEnabled "$app") ]
 		then
-			printf 'tell app "Atom"
-						set miniaturized of every '"$(selector 'Atom' "$jiranum" "$repo")"' to true
-					end tell
-				' | osascript &
+			osascript -e "tell app \"${app}\" to set miniaturized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null &
+			osascript -e "tell app \"${app}\" to set minimized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null &
 		fi
-	fi
+	done <<< "$apps"
 }
 
 close() {
 	local jiranum=$(echo "$1" | cut -d " " -f 1)
 	local repo=$(echo "$1" | cut -d " " -f 4)
 
-	if [ "$enableChrome" ]
-	then
-		printf 'tell app "Google Chrome"
-					close every '"$(selector 'Google Chrome' "$jiranum" "$repo")"'
-				end tell
-			' | osascript &
-	fi
-
-	if [ "$enableTerminal" ]
-	then
-		printf 'tell app "Terminal"
-					close every '"$(selector 'Terminal' "$jiranum" "$repo")"'
-				end tell
-			' | osascript &
-	fi
-
-	if [ "$repo" ]
-	then
-		if [ "$enableAtom" ]
-		then
-			printf 'tell app "Atom"
-						close every '"$(selector 'Atom' "$jiranum" "$repo")"'
-					end tell
-				' | osascript &
-		fi
-	fi
+	while read app
+	do
+		[ $(appEnabled "$app") ] && osascript -e "tell app \"${app}\" to close every $(selector "$app" "$jiranum" "$repo")" &
+	done <<< "$apps"
 }

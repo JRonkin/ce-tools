@@ -18,12 +18,29 @@ clean_exit() {
 # Run clean_exit if interrupted
 trap clean_exit EXIT INT SIGHUP SIGINT SIGQUIT SIGTERM
 
+load_items() {
+	local directory="$1"
+
+	while read dir
+	do
+		name="$(head -n 1 "${dir}/.taskname" 2>/dev/null)"
+		active=' '
+		if [ -f "${dir}/.taskactive" ]
+		then
+			active='*'
+		fi
+
+		echo "${active}${dir}   ${name}"
+	done <<< "$(ls -d */ | tr -d '/')"
+}
+
 # Set window title
 osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"' &
 
 # Set up directory and files
 cd "$(dirname "${BASH_SOURCE[0]}")"
 source taskswap.sh
+source ../common/menu.sh
 mkdir -p ../appdata/taskboard
 touch ../appdata/taskboard/tasks
 
