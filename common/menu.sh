@@ -1,6 +1,6 @@
 clear-menu() {
 	# Restore Terminal state
-	stty $originalTTYState
+	stty $originalTTYState &>/dev/null
 
 	# Restore the screen and cursor
 	tput rmcup

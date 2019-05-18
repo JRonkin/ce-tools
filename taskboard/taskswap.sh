@@ -5,15 +5,6 @@ do
 	source "$(dirname "${BASH_SOURCE[0]}")/apps/$appfile"
 done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
 
-# ########### TEST ###########
-
-# for app in "${apps[@]}"
-# do
-# 	enabledApps[$(hash "$app")]=true
-# done
-
-# ############################
-
 selector() {
 	local app="$1"
 	local jiranum="$2"
