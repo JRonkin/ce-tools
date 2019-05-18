@@ -139,7 +139,34 @@ S: Set Current Window Positions as Default
 T: TimeReport" ' Return to TaskBoard' 0 'E' 'S' 'T'
 
 	case "$menu_key" in
-		'E' ) ;;
+		'E' )
+			menu_selected=0
+			while :
+			do
+				menu '[Enter]: Enable/Disable App | Q: Save Preferences' "$(
+					for app in "${apps[@]}"
+					do
+						local symbol=' '
+						[ ${enabledApps[$(hash "$app")]} ] && symbol='*'
+						echo "${symbol}${app}"
+					done
+				)" $menu_selected 'Q'
+
+				[ "$menu_key" = 'Q' ] && break
+
+				enabledApps[$(hash "${menu_value:1}")]=$([ ${enabledApps[$(hash "${menu_value:1}")]} ] || echo true)
+			done
+
+			rm ../appdata/taskboard/taskswap.config 2>/dev/null
+			for app in "${apps[@]}"
+			do
+				if [ ${enabledApps[$(hash "$app")]} ]
+				then
+					echo "enabledApps[$(hash "$app")]=true" >> ../appdata/taskboard/taskswap.config
+				fi
+			done
+
+		;;
 
 		# Set Current Window Positions as Default 
 		'S' )
