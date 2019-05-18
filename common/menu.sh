@@ -42,7 +42,7 @@ menu() {
 	while [ "$1" ]
 	do
 		input="$(echo "$1" | tr 'a-z' 'A-Z')"
-		triggers[$(printf %x \'$input)]=true
+		triggers[$(printf %d \'$input)]=true
 		shift 1
 	done
 
@@ -151,7 +151,7 @@ menu() {
 			fi
 		else
 			input="$(echo "$input" | tr 'a-z' 'A-Z')"
-			if [ ! "$input" ] || [ "${triggers[$(printf %x \'$input)]}" ]
+			if [ ! "$input" ] || [ "${triggers[$(printf %d \'$input)]}" ]
 			then
 				menu_key="$input"
 				menu_selected=$selected

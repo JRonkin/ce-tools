@@ -1,3 +1,7 @@
+hash() {
+	cksum <<< "$1" | cut -d ' ' -f 1
+}
+
 trash() {
 	if [ "$1" ]
 	then

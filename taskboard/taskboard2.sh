@@ -3,17 +3,29 @@ load_items() {
 	local name
 	local symbol
 
-	while read dir
-	do
-		name=
-		symbol=
-		source "${dir}.taskboard" 2>/dev/null
+	if [ "$(ls "$directory")" ]
+	then
+		while read dir
+		do
+			name=
+			symbol=
+			source "${dir}.taskboard" 2>/dev/null
 
-		echo "${symbol}$(basename "$dir")   ${name}"
-	done <<< "$(ls -d ${directory}*/)"
+			echo "${symbol}$(basename "$dir")   ${name}"
+		done <<< "$(ls -d "$directory"*/)"
+	fi
 }
 
 # Menu Functions
+
+quit() {
+	clear_menu
+
+	# Remove custom title
+	# osascript -e 'tell app "Terminal" to set custom title of 1st window whose name contains "TaskBoard" to "Terminal"' &
+
+	exit
+}
 
 new_task() {
 	clear
@@ -37,8 +49,8 @@ new_task() {
 
 	read -p "Message: " name
 
-	read -p "GitHub URL (blank for none): " gitUrl
-	repo=""
+	read -p "GitHub URL or Repo Name (blank for none): " gitUrl
+	repo="$gitUrl"
 	if [[ "$gitUrl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 	then
 		repo="${BASH_REMATCH[1]}"
@@ -50,24 +62,22 @@ new_task() {
 
 
 	# Switch active task to new task
-	if [ "$active" ]
+	if [ "$active_jira" ]
 	then
-		deactivate "$active" &
-		../timelog/timelog.sh "$active" end
+		deactivate "$active_jira" "$active_repo" &
+		../timelog/timelog.sh "${active_jira}   ${active_name}" end
 	fi
-	active="${jiranum}   ${name}"
+	active_jira="$jiranum"
+	active_repo="$repo"
+	active_name="$name"
 
 	# Start timelog
-	../timelog/timelog.sh "$active" start
+	../timelog/timelog.sh "${active_jira}   ${active_name}" start
 }
 
-quit() {
-	clear_menu
-
-	# Remove custom title
-	osascript -e 'tell app "Terminal" to set custom title of 1st window whose name contains "TaskBoard" to "Terminal"' &
-
-	exit
+close_task() {
+	close "$(echo "$menu_value" | cut -d ' ' -f 1)"
+	../timelog/timelog.sh "$menu_value" end
 }
 
 # PROGRAM START
@@ -90,14 +100,14 @@ then
 fi
 mkdir -p "$taskdir"
 
-selected=0
+menu_selected=0
 
 while :
 do
 	menu '\
 Q: Quit TaskBoard | N: New Task       | X: Close Selected
 [Enter]: Activate/Deactivate Selected | R: Reload Selected
-M: More Options' "$(load_items "$taskdir")" $selected 'Q'
+M: More Options' "$(load_items "$taskdir")" $menu_selected 'Q'
 
 	case "$menu_key" in
 		'Q' ) quit;;
