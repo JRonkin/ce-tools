@@ -18,7 +18,7 @@ load_items() {
 	fi
 }
 
-activate_task() {
+activate-task() {
 	local jiranum="$1"
 	local repo="$2"
 	local name="$3"
@@ -31,7 +31,7 @@ activate_task() {
 	active_name="$name"
 }
 
-deactivate_task() {
+deactivate-task() {
 	local jiranum="$1"
 	local repo="$2"
 	local name="$3"
@@ -47,30 +47,30 @@ deactivate_task() {
 
 # Main Menu Functions
 
-select_task() {
+select-task() {
 	case "${menu_value:0:1}" in
-		'·' )
-			[ "$active_jira" ] && deactivate_task "$active_jira" "$active_repo" "$active_name"
-			activate_task "$jiranum" "$repo" "$name"
+		' ' )
+			[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
+			activate-task "$jiranum" "$repo" "$name"
 		;;
 		'*' )
-			deactivate_task "$jiranum" "$repo" "$name"
+			deactivate-task "$jiranum" "$repo" "$name"
 		;;
 	esac
 }
 
 quit() {
-	[ "$active_jira" ] && deactivate_task "$active_jira" "$active_repo" "$active_name"
+	[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
 
 	# Remove custom title
 	osascript -e 'tell app "Terminal" to set custom title of 1st window whose name contains "TaskBoard" to "Terminal"' &
 
-	clear_menu
+	clear-menu
 
 	exit
 }
 
-new_task() {
+new-task() {
 	local jiraurl
 	local jiranum
 	local name
@@ -92,8 +92,8 @@ new_task() {
 		else
 			tput civis
 			stty -echo
-			printf "Invalid URL or JIRA Number:\n$jiraurl\n\n> Return to TaskBoard"
-			read -sp ""
+			printf "Invalid URL or JIRA Number:\n${jiraurl}\n\n> Return to TaskBoard"
+			read -sp ''
 			return
 		fi
 	fi
@@ -115,7 +115,7 @@ new_task() {
 
 
 	# Switch active task to new task
-	[ "$active_jira" ] && deactivate_task "$active_jira" "$active_repo" "$active_name"
+	[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
 	active_jira="$jiranum"
 	active_repo="$repo"
 	active_name="$name"
@@ -124,12 +124,60 @@ new_task() {
 	../timelog/timelog.sh "${active_jira} ${active_name}" start
 }
 
-close_task() {
+close-task() {
 	if [ "$jiranum" ]
 	then
 		close "$(echo "$jiranum" | cut -d ' ' -f 1)"
 		../timelog/timelog.sh "${jiranum} ${name}" end
 	fi
+}
+
+more_options() {
+	menu "\
+E: Enable/Disable TaskSwap
+S: Set Current Window Positions as Default
+T: TimeReport" ' Return to TaskBoard' 0 'E' 'S' 'T'
+
+	case "$menu_key" in
+		'E' ) ;;
+
+		# Set Current Window Positions as Default 
+		'S' )
+			if [ "$active_jira" ]
+			then
+				save-window-bounds "$active_jira" "$active_repo"
+				clear
+				printf "The current window positions and sizes have been set as default.\n\n> Return to TaskBoard"
+				read -p ''
+			else
+				clear
+				printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
+				read -p ''
+			fi
+		;;
+
+		# TimeReport
+		'T' )
+			clear
+			tput cnorm
+			stty echo
+
+			read -p 'Start Date (format yyyy-mm-dd; leave blank for today): ' date
+			read -p 'End Date (format yyyy-mm-dd; leave blank for same as start): ' endDate
+
+			[ "$active_jira" ] && ../timelog/timelog.sh "${jiranum} ${name}" end
+
+			../timelog/timereport.sh "$date" "$endDate"
+
+			[ "$active_jira" ] && ../timelog/timelog.sh "${jiranum} ${name}" start
+
+			tput civis
+			stty -echo
+
+			printf "\n\n> Return to TaskBoard"
+			read -p ''
+		;;
+	esac
 }
 
 
@@ -153,25 +201,24 @@ then
 fi
 mkdir -p "$taskdir"
 
-menu_selected=0
+selected=0
 
 while :
 do
 	menu "\
 Q: Quit TaskBoard | N: New Task       | X: Close Selected
-[Enter]: Activate/Deactivate Selected | R: Reload Selected
-M: More Options" "$(load_items "$taskdir")" $menu_selected 'Q' 'N' 'X' 'R' 'M'
+[Enter]: Activate/Deactivate Selected | M: More Options" "$(load_items "$taskdir")" $selected 'Q' 'N' 'X' 'M'
 
+	selected=$menu_selected
 	jiranum="$(echo "${menu_value:1}" | cut -d ' ' -f 1)"
 	repo=
 	name="$(echo "${menu_value:1} " | cut -d ' ' -f 4)"
 
 	case "$menu_key" in
-		'' ) select_task;;
+		'' ) select-task;;
 		'Q' ) quit;;
-		'N' ) new_task;;
-		'X' ) close_task;;
-		'R' ) ;;
-		'M' ) ;;
+		'N' ) new-task;;
+		'X' ) close-task;;
+		'M' ) more_options;;
 	esac
 done

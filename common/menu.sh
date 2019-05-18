@@ -1,29 +1,29 @@
-clear_menu() {
+clear-menu() {
 	# Restore Terminal state
-	stty $original_tty_state
+	stty $originalTTYState
 
 	# Restore the screen and cursor
 	tput rmcup
 	tput cnorm
 
-	original_tty_state=''
+	originalTTYState=''
 }
 
-clean_exit() {
-	clear_menu
+clean-exit() {
+	clear-menu
 	exit
 }
 
 menu() {
-	if [ ! "$original_tty_state" ]
+	if [ ! "$originalTTYState" ]
 	then
 		# Save terminal state
-		original_tty_state="$(stty -g)"
+		originalTTYState="$(stty -g)"
 		tput smcup
 	fi
 
 	# Run clean_exit if interrupted
-	trap clean_exit EXIT INT SIGHUP SIGINT SIGQUIT SIGTERM
+	trap clean-exit EXIT INT SIGHUP SIGINT SIGQUIT SIGTERM
 
 	# Hide input and cursor
 	stty -echo
@@ -48,12 +48,12 @@ menu() {
 
 	local width=0
 	local line
-	while read line
+	while IFS= read line
 	do
 		[ ${#line} -gt $width ] && width=${#line}
 	done <<< "$header"
 	(( width -= 1 ))
-	while read line
+	while IFS= read line
 	do
 		[ ${#line} -gt $width ] && width=${#line}
 	done <<< "$options"
@@ -66,18 +66,18 @@ menu() {
 	tput home
 	printf "\033[2J$(seq  -f '=' -s '' $width)\n"
 
-	while read line
-	do
-		if [ "$line" ]
-		then
+	if [ "$header" ]
+	then
+		while IFS= read line
+		do
 			[ ${#line} -gt $(( width - 4 )) ] && line="${line:0:$(( width - 5 ))}…"
 			printf "| ${line}$(seq  -f ' ' -s '' $(( $width - 3 - ${#line} )))|\n"
 			(( ++start ))
 			(( ++end ))
-		fi
-	done <<< "$header"
+		done <<< "$header"
+	fi
 
-	while read line
+	while IFS= read line
 	do
 		if [ "$line" ]
 		then

@@ -95,7 +95,7 @@ deactivate() {
 
 	local folder="${HOME}/items/${jiranum}"
 
-	sed -i '' "s/^symbol=.*/symbol='·'/" "${folder}/.taskboard"
+	sed -i '' "s/^symbol=.*/symbol=' '/" "${folder}/.taskboard"
 
 	for app in "${apps[@]}"
 	do
