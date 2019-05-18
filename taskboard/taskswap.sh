@@ -7,7 +7,7 @@ done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
 
 ########### TEST ###########
 
-for app in ${apps[*]}
+for app in "${apps[@]}"
 do
 	enabledApps[$(hash "$app")]=true
 done
@@ -27,7 +27,7 @@ save-window-bounds() {
 	local repo="$2"
 
 	(
-		for app in ${apps[*]}
+		for app in "${apps[@]}"
 		do
 			if [ ${enabledApps[$(hash "$app")]} ]
 			then
@@ -44,9 +44,8 @@ new() {
 	local repo="$3"
 
 	local folder="${HOME}/items/${jiranum}"
-
-	# Count the number of displays (monitors)
-	local monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial") &
+	local configdir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
+	local monitors
 
 	mkdir -p "$folder"
 
@@ -57,15 +56,17 @@ new() {
 	fi
 
 	# Set up new task
-	echo -e "name=${name}\nsymbol='*'" > "${folder}/.taskboard"
+	echo -e "name=\"${name}\"\nsymbol='*'" > "${folder}/.taskboard"
 
 	# Load window bounds
-	local dir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
-	[ -f "${dir}/windowbounds" ] && source "${dir}/windowbounds"
+	[ -f "${configdir}/windowbounds" ] && source "${configdir}/windowbounds"
+
+	# Count the number of displays (monitors)
+	monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")
 
 	wait
 
-	for app in ${apps[*]}
+	for app in "${apps[@]}"
 	do
 		if [ ${enabledApps[$(hash "$app")]} ]
 		then
@@ -78,7 +79,11 @@ activate() {
 	local jiranum="$1"
 	local repo="$2"
 
-	for app in ${apps[*]}
+	local folder="${HOME}/items/${jiranum}"
+
+	sed -i '' "s/^symbol=.*/symbol='*'/" "${folder}/.taskboard"
+
+	for app in "${apps[@]}"
 	do
 		[ ${enabledApps[$(hash "$app")]} ] && osascript -e "tell app \"${app}\" to set index of every $(selector "$app" "$jiranum" "$repo") to 1" &
 	done
@@ -88,7 +93,11 @@ deactivate() {
 	local jiranum="$1"
 	local repo="$2"
 
-	for app in ${apps[*]}
+	local folder="${HOME}/items/${jiranum}"
+
+	sed -i '' "s/^symbol=.*/symbol='·'/" "${folder}/.taskboard"
+
+	for app in "${apps[@]}"
 	do
 		if [ ${enabledApps[$(hash "$app")]} ]
 		then
@@ -104,10 +113,12 @@ close() {
 
 	local folder="${HOME}/items/${jiranum}"
 
-	for app in ${apps[*]}
+	for app in "${apps[@]}"
 	do
 		[ ${enabledApps[$(hash "$app")]} ] && osascript -e "tell app \"${app}\" to close every $(selector "$app" "$jiranum" "$repo")" &
 	done
+
+	wait
 
 	trash "$folder"
 }

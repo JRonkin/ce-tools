@@ -10,14 +10,13 @@ trash() {
 		if [ ! -f "$file" ] && [ ! -d "$file" ]
 		then
 			echo "trash: ${file}: No such file or directory" >&2
-			exit 1
-		fi
+		else
+			if [[ ! "$file" = /* ]]
+			then
+				file="$(pwd)/$file"
+			fi
 
-		if [[ ! "$file" = /* ]]
-		then
-			file="$(pwd)/$file"
+			osascript -e "tell app \"Finder\" to delete POSIX file \"$file\"" 1>/dev/null
 		fi
-
-		osascript -e "tell app \"Finder\" to delete POSIX file \"$file\"" 1>/dev/null
 	fi
 }

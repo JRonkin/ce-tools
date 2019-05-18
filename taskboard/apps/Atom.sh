@@ -39,4 +39,4 @@ new_Atom() {
 	fi
 }
 
-apps[${#apps[*]}]='Atom'
+apps[${#apps[@]}]='Atom'

@@ -90,7 +90,7 @@ menu() {
 
 			[ ${#line} -gt $(( width - 5 )) ] && line="${line:0:$(( width - 6 ))}…"
 			printf "|  ${line}$(seq  -f ' ' -s '' $(( $width - 4 - ${#line} )))|\n"
-			optionsArray[${#optionsArray[*]}]="$line"
+			optionsArray[${#optionsArray[@]}]="$line"
 			(( ++end ))
 		fi
 	done <<< "$options"

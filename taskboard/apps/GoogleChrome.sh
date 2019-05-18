@@ -41,4 +41,4 @@ new_GoogleChrome() {
 	" | osascript &
 }
 
-apps[${#apps[*]}]='Google Chrome'
+apps[${#apps[@]}]='Google Chrome'
