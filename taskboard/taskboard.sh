@@ -31,7 +31,7 @@ activate-task() {
 	local repo="$2"
 	local name="$3"
 
-	activate "$jiranum" "$repo" "$name" &
+	activate "$jiranum" "$repo" "$name"
 	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
 
 	active_jira="$jiranum"
@@ -44,7 +44,7 @@ deactivate-task() {
 	local repo="$2"
 	local name="$3"
 
-	deactivate "$jiranum" "$repo" "$name" &
+	deactivate "$jiranum" "$repo" "$name"
 	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
 
 	active_jira=
