@@ -18,13 +18,21 @@ load_items() {
 	fi
 }
 
+timelog-message() {
+	local jiranum="$1"
+	local repo="$2"
+	local name="$3"
+
+	echo "${jiranum} $(echo "$name" | sed 's/^ *//')" | sed 's/ *$//'
+}
+
 activate-task() {
 	local jiranum="$1"
 	local repo="$2"
 	local name="$3"
 
 	activate "$jiranum" "$repo" "$name" &
-	../timelog/timelog.sh "${jiranum} ${name}" start
+	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
 
 	active_jira="$jiranum"
 	active_repo="$repo"
@@ -37,7 +45,7 @@ deactivate-task() {
 	local name="$3"
 
 	deactivate "$jiranum" "$repo" "$name" &
-	../timelog/timelog.sh "${jiranum} ${name}" end
+	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
 
 	active_jira=
 	active_repo=
@@ -98,7 +106,7 @@ new-task() {
 		fi
 	fi
 
-	read -p "Message: " name
+	IFS= read -p "Message: " name
 	name="${name//\"/\\\"}"
 	name="${name//\$/\\\"}"
 
@@ -121,14 +129,21 @@ new-task() {
 	active_name="$name"
 
 	# Start timelog
-	../timelog/timelog.sh "${active_jira} ${active_name}" start
+	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
 }
 
 close-task() {
 	if [ "$jiranum" ]
 	then
 		close "$(echo "$jiranum" | cut -d ' ' -f 1)"
-		../timelog/timelog.sh "${jiranum} ${name}" end
+		../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
+
+		if [ "$jiranum" = "$active_jira" ]
+		then
+			active_jira=
+			active_repo=
+			active_name=
+		fi
 	fi
 }
 
@@ -192,11 +207,11 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'S' 'T'
 			read -p 'Start Date (format yyyy-mm-dd; leave blank for today): ' date
 			read -p 'End Date (format yyyy-mm-dd; leave blank for same as start): ' endDate
 
-			[ "$active_jira" ] && ../timelog/timelog.sh "${jiranum} ${name}" end
+			[ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
 
 			../timelog/timereport.sh "$date" "$endDate"
 
-			[ "$active_jira" ] && ../timelog/timelog.sh "${jiranum} ${name}" start
+			[ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
 
 			tput civis
 			stty -echo
