@@ -98,15 +98,15 @@ menu() {
 	printf "$(seq  -f '=' -s '' $width)\n"
 
 	# Set Cursor
+	if [ $selected -lt 0 ]
+	then
+		selected=0
+	fi
+	if [ ! $selected -lt $(( $end - $start )) ]
+	then
+		selected=$(( $end - $start - 1 ))
+	fi
 	local cursor=$(( $start + $selected ))
-	if [ $cursor -lt $start ]
-	then
-		cursor=$start
-	fi
-	if [ ! $cursor -lt $end ]
-	then
-		cursor=$(( $end - 1 ))
-	fi
 
 	if [ ! $cursor -lt $start ]
 	then
