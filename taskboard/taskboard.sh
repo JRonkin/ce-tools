@@ -23,7 +23,7 @@ timelog-message() {
 	local repo="$2"
 	local name="$3"
 
-	echo "${jiranum} $(echo "$name" | sed 's/^ *//')" | sed 's/ *$//'
+	echo "${jiranum} ${name}" | sed 's/ *$//'
 }
 
 activate-task() {
@@ -254,7 +254,7 @@ Q: Quit TaskBoard | N: New Task       | X: Close Selected
 	selected=$menu_selected
 	jiranum="$(echo "${menu_value:1}" | cut -d ' ' -f 1)"
 	repo=
-	name="$(echo "${menu_value:1} " | cut -d ' ' -f 4)"
+	name="$(echo "${menu_value:1} " | cut -d ' ' -f 4-)"
 
 	case "$menu_key" in
 		'' ) select-task;;
