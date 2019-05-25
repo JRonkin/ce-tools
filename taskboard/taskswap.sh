@@ -33,10 +33,12 @@ new() {
 	local name="$1"
 	local jiranum="$2"
 	local repo="$3"
-
-	local folder="${HOME}/items/${jiranum}"
-	local configdir="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
+	
+	local CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 	local monitors
+
+	local folder="${ITEMS_DIR}${jiranum}"
+	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
 	mkdir -p "$folder"
 
@@ -50,7 +52,7 @@ new() {
 	echo -e "name=\"${name}\"\nsymbol='*'" > "${folder}/.taskboard"
 
 	# Load window bounds
-	[ -f "${configdir}/windowbounds" ] && source "${configdir}/windowbounds"
+	[ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
 
 	# Count the number of displays (monitors)
 	monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")
@@ -70,7 +72,8 @@ activate() {
 	local jiranum="$1"
 	local repo="$2"
 
-	local folder="${HOME}/items/${jiranum}"
+	local folder="${ITEMS_DIR}${jiranum}"
+	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
 	sed -i '' "s/^symbol=.*/symbol='*'/" "${folder}/.taskboard"
 
@@ -84,7 +87,8 @@ deactivate() {
 	local jiranum="$1"
 	local repo="$2"
 
-	local folder="${HOME}/items/${jiranum}"
+	local folder="${ITEMS_DIR}${jiranum}"
+	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
 	sed -i '' "s/^symbol=.*/symbol=' '/" "${folder}/.taskboard"
 
@@ -102,7 +106,8 @@ close() {
 	local jiranum="$1"
 	local repo="$2"
 
-	local folder="${HOME}/items/${jiranum}"
+	local folder="${ITEMS_DIR}${jiranum}"
+	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
 	for app in "${apps[@]}"
 	do

@@ -1,7 +1,7 @@
 # Helper Functions
 
 save-config() {
-	echo "taskdir='${taskdir}'" > ../appdata/taskboard/taskswap.config
+	echo "ITEMS_DIR='${ITEMS_DIR}'" > ../appdata/taskboard/taskswap.config
 
 	for app in "${apps[@]}"
 	do
@@ -198,9 +198,9 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
 			echo "Default is ${HOME}/items/"
 			echo 'Type the full name of the directory or leave blank to use default:'
 
-			read taskdir
-			[ "$taskdir" ] || taskdir="${HOME}/items/"
-			
+			read ITEMS_DIR
+			[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items/"
+
 			save-config
 		;;
 
@@ -258,19 +258,19 @@ mkdir -p ../appdata/taskboard
 # Read TaskSwap settings from config file
 [ -f ../appdata/taskboard/taskswap.config ] && source ../appdata/taskboard/taskswap.config
 
-if [ ! "$taskdir" ]
+if [ ! "$ITEMS_DIR" ]
 then
 	clear
 	echo 'Welcome to TaskBoard! Please choose a directory for item folders.'
 	echo "Default is ${HOME}/items/"
 	echo 'Type the full name of the directory or leave blank to use default:'
 
-	read taskdir
-	[ "$taskdir" ] || taskdir="${HOME}/items/"
+	read ITEMS_DIR
+	[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items/"
 
 	save-config
 fi
-mkdir -p "$taskdir"
+mkdir -p "$ITEMS_DIR"
 
 selected=0
 
@@ -278,7 +278,7 @@ while :
 do
 	menu "\
 Q: Quit TaskBoard | N: New Task       | X: Close Selected
-[Enter]: Activate/Deactivate Selected | M: More Options" "$(load_items "$taskdir")" $selected 'Q' 'N' 'X' 'M'
+[Enter]: Activate/Deactivate Selected | M: More Options" "$(load_items "$ITEMS_DIR")" $selected 'Q' 'N' 'X' 'M'
 
 	selected=$menu_selected
 	jiranum="$(echo "${menu_value:1}" | cut -d ' ' -f 1)"
