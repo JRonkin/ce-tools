@@ -7,19 +7,33 @@
 // @author       You
 // @match        https://yext.okta.com/login/login.htm*
 // @grant        none
-// @run-at:      document-end
+// @run-at:      document-idle
 // ==/UserScript==
 
 (function() {
   'use strict';
 
   var pwInput = document.getElementById('okta-signin-password');
-  if (pwInput.value) {
-    setTimeout(() => pwInput.form.dispatchEvent(new Event('submit')), 100);
+
+  function handler() {
+    if (pwInput.value) {
+      setTimeout(() => pwInput.form.dispatchEvent(new Event('submit')), 100);
+    } else {
+      pwInput.addEventListener('change', () => {
+        if (pwInput.value) {
+          setTimeout(() => pwInput.form.dispatchEvent(new Event('submit')), 100);
+        }
+      });
+    }
+  }
+
+  if (pwInput) {
+    handler();
   } else {
-    pwInput.addEventListener('change', () => {
-      if (pwInput.value) {
-        setTimeout(() => pwInput.form.dispatchEvent(new Event('submit')), 100);
+    window.addEventListener('DOMNodeInserted', function(e) {
+      pwInput = document.getElementById('okta-signin-password');
+      if (pwInput) {
+        handler();
       }
     });
   }
