@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         JIRA -- No Notification Badge
-// @namespace    https://github.com/JRonkin/yext-ce-tools
+// @namespace    jronkin.yext
 // @version      1.0
+// @downloadUrl  https://github.com/JRonkin/yext-ce-tools/raw/master/tampermonkey/JIRA%20--%20No%20Notification%20Badge.user.js
 // @description  Hide the notification badge in JIRA
 // @author       You
 // @match        https://*.atlassian.net/*

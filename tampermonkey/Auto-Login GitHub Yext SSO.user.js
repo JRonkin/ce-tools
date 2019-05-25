@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Auto-Login GitHub Yext SSO
-// @namespace    https://github.com/JRonkin/yext-ce-tools
+// @namespace    jronkin.yext
 // @version      1.0
+// @downloadUrl  https://github.com/JRonkin/yext-ce-tools/raw/master/tampermonkey/Auto-Login%20GitHub%20Yext%20SSO.user.js
 // @description  Automatically click the SSO link when it appears
 // @author       You
 // @match        https://github.com/*

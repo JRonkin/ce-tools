@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Storm -- Unlimit Site Attributes
-// @namespace    https://github.com/JRonkin/yext-ce-tools
+// @namespace    jronkin.yext
 // @version      1.0
+// @downloadUrl  https://github.com/JRonkin/yext-ce-tools/raw/master/tampermonkey/Storm%20--%20Unlimit%20Site%20Attributes.user.js
 // @description  Set the query param "limit=none" when viewing site attributes in Storm
 // @author       You
 // @match        https://www.yext.com/s/*/storepages/site/*/attributes*

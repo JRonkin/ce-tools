@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Pages Admin -- Fix Query
-// @namespace    https://github.com/JRonkin/yext-ce-tools
+// @namespace    jronkin.yext
 // @version      1.0
+// @downloadUrl  https://github.com/JRonkin/yext-ce-tools/raw/master/tampermonkey/Pages%20Admin%20--%20Fix%20Query.user.js
 // @description  Bring back the functionality to search with query parameter, as in "?query=%s"
 // @author       You
 // @match        https://www.yext.com/pagesadmin*

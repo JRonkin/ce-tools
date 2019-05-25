@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         GitHub -- Always Hide Whitespace Changes
-// @namespace    https://github.com/JRonkin/yext-ce-tools
+// @namespace    jronkin.yext
 // @version      1.0
+// @downloadUrl  https://github.com/JRonkin/yext-ce-tools/raw/master/tampermonkey/GitHub%20--%20Always%20Hide%20Whitespace%20Changes.user.js
 // @description  Always hide whitespace changes when viewing diffs and pull requests
 // @author       You
 // @match        https://github.com/*

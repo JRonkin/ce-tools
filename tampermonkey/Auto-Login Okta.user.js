@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Auto-Login Okta
-// @namespace    https://github.com/JRonkin/yext-ce-tools
+// @namespace    jronkin.yext
 // @version      1.0
+// @downloadUrl  https://github.com/JRonkin/yext-ce-tools/raw/master/tampermonkey/Auto-Login%20Okta.user.js
 // @description  Automatically click the Okta login button
 // @author       You
 // @match        https://yext.okta.com/login/login.htm*
