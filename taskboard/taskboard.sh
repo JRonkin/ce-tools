@@ -1,5 +1,17 @@
 # Helper Functions
 
+save-config() {
+	echo "taskdir='${taskdir}'" > ../appdata/taskboard/taskswap.config
+
+	for app in "${apps[@]}"
+	do
+		if [ ${enabledApps[$(hash "$app")]} ]
+		then
+			echo "enabledApps[$(hash "$app")]=true" >> ../appdata/taskboard/taskswap.config
+		fi
+	done
+}
+
 load_items() {
 	local directory="$1"
 	local name
@@ -150,8 +162,9 @@ close-task() {
 more_options() {
 	menu "\
 E: Enable/Disable TaskSwap
+I: Change Items Directory
 S: Set Current Window Positions as Default
-T: TimeReport" ' Return to TaskBoard' 0 'E' 'S' 'T'
+T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
 
 	case "$menu_key" in
 		'E' )
@@ -172,15 +185,23 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'S' 'T'
 				enabledApps[$(hash "${menu_value:1}")]=$([ ${enabledApps[$(hash "${menu_value:1}")]} ] || echo true)
 			done
 
-			rm ../appdata/taskboard/taskswap.config 2>/dev/null
-			for app in "${apps[@]}"
-			do
-				if [ ${enabledApps[$(hash "$app")]} ]
-				then
-					echo "enabledApps[$(hash "$app")]=true" >> ../appdata/taskboard/taskswap.config
-				fi
-			done
+			save-config
 
+		;;
+
+		# Change Items Directory
+		'I' )
+			clear
+			tput cnorm
+			stty echo
+
+			echo "Default is ${HOME}/items/"
+			echo 'Type the full name of the directory or leave blank to use default:'
+
+			read taskdir
+			[ "$taskdir" ] || taskdir="${HOME}/items/"
+			
+			save-config
 		;;
 
 		# Set Current Window Positions as Default 
@@ -239,7 +260,15 @@ mkdir -p ../appdata/taskboard
 
 if [ ! "$taskdir" ]
 then
-	taskdir="${HOME}/items/"
+	clear
+	echo 'Welcome to TaskBoard! Please choose a directory for item folders.'
+	echo "Default is ${HOME}/items/"
+	echo 'Type the full name of the directory or leave blank to use default:'
+
+	read taskdir
+	[ "$taskdir" ] || taskdir="${HOME}/items/"
+
+	save-config
 fi
 mkdir -p "$taskdir"
 
