@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto-Login Okta
 // @namespace    jronkin.yext
-// @version      1.0
+// @version      1.0.0
 // @downloadUrl  https://github.com/JRonkin/yext-ce-tools/raw/master/tampermonkey/Auto-Login%20Okta.user.js
 // @description  Automatically click the Okta login button -- NOTE: Must have browser auto-fill username and password
 // @author       You
