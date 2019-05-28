@@ -1,22 +1,250 @@
-# Save terminal state
-original_tty_state="$(stty -g)"
+# Helper Functions
 
-clean_exit() {
+save-config() {
+	echo "ITEMS_DIR='${ITEMS_DIR}'" > ../appdata/taskboard/taskswap.config
+
+	for app in "${apps[@]}"
+	do
+		if [ ${enabledApps[$(hash "$app")]} ]
+		then
+			echo "enabledApps[$(hash "$app")]=true" >> ../appdata/taskboard/taskswap.config
+		fi
+	done
+}
+
+load_items() {
+	local directory="$1"
+	local name
+	local symbol
+
+	if [ "$(ls "$directory")" ]
+	then
+		while read dir
+		do
+			name=
+			symbol=
+			source "${dir}.taskboard" 2>/dev/null
+
+			echo "${symbol}$(basename "$dir")   ${name}"
+		done <<< "$(ls -d "$directory"*/)"
+	fi
+}
+
+timelog-message() {
+	local jiranum="$1"
+	local repo="$2"
+	local name="$3"
+
+	echo "${jiranum} ${name}" | sed 's/ *$//'
+}
+
+activate-task() {
+	local jiranum="$1"
+	local repo="$2"
+	local name="$3"
+
+	activate "$jiranum" "$repo" "$name"
+	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
+
+	active_jira="$jiranum"
+	active_repo="$repo"
+	active_name="$name"
+}
+
+deactivate-task() {
+	local jiranum="$1"
+	local repo="$2"
+	local name="$3"
+
+	deactivate "$jiranum" "$repo" "$name"
+	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
+
+	active_jira=
+	active_repo=
+	active_name=
+}
+
+
+# Main Menu Functions
+
+select-task() {
+	case "${menu_value:0:1}" in
+		' ' )
+			[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
+			activate-task "$jiranum" "$repo" "$name"
+		;;
+		'*' )
+			deactivate-task "$jiranum" "$repo" "$name"
+		;;
+	esac
+}
+
+quit() {
+	[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
+
 	# Remove custom title
-	osascript -e 'tell app "Terminal" to set custom title of every window whose name contains "TaskBoard" to ""' &
+	osascript -e 'tell app "Terminal" to set custom title of 1st window whose name contains "TaskBoard" to "Terminal"' 2>/dev/null &
 
-	# Restore the screen and cursor
-	tput rmcup
-	tput cnorm
-
-	# Restore Terminal state
-	stty $original_tty_state
+	clear-menu
 
 	exit
 }
 
-# Run clean_exit if interrupted
-trap clean_exit EXIT INT SIGHUP SIGINT SIGQUIT SIGTERM
+new-task() {
+	local jiraurl
+	local jiranum
+	local name
+	local gitUrl
+	local repo
+
+	clear
+	tput cnorm
+	stty echo
+
+	read -p "JIRA URL or Number: " jiraurl
+	if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/#\?]+).* ]]
+	then
+		jiranum="${BASH_REMATCH[1]}"
+	else
+		if [[ "$jiraurl" =~ ^[A-Za-z]+-[0-9]+$ ]]
+		then
+			jiranum="$jiraurl"
+		else
+			tput civis
+			stty -echo
+			printf "Invalid URL or JIRA Number:\n${jiraurl}\n\n> Return to TaskBoard"
+			read -sp ''
+			return
+		fi
+	fi
+
+	IFS= read -p "Message: " name
+	name="${name//\"/\\\"}"
+	name="${name//\$/\\\"}"
+
+	read -p "GitHub URL or Repo Name (blank for none): " gitUrl
+	repo="$gitUrl"
+	if [[ "$gitUrl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
+	then
+		repo="${BASH_REMATCH[1]}"
+	fi
+
+	# Start new task
+	clear-menu
+	new "$name" "$jiranum" "$repo"
+
+
+	# Switch active task to new task
+	[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
+	active_jira="$jiranum"
+	active_repo="$repo"
+	active_name="$name"
+
+	# Start timelog
+	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
+}
+
+close-task() {
+	if [ "$jiranum" ]
+	then
+		close "$(echo "$jiranum" | cut -d ' ' -f 1)"
+		../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
+
+		if [ "$jiranum" = "$active_jira" ]
+		then
+			active_jira=
+			active_repo=
+			active_name=
+		fi
+	fi
+}
+
+more_options() {
+	menu "\
+E: Enable/Disable TaskSwap
+I: Change Items Directory
+S: Set Current Window Positions as Default
+T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
+
+	case "$menu_key" in
+		'E' )
+			menu_selected=0
+			while :
+			do
+				menu '[Enter]: Enable/Disable App | Q: Save Preferences' "$(
+					for app in "${apps[@]}"
+					do
+						local symbol=' '
+						[ ${enabledApps[$(hash "$app")]} ] && symbol='*'
+						echo "${symbol}${app}"
+					done
+				)" $menu_selected 'Q'
+
+				[ "$menu_key" = 'Q' ] && break
+
+				enabledApps[$(hash "${menu_value:1}")]=$([ ${enabledApps[$(hash "${menu_value:1}")]} ] || echo true)
+			done
+
+			save-config
+
+		;;
+
+		# Change Items Directory
+		'I' )
+			clear
+			tput cnorm
+			stty echo
+
+			echo "Default is ${HOME}/items/"
+			echo 'Type the full name of the directory or leave blank to use default:'
+
+			read ITEMS_DIR
+			[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items/"
+
+			save-config
+		;;
+
+		# Set Current Window Positions as Default 
+		'S' )
+			if [ "$active_jira" ]
+			then
+				save-window-bounds "$active_jira" "$active_repo"
+				clear
+				printf "The current window positions and sizes have been set as default.\n\n> Return to TaskBoard"
+				read -p ''
+			else
+				clear
+				printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
+				read -p ''
+			fi
+		;;
+
+		# TimeReport
+		'T' )
+			clear
+			tput cnorm
+			stty echo
+
+			read -p 'Start Date (format yyyy-mm-dd; leave blank for today): ' date
+			read -p 'End Date (format yyyy-mm-dd; leave blank for same as start): ' endDate
+
+			[ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
+
+			../timelog/timereport.sh "$date" "$endDate"
+
+			[ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
+
+			tput civis
+			stty -echo
+
+			printf "\n\n> Return to TaskBoard"
+			read -p ''
+		;;
+	esac
+}
+
+
+# PROGRAM START
 
 # Set window title
 osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"' &
@@ -24,302 +252,44 @@ osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBo
 # Set up directory and files
 cd "$(dirname "${BASH_SOURCE[0]}")"
 source taskswap.sh
+source ../common/menu.sh
 mkdir -p ../appdata/taskboard
-touch ../appdata/taskboard/tasks
 
 # Read TaskSwap settings from config file
-touch ../appdata/taskboard/taskswap.config
-source ../appdata/taskboard/taskswap.config
+[ -f ../appdata/taskboard/taskswap.config ] && source ../appdata/taskboard/taskswap.config
 
-# Initialize tasks
-tasks=()
+if [ ! "$ITEMS_DIR" ]
+then
+	clear
+	echo 'Welcome to TaskBoard! Please choose a directory for item folders.'
+	echo "Default is ${HOME}/items/"
+	echo 'Type the full name of the directory or leave blank to use default:'
+
+	read ITEMS_DIR
+	[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items/"
+
+	save-config
+fi
+mkdir -p "$ITEMS_DIR"
+
 selected=0
-active=-1
 
-# Read in saved tasks from file
-while read line
-do
-	tasks[${#tasks[*]}]="$line"
-	deactivate "$line" &
-done < ../appdata/taskboard/tasks
-
-# Save and clear the screen
-tput smcup
-tput clear
-tput civis
-
-# Program loop
 while :
 do
-	# Draw GUI
-	display="$(printf "\033[2J\
-==============================================================
-| Q: Quit TaskBoard | N: New Task       | X: Close Selected  |
-| [Enter]: Activate/Deactivate Selected | R: Reload Selected |
-| M: More Options                                            |
-|------------------------------------------------------------|
-"
-	for ((i = 0; i < ${#tasks[@]}; i++))
-	do
-		if [ $selected = $i ]; then s=">"; else s=" "; fi
-		if [ $active = $i ]; then a="*"; else a=" "; fi
-		printf "\
-| $s$a%s |\033[0K
-" "$(echo "${tasks[i]}                                                        " | sed "s/\(.\{56\}\).*/\1/")"
-	done
-	printf "\
-==============================================================
-")"
-	tput home
-	echo "$display"
+	menu "\
+Q: Quit TaskBoard | N: New Task       | X: Close Selected
+[Enter]: Activate/Deactivate Selected | M: More Options" "$(load_items "$ITEMS_DIR")" $selected 'Q' 'N' 'X' 'M'
 
-	# Wait for input
-	tput el
-	read -sn 1 input
-	tput el1
-	case "$(echo "$input" | tr a-z A-Z)" in
+	selected=$menu_selected
+	jiranum="$(echo "${menu_value:1}" | cut -d ' ' -f 1)"
+	repo=
+	name="$(echo "${menu_value:1} " | cut -d ' ' -f 4-)"
 
-		# Arrow key
-		"" )
-			read -sn 2 -t 1 input
-			tput el1
-			case "$input" in
-				# Up arrow
-				"[A" )
-					if [ $selected -gt 0 ]
-					then
-						(( --selected ))
-					else
-						selected=$(( ${#tasks[*]} - 1 ))
-					fi
-				;;
-				# Down Arrow
-				"[B" )
-					if [ $selected -lt $(( ${#tasks[*]} - 1 )) ]
-					then
-						(( ++selected ))
-					else
-						selected=0
-					fi
-				;;
-			esac
-		;;
-
-		# Quit Taskboard
-		"Q" )
-			if [ $active -gt -1 ]
-			then
-				deactivate "${tasks[$active]}" &
-				../timelog/timelog.sh "${tasks[$active]}" end
-			fi
-			break
-		;;
-
-		# New Task
-		"N" )
-			# Get input
-			clear
-			tput cnorm
-			read -p "JIRA URL or Number: " jiraurl
-			if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/#\?]+).* ]]
-			then
-				jiranum="${BASH_REMATCH[1]}"
-			else
-				if [[ "$jiraurl" =~ ^[A-Za-z]+-[0-9]+$ ]]
-				then
-					jiranum="$jiraurl"
-				else
-					tput civis
-					printf "Invalid URL or JIRA Number:\n$jiraurl\n\n> Return to TaskBoard"
-					read -sp ""
-					continue
-				fi
-			fi
-			read -p "GitHub URL or Message: " gitOrMsg
-			tput civis
-			repo=""
-			message=""
-			if [[ "$gitOrMsg" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
-			then
-				repo="${BASH_REMATCH[1]}"
-			else
-				message=" $gitOrMsg"
-			fi
-			# Start new task
-			tput rmcup
-			new "$jiranum" "$repo"
-			tput smcup
-			tput clear
-			# Add new task to list
-			selected=${#tasks[*]}
-			tasks[${#tasks[*]}]="${jiranum}   ${repo}${message}"
-			# Switch active task to new task
-			if [ $active -gt -1 ]
-			then
-				deactivate "${tasks[$active]}" &
-				../timelog/timelog.sh "${tasks[$active]}" end
-			fi
-			active=$selected
-			# Save task and start timelog
-			echo "${tasks[$active]}" >> ../appdata/taskboard/tasks
-			../timelog/timelog.sh "${tasks[$active]}" start
-		;;
-
-		# Close Selected
-		"X" )
-			if [ ${#tasks[*]} -gt 0 ]
-			then
-				close "${tasks[$selected]}" &
-				# Remove task from saved task list
-				sed -i "" "/${tasks[$selected]}/d" ../appdata/taskboard/tasks
-				# If closing active task, end timelog and unset active; else adjust active
-				if [ $active = $selected ]
-				then
-					../timelog/timelog.sh "${tasks[$active]}" end
-					active=-1
-				else
-					if [ $active -gt $selected ]
-					then
-						(( --active ))
-					fi
-				fi
-				# Remove task and adjust selected
-				tasks=("${tasks[@]:0:$selected}" "${tasks[@]:$(( $selected + 1 )):${#tasks[*]}}")
-				if [ $selected = ${#tasks[*]} ]; then (( --selected )); fi
-			fi
-		;;
-
-		# Activate/Deactivate Selected
-		"" )
-			# Deactivate active task and activate selected task
-			if [ ${#tasks[*]} -gt 0 ]
-			then
-				if [ $active -gt -1 ]
-				then
-					deactivate "${tasks[$active]}" &
-					../timelog/timelog.sh "${tasks[$active]}" end
-				fi
-				if [ $selected = $active ]
-				then
-					active=-1
-				else
-					activate "${tasks[$selected]}" &
-					active=$selected
-					../timelog/timelog.sh "${tasks[$active]}" start
-				fi
-			fi
-		;;
-
-		# Reload
-		"R" )
-			# Deactivate active task and reload selected task
-			if [ ${#tasks[*]} -gt 0 ]
-			then
-				if [ $active -gt -1 ] && [ ! $selected = $active ]
-				then
-					deactivate "${tasks[$active]}" &
-					../timelog/timelog.sh "${tasks[$active]}" end
-				fi
-				close "${tasks[$selected]}"
-				new "$(echo "${tasks[$selected]}" | cut -d " " -f 1)" "$(echo "${tasks[$selected]}" | cut -d " " -f 4)" &
-				active=$selected
-				../timelog/timelog.sh "${tasks[$active]}" start
-			fi
-		;;
-
-		# More Options
-		"M" )
-			clear
-			printf "\
-[Enter]: Return to TaskBoard
-E: Enable/Disable TaskSwap
-S: Set Current Window Positions as Default
-T: TimeReport
-"
-			tput el
-			read -sn 1 input
-			tput el1
-			case "$(echo "$input" | tr a-z A-Z)" in
-				# Options for TaskBoard to Enable or Disable Apps
-				"E" )
-					while :
-					do
-						clear
-						printf "\
-[Enter]: Return to TaskBoard
-1: %s Atom
-2: %s Chrome
-3: %s Terminal
-" "$(sed 's/^$/Enable/;s/^true$/Disable/' <<< "$enableAtom")" "$(sed 's/^$/Enable/;s/^true$/Disable/' <<< "$enableChrome")" "$(sed 's/^$/Enable/;s/^true$/Disable/' <<< "$enableTerminal")"
-					
-						tput el
-						read -sn 1 input
-						tput el1
-						case "$input" in
-							"1" )
-								enableAtom="$(sed 's/^true$/false/;s/^$/true/;s/^false$//' <<< "$enableAtom")"
-							;;
-
-							"2" )
-								enableChrome="$(sed 's/^true$/false/;s/^$/true/;s/^false$//' <<< "$enableChrome")"
-							;;
-
-							"3" )
-								enableTerminal="$(sed 's/^true$/false/;s/^$/true/;s/^false$//' <<< "$enableTerminal")"
-							;;
-
-							* )
-								break
-							;;
-						esac
-					done
-
-					echo "enableAtom='$enableAtom'" > ../appdata/taskboard/taskswap.config
-					echo "enableChrome='$enableChrome'" >> ../appdata/taskboard/taskswap.config
-					echo "enableTerminal='$enableTerminal'" >> ../appdata/taskboard/taskswap.config
-				;;
-
-				# Set Current Window Positions as Default 
-				"S" )
-					if [ $active -gt -1 ]
-					then
-						save-window-bounds "${tasks[$active]}"
-						clear
-						printf "The current window positions and sizes have been set as default.\n\n> Return to TaskBoard"
-						read -sp ""
-					else
-						clear
-						printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
-						read -sp ""
-					fi
-					clear
-				;;
-
-				# Run TimeReport
-				"T" )
-					clear
-					tput cnorm
-					read -p "Start Date (format yyyy-mm-dd; leave blank for today): " date
-					read -p "End Date (format yyyy-mm-dd; leave blank for same as start): " endDate
-
-					if [ $active -gt -1 ]
-					then
-						../timelog/timelog.sh "${tasks[$active]}" end
-					fi
-
-					../timelog/timereport.sh "$date" "$endDate"
-
-					if [ $active -gt -1 ]
-					then
-						../timelog/timelog.sh "${tasks[$active]}" start
-					fi
-
-					tput civis
-					printf "\n\n> Return to TaskBoard"
-					read -sp ""
-					tput clear
-				;;
-			esac
-		;;
+	case "$menu_key" in
+		'' ) select-task;;
+		'Q' ) quit;;
+		'N' ) new-task;;
+		'X' ) close-task;;
+		'M' ) more_options;;
 	esac
 done
