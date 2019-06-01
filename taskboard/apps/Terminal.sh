@@ -40,7 +40,7 @@ new_Terminal() {
 				set the custom title of the front window to \"${jiranum}\"
 				set the bounds of the front ${selector} to {${bounds1}}
 
-				do script \"J=${jiranum}; cd ${folder}/${repo} && git co ${jiranum}/trunk || (git co master && git co -b ${jiranum}/trunk); git branch\"
+				do script \"J=${jiranum}; cd ${folder}/${repo} && (git co ${jiranum}/trunk || git co master; git branch)\"
 				set the custom title of the front window to \"${jiranum}\"
 				set the bounds of the front ${selector} to {${bounds2}}
 			end tell
