@@ -7,7 +7,7 @@ then
 	shift
 fi
 
-group="$(get_current_group)"
+group="$(get_current_group 2>/dev/null)"
 message="$@"
 
 if [ "$message" ] && [[ "$group" =~ $jira_regex ]]
