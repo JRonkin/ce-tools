@@ -1,5 +1,5 @@
-# Yext CE Tools
-*A repository for scripts and automation tools related to Yext Consulting Engineering*
+# CE Tools
+*A repository for scripts and automation tools related to Consulting Engineering*
 
 ### INSTALL INSTRUCTIONS:
 1. Clone this repo
@@ -43,8 +43,8 @@
 - Submit time to JIRA, logged individually for each item on each day
 
 ### Scripts
-*Shortcut: yts [SCRIPTNAME]*
-- add-dns: step-through automation of adding a yext-cdn DNS entry (bridge domain)
+*Shortcut: ce [SCRIPTNAME]*
+- add-dns: step-through automation of adding a DNS entry (bridge domain)
 - custom-field-audit: find all the custom fields used in a site
 - deactivate-site: step through the process of deactivating a Pages site
 - pager: run old pager (json pager)
@@ -52,4 +52,4 @@
 - reset-alpha: reset the local repo of alpha by re-cloning, re-installing, and re-making binaries
 - s3-download: download site files from S3
 - sites-pager-helper: start sites-pager for a site
-- update: update alpha, generator-ysp, pages-builder, pages-tools, yext-ce-tools, and homebrew
+- update: update alpha, generator-ysp, pages-builder, pages-tools, ce-tools, and homebrew

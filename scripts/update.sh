@@ -11,42 +11,42 @@ fi
 	cd $CONGO && git co master && git pull && glock sync congo && glock sync yext && make
 	cd $ALPHA && git co master && git pull && make
 ) &
-if ! [ "$parallel" ]; then wait; fi
+[ $parallel ] || wait
 
 # generator ysp
 cd ~/repo/generator-ysp && git co master && git pull && yarn install && yarn link &
-if ! [ "$parallel" ]; then wait; fi
+[ $parallel ] || wait
 
 # pages builder
 cd ~/repo/pages-builder && git pull &
-if ! [ "$parallel" ]; then wait; fi
+[ $parallel ] || wait
 
 # pages tools
 cd ~/repo/pages-tools && git pull &
-if ! [ "$parallel" ]; then wait; fi
+[ $parallel ] || wait
 
 # Homebrew
 brew upgrade &
-if ! [ "$parallel" ]; then wait; fi
+[ $parallel ] || wait
 
 # npm
 (
-	npm i -g npm 
+	npm i -g npm
 	npm i -g bower
 	npm install -g yo
 ) &
-if ! [ "$parallel" ]; then wait; fi
+[ $parallel ] || wait
 
 # Python
 (
 	pip install --upgrade pip --user
 	pip install --upgrade awscli --user
 ) &
-if ! [ "$parallel" ]; then wait; fi
+[ $parallel ] || wait
 
 
 
 # Keep this last so that updating doesn't change this script before it's finished
-# yext ce tools
-cd ~/repo/yext-ce-tools && git pull &
+# ce tools
+cd ~/repo/ce-tools && git pull &
 wait

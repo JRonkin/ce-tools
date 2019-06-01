@@ -102,7 +102,7 @@ new-task() {
 	stty echo
 
 	read -p "JIRA URL or Number: " jiraurl
-	if [[ "$jiraurl" =~ .*yexttest\.atlassian\.net\/browse\/([^/#\?]+).* ]]
+	if [[ "$jiraurl" =~ .*\.atlassian\.net\/browse\/([^/#?]+).* ]]
 	then
 		jiranum="${BASH_REMATCH[1]}"
 	else
@@ -204,7 +204,7 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
 			save-config
 		;;
 
-		# Set Current Window Positions as Default 
+		# Set Current Window Positions as Default
 		'S' )
 			if [ "$active_jira" ]
 			then

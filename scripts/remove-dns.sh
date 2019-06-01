@@ -31,7 +31,7 @@ git pull
 
 if [ ! "$domain" ]
 then
-	read -p "Site Domain (format: 'locations.yext.com'): " domain
+	read -p "Site Domain (format: 'locations.example.com'): " domain
 fi
 
 if [ ! "$(cat "$DNS_FILE" | grep "^${domain}:\$")" ]
@@ -62,7 +62,7 @@ mv ${DNS_FILE}.tmp ${DNS_FILE}
 echo "Creating new commit for ${DNS_FILE}..."
 git add "$DNS_FILE"
 
-echo ""
+echo
 echo "COMMIT MESSAGE FORMAT:"
 echo "yext-cdn octodns: Remove BRAND_NAME"
 echo "J=JIRA_NUMBER"

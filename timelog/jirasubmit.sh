@@ -6,7 +6,7 @@ usage="Usage: jirasubmit.sh [-hq] [-u username [-t api_token]] jira_number hours
 definitions=(""
 	"-h = help"
 	"-q = quiet (suppress non-error messages)"
-	"-u username = JIRA username (your Yext email address)"
+	"-u username = JIRA username (your email address)"
 	"-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
 	""
 	"jira_number = issue to log time to -- format: PC-XXXXX"
@@ -141,4 +141,3 @@ case "$response" in
 		exit 1
 	;;
 esac
-
