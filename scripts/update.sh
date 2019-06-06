@@ -22,6 +22,10 @@ cd ~/repo/pages-tools && git pull &
 brew upgrade &
 [ $parallel ] || wait
 
+# Install Pager
+go install ~/alpha/gocode/src/yext/pages/sites/scripts/pager &
+[ $parallel ] || wait
+
 # npm
 npm i -g npm bower yo &
 [ $parallel ] || wait
