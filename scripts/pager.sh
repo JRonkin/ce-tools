@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 if [ "$1" = 'dist' ]
 then
 	dist='serve:dist'

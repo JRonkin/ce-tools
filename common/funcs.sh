@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 hash() {
 	cksum <<< "$1" | cut -d ' ' -f 1
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 source "$(dirname "${BASH_SOURCE[0]}")/../common/timefuncs.sh"
 
 #S3 bucket for log files

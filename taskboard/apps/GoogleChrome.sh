@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 selector_GoogleChrome() {
 	local jiranum="$1"
 	local repo="$2"

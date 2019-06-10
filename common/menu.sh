@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 clear-menu() {
 	# Restore Terminal state
 	stty $originalTTYState &>/dev/null

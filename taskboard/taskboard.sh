@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Helper Functions
 
 save-config() {

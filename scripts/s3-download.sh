@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Set constants
 
 #S3 bucket for site files

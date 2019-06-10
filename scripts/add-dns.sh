@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 DNS_FILE="octodns/yext-cdn.com.yaml"
 
 cd $ALPHA

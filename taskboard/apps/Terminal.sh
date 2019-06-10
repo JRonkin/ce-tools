@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 selector_Terminal() {
 	local jiranum="$1"
 	local repo="$2"

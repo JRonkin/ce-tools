@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 hours2seconds() {
 	bc <<< "scale = 0; ${1} * 3600 / 1"
 }
