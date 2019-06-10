@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 jira-auth() {
 	username="$1"
 	if [ ! "$username" ]

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 if [ ! -d src/templates ]
 then
 	echo "Error: 'src/templates/' not found. Run this script from the root of a repo."

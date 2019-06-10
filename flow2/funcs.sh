@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Most of these were taken from pages-flow-common
 
 tag_format_regex="^([0-9]+)\.([0-9]+)\.([0-9]+)$"

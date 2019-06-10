@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 while read filename
 do
 	cat "$filename" | sort -u > "${filename}.tmp"

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Run from [repo]/src
 
 # Make messages directory with .gitkeep so new webpack works

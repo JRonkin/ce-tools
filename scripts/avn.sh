@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # avn only triggers after doing 'cd' to a directory with .node-version
 # That doesn't work in scripts, and I don't know how to trigger it manually.
 # This script solves that problem.

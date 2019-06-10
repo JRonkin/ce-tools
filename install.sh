@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 if [ ! "$(grep "# ce tools" < "${HOME}/.bash_profile")" ]
 then
 	cd "$(dirname "${BASH_SOURCE[0]}")"

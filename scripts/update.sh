@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Run updates in parallel if flag is set
 parallel=''
 if [ "$1" = "-p" ]

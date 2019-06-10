@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Backup alpha
 cd ~
 mv alpha alpha.bak

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 domain="$1"
 
 DNS_FILE="octodns/yext-cdn.com.yaml"
