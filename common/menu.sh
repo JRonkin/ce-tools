@@ -16,7 +16,7 @@ clean-exit() {
 }
 
 menu() {
-	if [ ! "$originalTTYState" ]
+	if [[ ! "$originalTTYState" ]]
 	then
 		# Save terminal state
 		originalTTYState="$(stty -g)"
@@ -40,7 +40,7 @@ menu() {
 
 	local triggers=()
 	local input
-	while [ "$1" ]
+	while [[ "$1" ]]
 	do
 		input="$(echo "$1" | tr 'a-z' 'A-Z')"
 		triggers[$(printf %d \'$input)]=true
@@ -51,14 +51,14 @@ menu() {
 	local line
 	while IFS= read line
 	do
-		[ ${#line} -gt $width ] && width=${#line}
+		[[ ${#line} -gt $width ]] && width=${#line}
 	done <<< "$header"
 	(( width -= 1 ))
 	while IFS= read line
 	do
-		[ ${#line} -gt $width ] && width=${#line}
+		[[ ${#line} -gt $width ]] && width=${#line}
 	done <<< "$options"
-	[ $(( width += 5 )) -gt $(tput cols) ] && width=$(tput cols)
+	[[ $(( width += 5 )) -gt $(tput cols) ]] && width=$(tput cols)
 
 	# Print Menu
 	local start=1
@@ -67,11 +67,11 @@ menu() {
 	tput home
 	printf "\033[2J$(seq  -f '=' -s '' $width)\n"
 
-	if [ "$header" ]
+	if [[ "$header" ]]
 	then
 		while IFS= read line
 		do
-			[ ${#line} -gt $(( width - 4 )) ] && line="${line:0:$(( width - 5 ))}…"
+			[[ ${#line} -gt $(( width - 4 )) ]] && line="${line:0:$(( width - 5 ))}…"
 			printf "| ${line}$(seq  -f ' ' -s '' $(( $width - 3 - ${#line} )))|\n"
 			(( ++start ))
 			(( ++end ))
@@ -80,16 +80,16 @@ menu() {
 
 	while IFS= read line
 	do
-		if [ "$line" ]
+		if [[ "$line" ]]
 		then
-			if [ $end = $start ] && [ $start -gt 1 ]
+			if [[ $end = $start ]] && [[ $start -gt 1 ]]
 			then
 				printf "|$(seq  -f '-' -s '' $(( $width - 2 )))|\n"
 				(( ++start ))
 				(( ++end ))
 			fi
 
-			[ ${#line} -gt $(( width - 5 )) ] && line="${line:0:$(( width - 6 ))}…"
+			[[ ${#line} -gt $(( width - 5 )) ]] && line="${line:0:$(( width - 6 ))}…"
 			printf "|  ${line}$(seq  -f ' ' -s '' $(( $width - 4 - ${#line} )))|\n"
 			optionsArray[${#optionsArray[@]}]="$line"
 			(( ++end ))
@@ -99,17 +99,17 @@ menu() {
 	printf "$(seq  -f '=' -s '' $width)\n"
 
 	# Set Cursor
-	if [ $selected -lt 0 ]
+	if [[ $selected -lt 0 ]]
 	then
 		selected=0
 	fi
-	if [ ! $selected -lt $(( $end - $start )) ]
+	if [[ ! $selected -lt $(( $end - $start )) ]]
 	then
 		selected=$(( $end - $start - 1 ))
 	fi
 	local cursor=$(( $start + $selected ))
 
-	if [ ! $cursor -lt $start ]
+	if [[ ! $cursor -lt $start ]]
 	then
 		tput cup $cursor 2
 		printf '>'
@@ -121,28 +121,28 @@ menu() {
 	do
 		IFS= read -n 1 input
 
-		if [ "$input" = "" ]
+		if [[ "$input" = "" ]]
 		then
 			read -n 2 -t 1 input
 
 			case "$input" in
 				# Up arrow
 				"[A" )
-					if [ $(( --cursor )) -lt $start ]
+					if [[ $(( --cursor )) -lt $start ]]
 					then
 						cursor=$(( $end - 1 ))
 					fi
 				;;
 				# Down Arrow
 				"[B" )
-					if [ ! $(( ++cursor )) -lt $end ]
+					if [[ ! $(( ++cursor )) -lt $end ]]
 					then
 						cursor=$start
 					fi
 				;;
 			esac
 
-			if [ ! $cursor -lt $start ] && [ $cursor -lt $end ]
+			if [[ ! $cursor -lt $start ]] && [[ $cursor -lt $end ]]
 			then
 				printf ' '
 				tput cup $cursor 2
@@ -152,7 +152,7 @@ menu() {
 			fi
 		else
 			input="$(echo "$input" | tr 'a-z' 'A-Z')"
-			if [ ! "$input" ] || [ "${triggers[$(printf %d \'$input)]}" ]
+			if [[ ! "$input" ]] || [[ "${triggers[$(printf %d \'$input)]}" ]]
 			then
 				menu_key="$input"
 				menu_selected=$selected

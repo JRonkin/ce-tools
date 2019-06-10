@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [ ! "$(grep "# ce tools" < "${HOME}/.bash_profile")" ]
+if [[ ! "$(grep "# ce tools" < "${HOME}/.bash_profile")" ]]
 then
 	cd "$(dirname "${BASH_SOURCE[0]}")"
 	export PATH="$PATH:$(pwd)/shortcuts"
