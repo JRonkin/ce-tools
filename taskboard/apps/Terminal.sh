@@ -48,7 +48,7 @@ new_Terminal() {
 	else
 		printf "
 			tell app \"Terminal\"
-				do script \"J=${jiranum}\"
+				do script \"J=${jiranum}; cd ${folder}\"
 				set the custom title of the front window to \"${jiranum}\"
 				set the bounds of the front ${selector} to {${bounds2}}
 			end tell
