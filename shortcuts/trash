@@ -1,2 +1,1 @@
-source "$(dirname "${BASH_SOURCE[0]}")"/../common/funcs.sh
-trash $@
+source "$(dirname "${BASH_SOURCE[0]}")"/../common/trash.sh $@

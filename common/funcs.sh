@@ -11,9 +11,9 @@ trash() {
 		then
 			echo "trash: ${file}: No such file or directory" >&2
 		else
-			pushd $(dirname "$file")
+			pushd $(dirname "$file") > /dev/null
 			osascript -e "tell app \"Finder\" to delete POSIX file \"$(pwd)/$(basename "$file")\"" 1>/dev/null
-			popd
+			popd > /dev/null
 		fi
 	fi
 }
