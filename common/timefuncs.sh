@@ -7,7 +7,7 @@ seconds2hours() {
 }
 
 time2epoch() {
-	date -ju -f "%H:%M:%S" "$1" "+%s" || date -ju -f "%H:%M" "$1" "+%s"
+	date -ju -f "%H:%M:%S" "$1" "+%s" 2>/dev/null || date -ju -f "%H:%M:%S" "${1}:00" "+%s"
 }
 
 date2epoch() {

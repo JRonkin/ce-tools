@@ -132,6 +132,9 @@ do
 				"time" )
 					while read -d " " period
 					do
+						[[ "$period" = -* ]] && period="00:00:00${period}"
+						[[ "$period" = *- ]] && period="${period}23:59:59"
+
 						sums[$index]=$(( ${sums[$index]} + $(timediff ${period/-/ }) ))
 					done <<< "${line} "
 					linetype="skip"
