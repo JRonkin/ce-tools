@@ -62,8 +62,8 @@ case "$command" in
 		linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
 		if ! [ "$linenum" ]
 		then
-			echo "Error: no open start time found for '$item'"
-			exit 1
+			./timelog.sh "$item" start '0:00:00'
+			linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
 		fi
 		if [ "$#" -lt 3 ]
 		then
