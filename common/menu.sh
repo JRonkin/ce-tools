@@ -31,10 +31,14 @@ menu() {
 
 	local header="$1"
 	shift
+
 	local options="$1"
 	shift
-	local selected=0$1
+
+	local selected="$1"
+	[[ ! "$selected" =~ ^[0-9]+$ ]] && selected=0
 	shift
+
 	local optionsArray=()
 
 	local triggers=()
