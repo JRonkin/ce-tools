@@ -3,7 +3,7 @@
 
 # Make messages directory with .gitkeep so new webpack works
 mkdir ../messages 2>/dev/null
-[ ! -f ../messages/.gitkeep ] && touch ../messages/.gitkeep
+[[ ! -f ../messages/.gitkeep ]] && touch ../messages/.gitkeep
 
 # Move readme file from old location to correct location
 mv -n Readme.md ../README.md 2>/dev/null

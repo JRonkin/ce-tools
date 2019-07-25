@@ -32,7 +32,7 @@ get_current_group() {
 
   group_regex="([^\/]*)/"
   branch_name="$(get_current_branch)"
-  if [[ $branch_name =~ $group_regex ]]; then
+  if [[ ${branch_name} =~ $group_regex ]]; then
     name="${BASH_REMATCH[1]}"
     echo "${name}"
   else

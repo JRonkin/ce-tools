@@ -4,11 +4,11 @@ hash() {
 }
 
 trash() {
-	if [ "$1" ]
+	if [[ "$1" ]]
 	then
 		file="$1"
 
-		if [ ! -f "$file" ] && [ ! -d "$file" ]
+		if [[ ! -f "$file" ]] && [[ ! -d "$file" ]]
 		then
 			echo "trash: ${file}: No such file or directory" >&2
 		else

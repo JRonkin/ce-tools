@@ -19,7 +19,7 @@ encode-filename() {
 # Get arguments
 
 domain="$1"
-if [ ! "$domain" ]
+if [[ ! "$domain" ]]
 then
 	echo
 	read -p "Enter the site domain to be downloaded: " domain
@@ -40,17 +40,17 @@ allfolders="$(awscli s3 ls "s3://${BUCKET}/${domain}/prod/" | grep PRE | sed 's/
 
 echo "$allfolders" | wc -l | tr -d ' '
 
-if [ ! "$allfolders" ]
+if [[ ! "$allfolders" ]]
 then
 	echo 'No folders found to download. Exiting script.'
 	exit 1
 else
-	if [ "$(echo "$allfolders" | wc -l | tr -d ' ')" -eq 1 ]
+	if [[ "$(echo "$allfolders" | wc -l | tr -d ' ')" -eq 1 ]]
 	then
 		echo "Found one folder: ${allfolders}"
 		folder="$allfolders"
 	else
-		while [ ! "$(echo "$allfolders" | grep -e "^${folder}\$")" ]
+		while [[ ! "$(echo "$allfolders" | grep -e "^${folder}\$")" ]]
 		do
 			echo "Found the following folders:"
 			echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -81,7 +81,7 @@ mkdir "${domain}_files"
 # Download the conflicting files individually
 # Can be done in the background while URL-encoding other files
 
-if [ "$conflicts" ]
+if [[ "$conflicts" ]]
 then
 	(
 		concurrent=0
@@ -117,7 +117,7 @@ while read filename
 do
 	mv "$filename" "../${domain}_files/$(encode-filename "$filename")"
 
-	if [ $((counter++)) -gt $onepercent ]
+	if [[ $((counter++)) -gt $onepercent ]]
 	then
 		echo -ne "\r$(( (completed += $counter) * 100 / $numfiles ))%\033[0K"
 		counter=0
@@ -130,7 +130,7 @@ rm -R "${domain}_files_tmp"
 
 
 # Wait for download conflicting files background process to finish
-if [ "$conflicts" ]
+if [[ "$conflicts" ]]
 then
 	echo "Resolving $(echo "$conflicts" | wc -l | tr -d ' ') file/directory name conflicts..."
 	wait

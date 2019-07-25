@@ -80,17 +80,17 @@ do
 	esac
 done
 
-if [ ! "$username" ]
+if [[ ! "$username" ]]
 then
 	apiToken=""
 fi
 
 shift $((OPTIND-1))
 
-if [ "$1" ]
+if [[ "$1" ]]
 then
 	date="$(date -ju -f "%Y-%m-%d" "$1" "+%Y-%m-%d")"
-	if [ ! "$date" ]
+	if [[ ! "$date" ]]
 	then
 		echo "Error: invalid date. Date must be in the format yyyy-mm-dd"
 		exit 1
@@ -99,7 +99,7 @@ else
 	date="$(date "+%Y-%m-%d")"
 fi
 
-if [ "$2" ]
+if [[ "$2" ]]
 then
 	endDate="$(date -ju -f "%Y-%m-%d" "$2" "+%Y-%m-%d")"
 	if [ ! "$endDate" ]
@@ -114,7 +114,7 @@ fi
 while read epoch
 do
 	file="../appdata/timelog/logs/$(epoch2date $epoch).log"
-	if [ -f "$file" ]
+	if [[ -f "$file" ]]
 	then
 		linetype="msg"
 		while read line
@@ -122,7 +122,7 @@ do
 			case "$linetype" in
 				"msg" )
 					index="$(cksum <<< "$line" | cut -d " " -f 1)"
-					if [ ! "${messages[$index]}" ]
+					if [[ ! "${messages[$index]}" ]]
 					then
 						indices[${#indices[*]}]=$index
 						messages[$index]="$line"
@@ -154,11 +154,11 @@ for index in ${indices[@]}
 do
 	hours=$(seconds2hours "${sums[$index]}")
 	roundedHours=$(round $hours $roundto $decimals)
-	if [ ! $roundedHours = 0 ]
+	if [[ ! $roundedHours = 0 ]]
 	then
 		echo "${roundedHours} hours: ${messages[$index]}"
 	fi
-	if [ $unrounded ]
+	if [[ $unrounded ]]
 	then
 		totalhours=$(bc <<< "${totalhours} + ${hours}")
 	else
@@ -167,7 +167,7 @@ do
 done
 sed 's/^\./0\./' <<< "${totalhours} hours total"
 
-if [ ! "$jira" ]
+if [[ ! "$jira" ]]
 then
 	read -p "Log to JIRA? You can edit on JIRA after submitting. (y/N) " jira
 	if [[ ! "$jira" =~ ^[Yy]([Ee][Ss])?$ ]]
@@ -176,11 +176,11 @@ then
 	fi
 fi
 
-if [ "$jira" ]
+if [[ "$jira" ]]
 then
 	jira-auth "$username" "$apiToken"
 
-	if [ "$endDate" = "$date" ]
+	if [[ "$endDate" = "$date" ]]
 	then
 		for index in ${indices[@]}
 		do

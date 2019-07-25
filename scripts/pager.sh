@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [ "$1" = 'dist' ]
+if [[ "$1" = 'dist' ]]
 then
 	dist='serve:dist'
 fi

@@ -47,32 +47,32 @@ done
 
 shift $((OPTIND-1))
 
-if [ ! "$1" ]
+if [[ ! "$1" ]]
 then
 	echo 'Error: missing start date'
 	exit 1
 fi
 start="$(date -ju -f '%Y-%m-%d' "$1" '+%Y-%m-%d')"
-if [ ! "$start" ]
+if [[ ! "$start" ]]
 then
 	echo 'Error: invalid start date. Date must be in the format yyyy-mm-dd'
 	exit 1
 fi
 
-if [ ! "$2" ]
+if [[ ! "$2" ]]
 then
 	echo 'Error: missing end date'
 	exit 1
 fi
 end="$(date -ju -f '%Y-%m-%d' "$2" '+%Y-%m-%d')"
-if [ ! "$start" ]
+if [[ ! "$start" ]]
 then
 	echo 'Error: invalid end date. Date must be in the format yyyy-mm-dd'
 	exit 1
 fi
 
 output_directory='cloudflare_logs'
-if [ "$3" ]
+if [[ "$3" ]]
 then
 	output_directory="$3"
 fi
@@ -116,7 +116,7 @@ do
 		gunzip "$zippedlog"
 		logfile="${zippedlog%.*}"
 
-		if [ "$exclude" ]
+		if [[ "$exclude" ]]
 		then
 			cat "${logfile}" | grep "$include" | grep -v "$exclude" >> "${cwd}/${day//-}.log"
 		else

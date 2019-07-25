@@ -5,7 +5,7 @@ do
 	mv "${filename}.tmp" "$filename"
 
 	conflicts="$(cat "$filename" | sed 's/^\([^,]*\),.*$/\1/' | uniq -d)"
-	if [ "$conflicts" ]
+	if [[ "$conflicts" ]]
 	then
 		>&2 echo "$(echo "$conflicts" | wc -l | tr -d ' ') CONFLICTS in '${filename}':"
 		>&2 echo "$conflicts"

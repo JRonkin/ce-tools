@@ -17,7 +17,7 @@ Double-check everything!
 "
 
 read -p 'Are you SURE you want to deactivate a site? Type the title of the above article to continue: ' confirmation
-if [ ! "$(echo "$confirmation" | tr A-Z a-z)" = "deactivating a site" ]
+if [[ ! "$(echo "$confirmation" | tr A-Z a-z)" = "deactivating a site" ]]
 then
 	echo "Title does not match. Exiting script."
 	exit

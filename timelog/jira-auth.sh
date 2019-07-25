@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 jira-auth() {
 	username="$1"
-	if [ ! "$username" ]
+	if [[ ! "$username" ]]
 	then
 		username="$(security find-generic-password -s "TimeLog" -l "JIRA API token" 2>/dev/null | grep '"acct"' | cut -d = -f 2 | tr -d \")"
 
-		while [ ! "$username" ]
+		while [[ ! "$username" ]]
 		do
 			read -p "JIRA Username: " username
 		done
@@ -14,9 +14,9 @@ jira-auth() {
 	apiToken="$2"
 	savedToken="$(security find-generic-password -s "TimeLog" -a "$username" -w 2>/dev/null)"
 
-	if [ "$apiToken" ]
+	if [[ "$apiToken" ]]
 	then
-		if [ "$savedToken" ] && [ ! "$apiToken" = "$savedToken" ]
+		if [[ "$savedToken" ]] && [[ ! "$apiToken" = "$savedToken" ]]
 		then
 			echo "The given API token does not match the saved token for '${username}'."
 			if [[ "$(read -p "Update saved token? (y/N) " ans; echo $ans)" =~ ^[Yy]([Ee][Ss])?$ ]]
@@ -25,7 +25,7 @@ jira-auth() {
 			fi
 		fi
 	else
-		if [ "$savedToken" ]
+		if [[ "$savedToken" ]]
 		then
 			apiToken="$savedToken"
 		else
@@ -33,7 +33,7 @@ jira-auth() {
 			echo "If you haven't created a token yet, create one here:"
 			echo "https://id.atlassian.com/manage/api-tokens"
 
-			while [ ! "$apiToken" ]
+			while [[ ! "$apiToken" ]]
 			do
 				read -sp "API Token: " apiToken
 				echo ""

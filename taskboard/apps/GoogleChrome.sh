@@ -19,8 +19,8 @@ new_GoogleChrome() {
 	local monitors="$3"
 
 	local bounds='279, 23, 1610, 1050'
-	[ $monitors -gt 1 ] && bounds='232, 23, 1919, 1118'
-	[ "$bounds_GoogleChrome" ] && bounds="$bounds_GoogleChrome"
+	[[ $monitors -gt 1 ]] && bounds='232, 23, 1919, 1118'
+	[[ "$bounds_GoogleChrome" ]] && bounds="$bounds_GoogleChrome"
 
 	if [ "$repo" ]
 	then

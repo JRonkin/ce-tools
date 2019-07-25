@@ -1,41 +1,41 @@
 #!/usr/bin/env bash
 # Run updates in parallel if flag is set
 parallel=''
-if [ "$1" = "-p" ]
+if [[ "$1" = "-p" ]]
 then
 	parallel=true
 fi
 
 # generator ysp
 cd ~/repo/generator-ysp && git co master && git pull && yarn install && yarn link &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 # pages builder
 cd ~/repo/pages-builder && git pull &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 # pages tools
 cd ~/repo/pages-tools && git pull &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 # Homebrew
 brew upgrade &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 # Install Pager
 go install ~/alpha/gocode/src/yext/pages/sites/scripts/pager &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 # npm
 npm i -g npm bower yo &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 # Python
 (
 	pip install --upgrade pip --user
 	pip install --upgrade awscli --user
 ) &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 # alpha and congo
 (
@@ -58,7 +58,7 @@ npm i -g npm bower yo &
 	))
 	cd $ALPHA && git co master
 ) &
-[ $parallel ] || wait
+[[ $parallel ]] || wait
 
 
 

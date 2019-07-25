@@ -28,7 +28,7 @@ do
 	esac
 done
 
-if [ "$#" -lt 2 ]
+if [[ "$#" -lt 2 ]]
 then
   echo "Error: incorrect number of arguments."
   echo "${usage}"
@@ -42,7 +42,7 @@ touch "$file"
 
 case "$command" in
 	"s" | "start" )
-		if [ "$#" -lt 3 ]
+		if [[ "$#" -lt 3 ]]
 		then
 			time="$(date +%T)"
 		else
@@ -61,12 +61,12 @@ case "$command" in
 
 	"e" | "end" )
 		linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
-		if ! [ "$linenum" ]
+		if ! [[ "$linenum" ]]
 		then
 			./timelog.sh "$item" start '0:00:00'
 			linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
 		fi
-		if [ "$#" -lt 3 ]
+		if [[ "$#" -lt 3 ]]
 		then
 			time="$(date +%T)"
 		else
@@ -76,13 +76,13 @@ case "$command" in
 	;;
 
 	"f" | "from" )
-		if [ "$#" -lt 3 ]
+		if [[ "$#" -lt 3 ]]
 		then
 			echo "Error: incorrect number of arguments."
 			echo "$command_from"
 			exit 1
 		fi
-		if [ "$#" -lt 4 ]
+		if [[ "$#" -lt 4 ]]
 		then
 			time="$(date +%T)"
 		else
@@ -93,13 +93,13 @@ case "$command" in
 	;;
 
 	"t" | "to" )
-		if [ "$#" -lt 3 ]
+		if [[ "$#" -lt 3 ]]
 		then
 			echo "Error: incorrect number of arguments."
 			echo "$command_to"
 			exit 1
 		fi
-		if [ "$#" -lt 4 ]
+		if [[ "$#" -lt 4 ]]
 		then
 			time="$(date +%T)"
 		else

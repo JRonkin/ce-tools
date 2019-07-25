@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 domain="$1"
 
-if [ ! "$domain" ]
+if [[ ! "$domain" ]]
 then
 	read -p "Site domain: " domain
 fi

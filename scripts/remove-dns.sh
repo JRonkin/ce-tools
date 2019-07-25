@@ -9,19 +9,19 @@ echo "Current directory: $(pwd)"
 branch_name="$(git symbolic-ref HEAD 2>/dev/null)" || branch_name="(no branch name)"
 branch_name="${branch_name##refs/heads/}"
 
-if ! [ "$branch_name" = "master" ]
+if ! [[ "$branch_name" = "master" ]]
 then
 	echo "Error: alpha must be on branch 'master' to continue."
 	exit 1
 fi
 
-if [ "$(git diff head)" ]
+if [[ "$(git diff head)" ]]
 then
 	echo "Error: unsaved changes on branch 'master' of alpha. Commit or stash your changes to continue."
 	exit 1
 fi
 
-if ! [ -f $DNS_FILE ]
+if ! [[ -f $DNS_FILE ]]
 then
 	echo "Error: cannot find file ${ALPHA}/${DNS_FILE}"
 	exit 1
@@ -30,12 +30,12 @@ fi
 echo "Pulling alpha..."
 git pull
 
-if [ ! "$domain" ]
+if [[ ! "$domain" ]]
 then
 	read -p "Site Domain (format: 'locations.example.com'): " domain
 fi
 
-if [ ! "$(cat "$DNS_FILE" | grep "^${domain}:\$")" ]
+if [[ ! "$(cat "$DNS_FILE" | grep "^${domain}:\$")" ]]
 then
 	echo "Entry for '${domain}' not found."
 	exit
@@ -50,7 +50,7 @@ do
 		deleting=''
 	fi
 
-	if [ ! $deleting ] && [[ ! "$line" == "${domain}:" ]]
+	if [[ ! $deleting ]] && [[ ! "$line" == "${domain}:" ]]
 	then
 		echo "$line" >> ${DNS_FILE}.tmp
 	else

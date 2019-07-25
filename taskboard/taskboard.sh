@@ -273,9 +273,9 @@ source ../common/menu.sh
 mkdir -p ../appdata/taskboard
 
 # Read TaskSwap settings from config file
-[ -f ../appdata/taskboard/taskswap.config ] && source ../appdata/taskboard/taskswap.config
+[[ -f ../appdata/taskboard/taskswap.config ]] && source ../appdata/taskboard/taskswap.config
 
-if [ ! "$ITEMS_DIR" ]
+if [[ ! "$ITEMS_DIR" ]]
 then
 	clear
 	echo 'Welcome to TaskBoard! Please choose a directory for item folders.'
@@ -283,7 +283,7 @@ then
 	echo 'Type the full name of the directory or leave blank to use default:'
 
 	read ITEMS_DIR
-	[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items/"
+	[[ "$ITEMS_DIR" ]] || ITEMS_DIR="${HOME}/items/"
 
 	save-config
 fi

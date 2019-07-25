@@ -18,11 +18,11 @@ new_Atom() {
 	local repo="$2"
 	local monitors="$3"
 
-	if [ "$repo" ]
+	if [[ "$repo" ]]
 	then
 		local bounds='279, 23, 1610, 1050'
-		[ $monitors -gt 1 ] && bounds='1920, 23, 3254, 1123'
-		[ "$bounds_Atom" ] && bounds="$bounds_Atom"
+		[[ $monitors -gt 1 ]] && bounds='1920, 23, 3254, 1123'
+		[[ "$bounds_Atom" ]] && bounds="$bounds_Atom"
 
 		local selector="$(selector_Atom "$jiranum" "$repo")"
 

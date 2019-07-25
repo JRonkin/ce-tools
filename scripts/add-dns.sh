@@ -7,19 +7,19 @@ echo "Current directory: $(pwd)"
 branch_name="$(git symbolic-ref HEAD 2>/dev/null)" || branch_name="(no branch name)"
 branch_name="${branch_name##refs/heads/}"
 
-if ! [ "$branch_name" = "master" ]
+if ! [[ "$branch_name" = "master" ]]
 then
 	echo "Error: alpha must be on branch 'master' to continue."
 	exit 1
 fi
 
-if [ "$(git diff head)" ]
+if [[ "$(git diff head)" ]]
 then
 	echo "Error: unsaved changes on branch 'master' of alpha. Commit or stash your changes to continue."
 	exit 1
 fi
 
-if ! [ -f $DNS_FILE ]
+if ! [[ -f $DNS_FILE ]]
 then
 	echo "Error: cannot find file ${ALPHA}/${DNS_FILE}"
 	exit 1
@@ -29,10 +29,10 @@ echo "Pulling alpha..."
 git pull
 
 done=''
-while [ ! "$done" ]
+while [[ ! "$done" ]]
 do
 	read -p "Site Domain (format: 'locations.example.com'): " domain
-	if [ "$(grep "^${domain//./\.}:$" ${DNS_FILE})" ]
+	if [[ "$(grep "^${domain//./\.}:$" ${DNS_FILE})" ]]
 	then
 		echo "'${domain}' is already on record."
 		exit
@@ -41,11 +41,11 @@ do
 	read -p "ttl (leave blank to not include): " ttl
 	read -p "type (leave blank for default 'CNAME'): " type
 	read -p "value (leave blank for default 'cloudflare.sitescdn.net.'): " value
-	if ! [ "$type" ]
+	if ! [[ "$type" ]]
 	then
 		type="CNAME"
 	fi
-	if ! [ "$value" ]
+	if ! [[ "$value" ]]
 	then
 		value="cloudflare.sitescdn.net."
 	fi
@@ -55,10 +55,10 @@ do
 	inserted=""
 	while IFS= read line
 	do
-		if [[ ! "$line" == "  "* ]] && [ ! $inserted ] && [[ "$domain" < "$line" ]]
+		if [[ ! "$line" == "  "* ]] && [[ ! ${inserted} ]] && [[ "$domain" < "$line" ]]
 		then
 			echo "${domain}:" >> ${DNS_FILE}.tmp
-			if [ "$ttl" ]
+			if [[ "$ttl" ]]
 			then
 				echo "  ttl: ${ttl}" >> ${DNS_FILE}.tmp
 			fi
@@ -70,7 +70,7 @@ do
 
 	done < ${DNS_FILE}
 
-	if [ ! $inserted ]
+	if [[ ! $inserted ]]
 	then
 		echo "${domain}:" >> ${DNS_FILE}.tmp
 		echo "  type: ${type}" >> ${DNS_FILE}.tmp
@@ -80,7 +80,7 @@ do
 	mv ${DNS_FILE}.tmp ${DNS_FILE}
 
 	read -p "Add another? (y/N)" done
-	if [ "$(echo "$done" | tr "A-Z" "a-z")" = "y" ] || [ "$(echo "$done" | tr "A-Z" "a-z")" = "yes" ]
+	if [[ "$(echo "$done" | tr "A-Z" "a-z")" = "y" ]] || [[ "$(echo "$done" | tr "A-Z" "a-z")" = "yes" ]]
 	then
 		done=''
 	else

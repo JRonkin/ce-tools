@@ -28,8 +28,8 @@ new_Terminal() {
 		bounds1='3255, 757, 3840, 1123'
 		bounds2='3255, 390, 3840, 756'
 	fi
-	[ "$bounds_Terminal1" ] && bounds1="$bounds_Terminal1"
-	[ "$bounds_Terminal2" ] && bounds2="$bounds_Terminal2"
+	[[ "$bounds_Terminal1" ]] && bounds1="$bounds_Terminal1"
+	[[ "$bounds_Terminal2" ]] && bounds2="$bounds_Terminal2"
 
 	local selector="$(selector_Terminal "$jiranum" "$repo")"
 

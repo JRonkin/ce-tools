@@ -49,7 +49,7 @@ do
 	esac
 done
 
-if [ ! "$username" ]
+if [[ ! "$username" ]]
 then
 	apiToken=""
 fi

@@ -2,7 +2,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/funcs.sh"
 assert_git_repo
 
-if [ "$1" = "-t" ]
+if [[ "$1" = "-t" ]]
 then
 	shift
 	tag="-t ${1}"
@@ -16,7 +16,7 @@ cd src
 "$(dirname "${BASH_SOURCE[0]}")/../scripts/avn.sh"
 cd "$cwd"
 
-if [ "$message" ]
+if [[ "$message" ]]
 then
 	git finish $tag -m "$message"
 else
