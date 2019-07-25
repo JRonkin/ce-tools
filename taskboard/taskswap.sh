@@ -5,6 +5,9 @@ do
 	source "$(dirname "${BASH_SOURCE[0]}")/apps/$appfile"
 done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
 
+# Count the number of displays (monitors)
+monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")
+
 selector() {
 	local app="$1"
 	local jiranum="$2"
@@ -29,13 +32,20 @@ save-window-bounds() {
 	) | sort > "$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard/windowbounds"
 }
 
+new-app() {
+	local app="$1"
+	local jiranum="$2"
+	local repo="$3"
+
+	new_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" "$monitors"
+}
+
 new() {
 	local name="$1"
 	local jiranum="$2"
 	local repo="$3"
 	
 	local CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
-	local monitors
 
 	local folder="${ITEMS_DIR}${jiranum}"
 	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
@@ -54,18 +64,20 @@ new() {
 	# Load window bounds
 	[ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
 
-	# Count the number of displays (monitors)
-	monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")
-
 	wait
 
 	for app in "${apps[@]}"
 	do
-		if [ ${enabledApps[$(hash "$app")]} ]
-		then
-			new_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" "$monitors" &
-		fi
+		[ ${enabledApps[$(hash "$app")]} ] && new-app "$app" "$jiranum" "$repo" &
 	done
+}
+
+activate-app() {
+	local app="$1"
+	local jiranum="$2"
+	local repo="$3"
+
+	osascript -e "tell app \"${app}\" to set index of every $(selector "$app" "$jiranum" "$repo") to 1"
 }
 
 activate() {
@@ -79,8 +91,17 @@ activate() {
 
 	for app in "${apps[@]}"
 	do
-		[ ${enabledApps[$(hash "$app")]} ] && osascript -e "tell app \"${app}\" to set index of every $(selector "$app" "$jiranum" "$repo") to 1" &
+		[ ${enabledApps[$(hash "$app")]} ] && activate-app "$app" "$jiranum" "$repo" &
 	done
+}
+
+deactivate-app() {
+	local app="$1"
+	local jiranum="$2"
+	local repo="$3"
+
+	osascript -e "tell app \"${app}\" to set miniaturized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
+	osascript -e "tell app \"${app}\" to set minimized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
 }
 
 deactivate() {
@@ -94,12 +115,16 @@ deactivate() {
 
 	for app in "${apps[@]}"
 	do
-		if [ ${enabledApps[$(hash "$app")]} ]
-		then
-			osascript -e "tell app \"${app}\" to set miniaturized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null &
-			osascript -e "tell app \"${app}\" to set minimized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null &
-		fi
+		[ ${enabledApps[$(hash "$app")]} ] && deactivate-app "$app" "$jiranum" "$repo" &
 	done
+}
+
+close-app() {
+	local app="$1"
+	local jiranum="$2"
+	local repo="$3"
+
+	osascript -e "tell app \"${app}\" to close every $(selector "$app" "$jiranum" "$repo")"
 }
 
 close() {
@@ -111,7 +136,7 @@ close() {
 
 	for app in "${apps[@]}"
 	do
-		[ ${enabledApps[$(hash "$app")]} ] && osascript -e "tell app \"${app}\" to close every $(selector "$app" "$jiranum" "$repo")" &
+		[ ${enabledApps[$(hash "$app")]} ] && close-app "$app" "$jiranum" "$repo" &
 	done
 
 	wait

@@ -12,7 +12,7 @@ save-config() {
 	done
 }
 
-load_items() {
+load-items() {
 	local directory="$1"
 	local name
 	local symbol
@@ -159,7 +159,23 @@ close-task() {
 	fi
 }
 
-more_options() {
+apps-menu() {
+	menu "$(timelog-message "$jiranum" "$repo" "$name")
+[Enter]: Open App | X: Close App | Q: Return to TaskBoard" "$(
+		for app in "${apps[@]}"
+		do
+			echo "$app"
+		done
+	)" 0 'X' 'Q'
+
+	case "$menu_key" in
+		'' ) new-app "$menu_value" "$jiranum" "$repo";;
+		'Q' ) ;;
+		'X' ) close-app "$menu_value" "$jiranum" "$repo";;
+	esac
+}
+
+more-options() {
 	menu "\
 E: Enable/Disable TaskSwap
 I: Change Items Directory
@@ -278,7 +294,8 @@ while :
 do
 	menu "\
 Q: Quit TaskBoard | N: New Task       | X: Close Selected
-[Enter]: Activate/Deactivate Selected | M: More Options" "$(load_items "$ITEMS_DIR")" $selected 'Q' 'N' 'X' 'M'
+A: Apps
+[Enter]: Activate/Deactivate Selected | M: More Options" "$(load-items "$ITEMS_DIR")" $selected 'Q' 'N' 'X' 'A' 'M'
 
 	selected=$menu_selected
 	jiranum="$(echo "${menu_value:1}" | cut -d ' ' -f 1)"
@@ -290,6 +307,7 @@ Q: Quit TaskBoard | N: New Task       | X: Close Selected
 		'Q' ) quit;;
 		'N' ) new-task;;
 		'X' ) close-task;;
-		'M' ) more_options;;
+		'A' ) apps-menu;;
+		'M' ) more-options;;
 	esac
 done
