@@ -82,10 +82,10 @@ select-task() {
 quit() {
 	[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
 
-	# Remove custom title
-	osascript -e 'tell app "Terminal" to set custom title of 1st window whose name contains "TaskBoard" to "Terminal"' 2>/dev/null &
-
 	clear-menu
+
+	# Remove custom title
+	echo -n -e "\033]0;\007"
 
 	exit
 }
@@ -263,7 +263,7 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
 # PROGRAM START
 
 # Set window title
-osascript -e 'tell app "Terminal" to set custom title of front window to "TaskBoard"' &
+echo -n -e "\033]0;TaskBoard\007"
 
 # Set up directory and files
 cd "$(dirname "${BASH_SOURCE[0]}")"
