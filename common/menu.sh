@@ -101,67 +101,79 @@ menu() {
 
 	printf "$(seq  -f '=' -s '' $width)\n"
 
-	# Set Cursor
+	# Set Selected
 	if [ $selected -lt 0 ]
 	then
 		selected=0
 	fi
-	if [ ! $selected -lt $(( $end - $start )) ]
+	if [ ! $selected -lt ${#optionsArray[@]} ]
 	then
-		selected=$(( $end - $start - 1 ))
+		selected=$(( ${#optionsArray[@]} - 1 ))
 	fi
-	local cursor=$(( $start + $selected ))
 
-	if [ ! $cursor -lt $start ]
-	then
-		tput cup $cursor 2
-		printf '>'
-		tput cup $cursor 2
-	fi
+	local cursor=$(( $start - 1 ))
 
 	# UI Loop
 	while :
 	do
+		if [ ! $cursor -eq $(( $start + $selected )) ]
+		then
+			printf ' '
+			cursor=$(( $start + $selected ))
+			tput cup $cursor 2
+			printf '>'
+			tput cup $cursor 2
+		fi
+
 		IFS= read -n 1 input
 
-		if [ "$input" = "" ]
-		then
-			read -n 2 -t 1 input
+		case "$input" in
+			# Arrow key
+			"" )
+				read -n 2 -t 1 input
 
-			case "$input" in
-				# Up arrow
-				"[A" )
-					if [ $(( --cursor )) -lt $start ]
-					then
-						cursor=$(( $end - 1 ))
-					fi
-				;;
-				# Down Arrow
-				"[B" )
-					if [ ! $(( ++cursor )) -lt $end ]
-					then
-						cursor=$start
-					fi
-				;;
-			esac
+				case "$input" in
+					# Up arrow
+					"[A" )
+						if [ $(( --selected )) -lt 0 ]
+						then
+							selected=$(( ${#optionsArray[@]} - 1 ))
+						fi
+					;;
+					# Down Arrow
+					"[B" )
+						if [ ${#optionsArray[@]} -gt 0 ] && [ ! $(( ++selected )) -lt ${#optionsArray[@]} ]
+						then
+							selected=0
+						fi
+					;;
+				esac
+			;;
+			# Number
+			[0-9] )
+				if [ $input -eq 0 ]
+				then
+					input=9
+				else
+					(( --input ))
+				fi
 
-			if [ ! $cursor -lt $start ] && [ $cursor -lt $end ]
-			then
-				printf ' '
-				tput cup $cursor 2
-				printf '>'
-				tput cup $cursor 2
-				selected=$(( $cursor - $start ))
-			fi
-		else
-			input="$(echo "$input" | tr 'a-z' 'A-Z')"
-			if [ ! "$input" ] || [ "${triggers[$(printf %d \'$input)]}" ]
-			then
-				menu_key="$input"
-				menu_selected=$selected
-				menu_value="${optionsArray[$selected]}"
-				break
-			fi
-		fi
+				if [ $input -lt ${#optionsArray[@]} ]
+				then
+					selected=$input
+				fi
+			;;
+			# Anything else
+			* )
+				input="$(echo "$input" | tr 'a-z' 'A-Z')"
+				if [ ! "$input" ] || [ "${triggers[$(printf %d \'$input)]}" ]
+				then
+					menu_key="$input"
+					menu_selected=$selected
+					menu_value="${optionsArray[$selected]}"
+					break
+				fi
+			;;
+		esac
 	done
 }
