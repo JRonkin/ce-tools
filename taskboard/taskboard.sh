@@ -12,22 +12,21 @@ save-config() {
 	done
 }
 
-load-items() {
+list-items() {
 	local directory="$1"
 	local name
 	local symbol
+	local repo
 
-	if [ "$(ls "$directory")" ]
-	then
-		while read dir
-		do
-			name=
-			symbol=
-			source "${dir}.taskboard" 2>/dev/null
+	while read dir
+	do
+		name=
+		symbol=
+		repo=
+		source "${dir}.taskboard" 2>/dev/null
 
-			echo "${symbol}$(basename "$dir")   ${name}"
-		done <<< "$(ls -d "$directory"*/)"
-	fi
+		echo "${symbol}$(basename "$dir")   ${name}"
+	done <<< "$(ls -d "${directory}/"*/)"
 }
 
 timelog-message() {
@@ -215,7 +214,8 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
 			echo 'Type the full name of the directory or leave blank to use default:'
 
 			read ITEMS_DIR
-			[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items/"
+			[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items"
+			ITEMS_DIR=${ITEMS_DIR%/}
 
 			save-config
 		;;
@@ -278,11 +278,12 @@ if [ ! "$ITEMS_DIR" ]
 then
 	clear
 	echo 'Welcome to TaskBoard! Please choose a directory for item folders.'
-	echo "Default is ${HOME}/items/"
+	echo "Default is ${HOME}/items"
 	echo 'Type the full name of the directory or leave blank to use default:'
 
 	read ITEMS_DIR
-	[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items/"
+	[ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items"
+	ITEMS_DIR=${ITEMS_DIR%/}
 
 	save-config
 fi
@@ -295,12 +296,14 @@ do
 	menu "\
 Q: Quit TaskBoard | N: New Task       | X: Close Selected
 A: Apps
-[Enter]: Activate/Deactivate Selected | M: More Options" "$(load-items "$ITEMS_DIR")" $selected 'Q' 'N' 'X' 'A' 'M'
+[Enter]: Activate/Deactivate Selected | M: More Options" "$(list-items "$ITEMS_DIR")" $selected 'Q' 'N' 'X' 'A' 'M'
 
 	selected=$menu_selected
 	jiranum="$(echo "${menu_value:1}" | cut -d ' ' -f 1)"
 	repo=
-	name="$(echo "${menu_value:1} " | cut -d ' ' -f 4-)"
+	name=
+	symbol=
+	source "${ITEMS_DIR}/${jiranum}/.taskboard"
 
 	case "$menu_key" in
 		'' ) select-task;;

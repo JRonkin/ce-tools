@@ -36,11 +36,11 @@ new_Terminal() {
 	then
 		printf "
 			tell app \"Terminal\"
-				do script \"J=${jiranum}; cd ${folder}/${repo}/src && if [ ! -d node_modules ]; then $(pwd)/../scripts/repo-fixes.sh; yarn install; bower install; bundle install; fi\"
+				do script \"J=${jiranum}; cd ${ITEMS_DIR}/${jiranum}/${repo}/src && if [ ! -d node_modules ]; then $(pwd)/../scripts/repo-fixes.sh; yarn install; bower install; bundle install; fi\"
 				set the custom title of the front window to \"${jiranum}\"
 				set the bounds of the front ${selector} to {${bounds1}}
 
-				do script \"J=${jiranum}; cd ${folder}/${repo} && (git co ${jiranum}/trunk || git co master; git branch)\"
+				do script \"J=${jiranum}; cd ${ITEMS_DIR}/${jiranum}/${repo} && (git co ${jiranum}/trunk || git co master; git branch)\"
 				set the custom title of the front window to \"${jiranum}\"
 				set the bounds of the front ${selector} to {${bounds2}}
 			end tell
@@ -48,7 +48,7 @@ new_Terminal() {
 	else
 		printf "
 			tell app \"Terminal\"
-				do script \"J=${jiranum}; cd ${folder}\"
+				do script \"J=${jiranum}; cd ${ITEMS_DIR}/${jiranum}\"
 				set the custom title of the front window to \"${jiranum}\"
 				set the bounds of the front ${selector} to {${bounds2}}
 			end tell

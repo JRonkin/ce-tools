@@ -25,7 +25,7 @@ new_Atom() {
 
 		local selector="$(selector_Atom "$jiranum" "$repo")"
 
-		atom "${folder}/${repo}" && sleep 2 &&
+		atom "${ITEMS_DIR}/${jiranum}/${repo}" && sleep 2 &&
 			printf "
 				tell app \"Atom\"
 					set timer to 0

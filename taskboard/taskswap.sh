@@ -47,24 +47,27 @@ new() {
 	
 	local CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 
-	local folder="${ITEMS_DIR}${jiranum}"
-	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
-
-	mkdir -p "$folder"
-
-	if [ "$repo" ]
+	local folder
+	if [ "$ITEMS_DIR" ]
 	then
-		# Clone repo, suppressing error if repo already exists
-		git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${folder}/${repo}" || true &
+		folder="${ITEMS_DIR}/${jiranum}"
+	else
+		folder="${HOME}/items/${jiranum}"
 	fi
 
-	# Set up new task
-	echo -e "name=\"${name}\"\nsymbol='*'" > "${folder}/.taskboard"
+	mkdir -p "$folder"
 
 	# Load window bounds
 	[ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
 
-	wait
+	# Set up new task
+	echo -e "name=\"${name}\"\nsymbol='*'\nrepo='${repo}'" > "${folder}/.taskboard"
+
+	if [ "$repo" ]
+	then
+		# Clone repo and submodules
+		git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${folder}/${repo}" || true
+	fi
 
 	for app in "${apps[@]}"
 	do
@@ -84,7 +87,7 @@ activate() {
 	local jiranum="$1"
 	local repo="$2"
 
-	local folder="${ITEMS_DIR}${jiranum}"
+	local folder="${ITEMS_DIR}/${jiranum}"
 	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
 	sed -i '' "s/^symbol=.*/symbol='*'/" "${folder}/.taskboard"
@@ -108,7 +111,7 @@ deactivate() {
 	local jiranum="$1"
 	local repo="$2"
 
-	local folder="${ITEMS_DIR}${jiranum}"
+	local folder="${ITEMS_DIR}/${jiranum}"
 	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
 	sed -i '' "s/^symbol=.*/symbol=' '/" "${folder}/.taskboard"
@@ -131,7 +134,7 @@ close() {
 	local jiranum="$1"
 	local repo="$2"
 
-	local folder="${ITEMS_DIR}${jiranum}"
+	local folder="${ITEMS_DIR}/${jiranum}"
 	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
 	for app in "${apps[@]}"
