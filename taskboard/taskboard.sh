@@ -66,18 +66,6 @@ deactivate-task() {
 
 # Main Menu Functions
 
-select-task() {
-	case "${menu_value:0:1}" in
-		' ' )
-			[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
-			activate-task "$jiranum" "$repo" "$name"
-		;;
-		'*' )
-			deactivate-task "$jiranum" "$repo" "$name"
-		;;
-	esac
-}
-
 quit() {
 	[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
 
@@ -87,6 +75,22 @@ quit() {
 	echo -n -e "\033]0;\007"
 
 	exit
+}
+
+apps-menu() {
+	menu "$(timelog-message "$jiranum" "$repo" "$name")
+[Enter]: Open App | X: Close App | Q: Return to TaskBoard" "$(
+		for app in "${apps[@]}"
+		do
+			echo "$app"
+		done
+	)" 0 'X' 'Q'
+
+	case "$menu_key" in
+		'' ) new-app "$menu_value" "$jiranum" "$repo";;
+		'Q' ) ;;
+		'X' ) close-app "$menu_value" "$jiranum" "$repo";;
+	esac
 }
 
 new-task() {
@@ -100,7 +104,7 @@ new-task() {
 	tput cnorm
 	stty echo
 
-	read -p "JIRA URL or Number: " jiraurl
+	read -p 'JIRA URL or Number: ' jiraurl
 	if [[ "$jiraurl" =~ .*\.atlassian\.net\/browse\/([^/#?]+).* ]]
 	then
 		jiranum="${BASH_REMATCH[1]}"
@@ -117,11 +121,11 @@ new-task() {
 		fi
 	fi
 
-	IFS= read -p "Message: " name
+	IFS= read -p 'Name: ' name
 	name="${name//\"/\\\"}"
 	name="${name//\$/\\\"}"
 
-	read -p "GitHub URL or Repo Name (blank for none): " gitUrl
+	read -p 'GitHub URL or Repo Name (blank for none): ' gitUrl
 	repo="$gitUrl"
 	if [[ "$gitUrl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 	then
@@ -143,6 +147,33 @@ new-task() {
 	../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
 }
 
+edit-task() {
+	menu "\
+N: Change Name
+R: Switch Repo" ' Return to TaskBoard' 0 'N' 'R'
+
+	case "$menu_key" in
+		'N' )
+			clear
+			tput cnorm
+			stty echo
+
+			echo "Current Name: \"${name}\""
+			read -p 'New Name: ' name
+			sed -i '' "s/^name=.*/name=\"${name}\"/" "${ITEMS_DIR}/${jiranum}/.taskboard"
+		;;
+		'R' )
+			clear
+			tput cnorm
+			stty echo
+
+			echo "Current Repo: ${repo}"
+			read -p 'New Repo: ' repo
+			sed -i '' "s/^repo=.*/repo=\"${repo}\"/" "${ITEMS_DIR}/${jiranum}/.taskboard"
+		;;
+	esac
+}
+
 close-task() {
 	if [ "$jiranum" ]
 	then
@@ -158,19 +189,15 @@ close-task() {
 	fi
 }
 
-apps-menu() {
-	menu "$(timelog-message "$jiranum" "$repo" "$name")
-[Enter]: Open App | X: Close App | Q: Return to TaskBoard" "$(
-		for app in "${apps[@]}"
-		do
-			echo "$app"
-		done
-	)" 0 'X' 'Q'
-
-	case "$menu_key" in
-		'' ) new-app "$menu_value" "$jiranum" "$repo";;
-		'Q' ) ;;
-		'X' ) close-app "$menu_value" "$jiranum" "$repo";;
+select-task() {
+	case "${menu_value:0:1}" in
+		' ' )
+			[ "$active_jira" ] && deactivate-task "$active_jira" "$active_repo" "$active_name"
+			activate-task "$jiranum" "$repo" "$name"
+		;;
+		'*' )
+			deactivate-task "$jiranum" "$repo" "$name"
+		;;
 	esac
 }
 
@@ -294,9 +321,9 @@ selected=0
 while :
 do
 	menu "\
-Q: Quit TaskBoard | N: New Task       | X: Close Selected
-A: Apps
-[Enter]: Activate/Deactivate Selected | M: More Options" "$(list-items "$ITEMS_DIR")" $selected 'Q' 'N' 'X' 'A' 'M'
+Q: Quit TaskBoard | A: Apps
+N: New Task       | E: Edit Task      | X: Close Task
+[Enter]: Activate/Deactivate Selected | M: More Options" "$(list-items "$ITEMS_DIR")" $selected 'Q' 'A' 'N' 'E' 'X' 'M'
 
 	selected=$menu_selected
 	jiranum="$(echo "${menu_value:1}" | cut -d ' ' -f 1)"
@@ -308,9 +335,10 @@ A: Apps
 	case "$menu_key" in
 		'' ) select-task;;
 		'Q' ) quit;;
-		'N' ) new-task;;
-		'X' ) close-task;;
 		'A' ) apps-menu;;
+		'N' ) new-task;;
+		'E' ) edit-task;;
+		'X' ) close-task;;
 		'M' ) more-options;;
 	esac
 done
