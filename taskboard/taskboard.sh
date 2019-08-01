@@ -178,10 +178,11 @@ close-task() {
 	if [ "$jiranum" ]
 	then
 		close "$(echo "$jiranum" | cut -d ' ' -f 1)"
-		../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
 
 		if [ "$jiranum" = "$active_jira" ]
 		then
+			../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
+
 			active_jira=
 			active_repo=
 			active_name=
