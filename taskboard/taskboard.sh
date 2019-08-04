@@ -18,15 +18,29 @@ list-items() {
 	local symbol
 	local repo
 
-	while read dir
+	for item in $(ls "$directory")
 	do
 		name=
-		symbol=
+		symbol=' '
 		repo=
-		source "${dir}.taskboard" 2>/dev/null
+		source "${directory}/${item}/.taskboard" 2>/dev/null
 
-		echo "${symbol}$(basename "$dir")   ${name}"
-	done <<< "$(ls -d "${directory}/"*/)"
+		echo "${symbol}${item}   ${name}"
+	done
+}
+
+list-repos() {
+	local directory="$1"
+	local currentRepo="$2"
+
+	for dir in $(find "$directory" -type d -name '.git' -maxdepth 2)
+	do
+		local repo="$(basename "$(dirname "$dir")")"
+		local symbol=' '
+		[ "$repo" = "$currentRepo" ] && symbol='*'
+
+		echo "${symbol}${repo}"
+	done
 }
 
 timelog-message() {
@@ -150,7 +164,7 @@ new-task() {
 edit-task() {
 	menu "\
 N: Change Name
-R: Switch Repo" ' Return to TaskBoard' 0 'N' 'R'
+R: Change Repo" ' Return to TaskBoard' 0 'N' 'R'
 
 	case "$menu_key" in
 		'N' )
@@ -158,18 +172,42 @@ R: Switch Repo" ' Return to TaskBoard' 0 'N' 'R'
 			tput cnorm
 			stty echo
 
-			echo "Current Name: \"${name}\""
+			echo "Current Name: ${name}"
 			read -p 'New Name: ' name
 			sed -i '' "s/^name=.*/name=\"${name}\"/" "${ITEMS_DIR}/${jiranum}/.taskboard"
 		;;
 		'R' )
-			clear
-			tput cnorm
-			stty echo
+			while :
+			do
+				source "${ITEMS_DIR}/${jiranum}/.taskboard"
+				menu '[Enter]: Select Repo | N: New Repo | X: Remove Repo' "$(list-repos "${ITEMS_DIR}/${jiranum}" "$repo")" 0 'N' 'X'
+				case "$menu_key" in
+					'' )
+						sed -i '' "s/^repo=.*/repo=\"${menu_value:1}\"/" "${ITEMS_DIR}/${jiranum}/.taskboard"
+						break
+					;;
+					'N' )
+						clear
+						tput cnorm
+						stty echo
 
-			echo "Current Repo: ${repo}"
-			read -p 'New Repo: ' repo
-			sed -i '' "s/^repo=.*/repo=\"${repo}\"/" "${ITEMS_DIR}/${jiranum}/.taskboard"
+						read -p 'GitHub URL or Repo Name: ' gitUrl
+						repo="$gitUrl"
+						if [[ "$gitUrl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
+						then
+							repo="${BASH_REMATCH[1]}"
+						fi
+
+						git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${ITEMS_DIR}/${jiranum}/${repo}"
+					;;
+					'X' )
+						if [ "${menu_value:1}" ]
+						then
+							trash "${ITEMS_DIR}/${jiranum}/${menu_value:1}"
+						fi
+					;;
+				esac
+			done
 		;;
 	esac
 }
@@ -331,7 +369,11 @@ N: New Task       | E: Edit Task      | X: Close Task
 	repo=
 	name=
 	symbol=
-	source "${ITEMS_DIR}/${jiranum}/.taskboard"
+
+	if [ "$menu_value" ]
+	then
+		source "${ITEMS_DIR}/${jiranum}/.taskboard"
+	fi
 
 	case "$menu_key" in
 		'' ) select-task;;

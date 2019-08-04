@@ -1,9 +1,9 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../common/funcs.sh"
 
-while read appfile
+for appfile in $(ls "$(dirname "${BASH_SOURCE[0]}")/apps")
 do
 	source "$(dirname "${BASH_SOURCE[0]}")/apps/$appfile"
-done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
+done
 
 # Count the number of displays (monitors)
 monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")

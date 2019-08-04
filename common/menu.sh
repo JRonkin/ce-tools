@@ -170,7 +170,9 @@ menu() {
 				then
 					menu_key="$input"
 					menu_selected=$selected
-					menu_value="${optionsArray[$selected]}"
+					menu_value=
+					[ ! $selected -lt 0 ] && menu_value="${optionsArray[$selected]}"
+
 					break
 				fi
 			;;
