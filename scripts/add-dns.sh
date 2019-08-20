@@ -94,7 +94,9 @@ echo
 echo "COMMIT MESSAGE FORMAT:"
 echo "yext-cdn octodns: Add BRAND_NAME"
 echo "J=JIRA_NUMBER"
+echo "TEST=none"
 echo
+echo "Copy the commit message template above."
 echo "Replace 'BRAND_NAME' with the name of the brand you're adding."
 echo "Replace 'JIRA_NUMBER' with the JIRA number for the item, e.g. 'PC-12345'."
 read -p "Press Enter to continue...
