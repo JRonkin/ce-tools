@@ -38,7 +38,7 @@ new-app() {
   local jiranum="$2"
   local repo="$3"
 
-  $(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$monitors"
+  $(dirname "${BASH_SOURCE[0]}")/apps/"$app"/new.sh "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$monitors"
 }
 
 new() {
