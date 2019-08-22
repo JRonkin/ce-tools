@@ -11,7 +11,7 @@ MAX_CONCURRENT=10
 # Alternate encoding that escapes more characters:
 # php -r "echo urlencode(\"$@\");"
 encode-filename() {
-	echo "$@" | sed 's/\//%2F/g; s/@/%40/g'
+  echo "$@" | sed 's/\//%2F/g; s/@/%40/g'
 }
 
 
@@ -20,8 +20,8 @@ encode-filename() {
 domain="$1"
 if [ ! "$domain" ]
 then
-	echo
-	read -p "Enter the site domain to be downloaded: " domain
+  echo
+  read -p "Enter the site domain to be downloaded: " domain
 fi
 
 folder="$2"
@@ -41,23 +41,23 @@ echo "$allfolders" | wc -l | tr -d ' '
 
 if [ ! "$allfolders" ]
 then
-	echo 'No folders found to download. Exiting script.'
-	exit 1
+  echo 'No folders found to download. Exiting script.'
+  exit 1
 else
-	if [ "$(echo "$allfolders" | wc -l | tr -d ' ')" -eq 1 ]
-	then
-		echo "Found one folder: ${allfolders}"
-		folder="$allfolders"
-	else
-		while [ ! "$(echo "$allfolders" | grep -e "^${folder}\$")" ]
-		do
-			echo "Found the following folders:"
-			echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-			echo "$allfolders"
-			echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-			read -p "Type the name of the folder to download: " folder
-		done
-	fi
+  if [ "$(echo "$allfolders" | wc -l | tr -d ' ')" -eq 1 ]
+  then
+    echo "Found one folder: ${allfolders}"
+    folder="$allfolders"
+  else
+    while [ ! "$(echo "$allfolders" | grep -e "^${folder}\$")" ]
+    do
+      echo "Found the following folders:"
+      echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      echo "$allfolders"
+      echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      read -p "Type the name of the folder to download: " folder
+    done
+  fi
 fi
 
 spath="${spath}${folder}/"
@@ -82,20 +82,20 @@ mkdir "${domain}_files"
 
 if [ "$conflicts" ]
 then
-	(
-		concurrent=0
+  (
+    concurrent=0
 
-		while read filename
-		do
-			awscli s3 cp "${spath}${filename}" "${cwd}/${domain}_files/$(encode-filename "$filename")" >/dev/null &
+    while read filename
+    do
+      awscli s3 cp "${spath}${filename}" "${cwd}/${domain}_files/$(encode-filename "$filename")" >/dev/null &
 
-			if [ ! $(( concurrent++ )) -lt $MAX_CONCURRENT ]
-			then
-				concurrent=0
-				wait
-			fi
-		done <<< "$conflicts"
-	) &
+      if [ ! $(( concurrent++ )) -lt $MAX_CONCURRENT ]
+      then
+        concurrent=0
+        wait
+      fi
+    done <<< "$conflicts"
+  ) &
 fi
 
 
@@ -114,13 +114,13 @@ onepercent=$(( $numfiles / 100 ))
 echo -ne "\r0%"
 while read filename
 do
-	mv "$filename" "../${domain}_files/$(encode-filename "$filename")"
+  mv "$filename" "../${domain}_files/$(encode-filename "$filename")"
 
-	if [ $((counter++)) -gt $onepercent ]
-	then
-		echo -ne "\r$(( (completed += $counter) * 100 / $numfiles ))%\033[0K"
-		counter=0
-	fi
+  if [ $((counter++)) -gt $onepercent ]
+  then
+    echo -ne "\r$(( (completed += $counter) * 100 / $numfiles ))%\033[0K"
+    counter=0
+  fi
 done <<< "$files"
 echo -ne "\r\033[0K"
 
@@ -131,8 +131,8 @@ rm -R "${domain}_files_tmp"
 # Wait for download conflicting files background process to finish
 if [ "$conflicts" ]
 then
-	echo "Resolving $(echo "$conflicts" | wc -l | tr -d ' ') file/directory name conflicts..."
-	wait
+  echo "Resolving $(echo "$conflicts" | wc -l | tr -d ' ') file/directory name conflicts..."
+  wait
 fi
 
 

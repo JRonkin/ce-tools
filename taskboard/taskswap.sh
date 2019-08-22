@@ -2,147 +2,147 @@ source "$(dirname "${BASH_SOURCE[0]}")/../common/funcs.sh"
 
 for appfile in $(ls "$(dirname "${BASH_SOURCE[0]}")/apps")
 do
-	source "$(dirname "${BASH_SOURCE[0]}")/apps/$appfile"
+  source "$(dirname "${BASH_SOURCE[0]}")/apps/$appfile"
 done
 
 # Count the number of displays (monitors)
 monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")
 
 selector() {
-	local app="$1"
-	local jiranum="$2"
-	local repo="$3"
+  local app="$1"
+  local jiranum="$2"
+  local repo="$3"
 
-	selector_$(echo "$app" | tr -d ' ') "$jiranum" "$repo"
+  selector_$(echo "$app" | tr -d ' ') "$jiranum" "$repo"
 }
 
 save-window-bounds() {
-	local jiranum="$1"
-	local repo="$2"
+  local jiranum="$1"
+  local repo="$2"
 
-	(
-		for app in "${apps[@]}"
-		do
-			if [ ${enabledApps[$(hash "$app")]} ]
-			then
-				save-window-bounds_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" &
-			fi
-		done
-		wait
-	) | sort > "$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard/windowbounds"
+  (
+    for app in "${apps[@]}"
+    do
+      if [ ${enabledApps[$(hash "$app")]} ]
+      then
+        save-window-bounds_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" &
+      fi
+    done
+    wait
+  ) | sort > "$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard/windowbounds"
 }
 
 new-app() {
-	local app="$1"
-	local jiranum="$2"
-	local repo="$3"
+  local app="$1"
+  local jiranum="$2"
+  local repo="$3"
 
-	new_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" "$monitors"
+  new_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" "$monitors"
 }
 
 new() {
-	local name="$1"
-	local jiranum="$2"
-	local repo="$3"
-	
-	local CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
+  local name="$1"
+  local jiranum="$2"
+  local repo="$3"
 
-	local folder
-	if [ "$ITEMS_DIR" ]
-	then
-		folder="${ITEMS_DIR}/${jiranum}"
-	else
-		folder="${HOME}/items/${jiranum}"
-	fi
+  local CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 
-	mkdir -p "$folder"
+  local folder
+  if [ "$ITEMS_DIR" ]
+  then
+    folder="${ITEMS_DIR}/${jiranum}"
+  else
+    folder="${HOME}/items/${jiranum}"
+  fi
 
-	# Load window bounds
-	[ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
+  mkdir -p "$folder"
 
-	# Set up new task
-	echo -e "name=\"${name}\"\nsymbol='*'\nrepo='${repo}'" > "${folder}/.taskboard"
+  # Load window bounds
+  [ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
 
-	if [ "$repo" ]
-	then
-		# Clone repo and submodules
-		git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${folder}/${repo}" || true
-	fi
+  # Set up new task
+  echo -e "name=\"${name}\"\nsymbol='*'\nrepo='${repo}'" > "${folder}/.taskboard"
 
-	for app in "${apps[@]}"
-	do
-		[ ${enabledApps[$(hash "$app")]} ] && new-app "$app" "$jiranum" "$repo" &
-	done
+  if [ "$repo" ]
+  then
+    # Clone repo and submodules
+    git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${folder}/${repo}" || true
+  fi
+
+  for app in "${apps[@]}"
+  do
+    [ ${enabledApps[$(hash "$app")]} ] && new-app "$app" "$jiranum" "$repo" &
+  done
 }
 
 activate-app() {
-	local app="$1"
-	local jiranum="$2"
-	local repo="$3"
+  local app="$1"
+  local jiranum="$2"
+  local repo="$3"
 
-	osascript -e "tell app \"${app}\" to set index of every $(selector "$app" "$jiranum" "$repo") to 1"
+  osascript -e "tell app \"${app}\" to set index of every $(selector "$app" "$jiranum" "$repo") to 1"
 }
 
 activate() {
-	local jiranum="$1"
-	local repo="$2"
+  local jiranum="$1"
+  local repo="$2"
 
-	local folder="${ITEMS_DIR}/${jiranum}"
-	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
+  local folder="${ITEMS_DIR}/${jiranum}"
+  [ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
-	sed -i '' "s/^symbol=.*/symbol='*'/" "${folder}/.taskboard"
+  sed -i '' "s/^symbol=.*/symbol='*'/" "${folder}/.taskboard"
 
-	for app in "${apps[@]}"
-	do
-		[ ${enabledApps[$(hash "$app")]} ] && activate-app "$app" "$jiranum" "$repo" &
-	done
+  for app in "${apps[@]}"
+  do
+    [ ${enabledApps[$(hash "$app")]} ] && activate-app "$app" "$jiranum" "$repo" &
+  done
 }
 
 deactivate-app() {
-	local app="$1"
-	local jiranum="$2"
-	local repo="$3"
+  local app="$1"
+  local jiranum="$2"
+  local repo="$3"
 
-	osascript -e "tell app \"${app}\" to set miniaturized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
-	osascript -e "tell app \"${app}\" to set minimized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
+  osascript -e "tell app \"${app}\" to set miniaturized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
+  osascript -e "tell app \"${app}\" to set minimized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
 }
 
 deactivate() {
-	local jiranum="$1"
-	local repo="$2"
+  local jiranum="$1"
+  local repo="$2"
 
-	local folder="${ITEMS_DIR}/${jiranum}"
-	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
+  local folder="${ITEMS_DIR}/${jiranum}"
+  [ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
-	sed -i '' "s/^symbol=.*/symbol=' '/" "${folder}/.taskboard"
+  sed -i '' "s/^symbol=.*/symbol=' '/" "${folder}/.taskboard"
 
-	for app in "${apps[@]}"
-	do
-		[ ${enabledApps[$(hash "$app")]} ] && deactivate-app "$app" "$jiranum" "$repo" &
-	done
+  for app in "${apps[@]}"
+  do
+    [ ${enabledApps[$(hash "$app")]} ] && deactivate-app "$app" "$jiranum" "$repo" &
+  done
 }
 
 close-app() {
-	local app="$1"
-	local jiranum="$2"
-	local repo="$3"
+  local app="$1"
+  local jiranum="$2"
+  local repo="$3"
 
-	osascript -e "tell app \"${app}\" to close every $(selector "$app" "$jiranum" "$repo")"
+  osascript -e "tell app \"${app}\" to close every $(selector "$app" "$jiranum" "$repo")"
 }
 
 close() {
-	local jiranum="$1"
-	local repo="$2"
+  local jiranum="$1"
+  local repo="$2"
 
-	local folder="${ITEMS_DIR}/${jiranum}"
-	[ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
+  local folder="${ITEMS_DIR}/${jiranum}"
+  [ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
 
-	for app in "${apps[@]}"
-	do
-		[ ${enabledApps[$(hash "$app")]} ] && close-app "$app" "$jiranum" "$repo" &
-	done
+  for app in "${apps[@]}"
+  do
+    [ ${enabledApps[$(hash "$app")]} ] && close-app "$app" "$jiranum" "$repo" &
+  done
 
-	wait
+  wait
 
-	trash "$folder"
+  trash "$folder"
 }

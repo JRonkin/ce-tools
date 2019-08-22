@@ -8,20 +8,20 @@ branch_name="${branch_name##refs/heads/}"
 
 if ! [ "$branch_name" = "master" ]
 then
-	echo "Error: alpha must be on branch 'master' to continue."
-	exit 1
+  echo "Error: alpha must be on branch 'master' to continue."
+  exit 1
 fi
 
 if [ "$(git diff head)" ]
 then
-	echo "Error: unsaved changes on branch 'master' of alpha. Commit or stash your changes to continue."
-	exit 1
+  echo "Error: unsaved changes on branch 'master' of alpha. Commit or stash your changes to continue."
+  exit 1
 fi
 
 if ! [ -f $DNS_FILE ]
 then
-	echo "Error: cannot find file ${ALPHA}/${DNS_FILE}"
-	exit 1
+  echo "Error: cannot find file ${ALPHA}/${DNS_FILE}"
+  exit 1
 fi
 
 echo "Pulling alpha..."
@@ -30,61 +30,61 @@ git pull
 done=''
 while [ ! "$done" ]
 do
-	read -p "Site Domain (format: 'locations.example.com'): " domain
-	if [ "$(grep "^${domain//./\.}:$" ${DNS_FILE})" ]
-	then
-		echo "'${domain}' is already on record."
-		exit
-	fi
+  read -p "Site Domain (format: 'locations.example.com'): " domain
+  if [ "$(grep "^${domain//./\.}:$" ${DNS_FILE})" ]
+  then
+    echo "'${domain}' is already on record."
+    exit
+  fi
 
-	read -p "ttl (leave blank to not include): " ttl
-	read -p "type (leave blank for default 'CNAME'): " type
-	read -p "value (leave blank for default 'cloudflare.sitescdn.net.'): " value
-	if ! [ "$type" ]
-	then
-		type="CNAME"
-	fi
-	if ! [ "$value" ]
-	then
-		value="cloudflare.sitescdn.net."
-	fi
+  read -p "ttl (leave blank to not include): " ttl
+  read -p "type (leave blank for default 'CNAME'): " type
+  read -p "value (leave blank for default 'cloudflare.sitescdn.net.'): " value
+  if ! [ "$type" ]
+  then
+    type="CNAME"
+  fi
+  if ! [ "$value" ]
+  then
+    value="cloudflare.sitescdn.net."
+  fi
 
-	echo "Inserting new domain into ${ALPHA}/${DNS_FILE}..."
-	>${DNS_FILE}.tmp
-	inserted=""
-	while IFS= read line
-	do
-		if [[ ! "$line" == "  "* ]] && [ ! $inserted ] && [[ "$domain" < "$line" ]]
-		then
-			echo "${domain}:" >> ${DNS_FILE}.tmp
-			if [ "$ttl" ]
-			then
-				echo "  ttl: ${ttl}" >> ${DNS_FILE}.tmp
-			fi
-			echo "  type: ${type}" >> ${DNS_FILE}.tmp
-			echo "  value: ${value}" >> ${DNS_FILE}.tmp
-			inserted=true
-		fi
-		echo "$line" >> ${DNS_FILE}.tmp
+  echo "Inserting new domain into ${ALPHA}/${DNS_FILE}..."
+  >${DNS_FILE}.tmp
+  inserted=""
+  while IFS= read line
+  do
+    if [[ ! "$line" == "  "* ]] && [ ! $inserted ] && [[ "$domain" < "$line" ]]
+    then
+      echo "${domain}:" >> ${DNS_FILE}.tmp
+      if [ "$ttl" ]
+      then
+        echo "  ttl: ${ttl}" >> ${DNS_FILE}.tmp
+      fi
+      echo "  type: ${type}" >> ${DNS_FILE}.tmp
+      echo "  value: ${value}" >> ${DNS_FILE}.tmp
+      inserted=true
+    fi
+    echo "$line" >> ${DNS_FILE}.tmp
 
-	done < ${DNS_FILE}
+  done < ${DNS_FILE}
 
-	if [ ! $inserted ]
-	then
-		echo "${domain}:" >> ${DNS_FILE}.tmp
-		echo "  type: ${type}" >> ${DNS_FILE}.tmp
-		echo "  value: ${value}" >> ${DNS_FILE}.tmp
-	fi
+  if [ ! $inserted ]
+  then
+    echo "${domain}:" >> ${DNS_FILE}.tmp
+    echo "  type: ${type}" >> ${DNS_FILE}.tmp
+    echo "  value: ${value}" >> ${DNS_FILE}.tmp
+  fi
 
-	mv ${DNS_FILE}.tmp ${DNS_FILE}
+  mv ${DNS_FILE}.tmp ${DNS_FILE}
 
-	read -p "Add another? (y/N)" done
-	if [ "$(echo "$done" | tr "A-Z" "a-z")" = "y" ] || [ "$(echo "$done" | tr "A-Z" "a-z")" = "yes" ]
-	then
-		done=''
-	else
-		done='true'
-	fi
+  read -p "Add another? (y/N)" done
+  if [ "$(echo "$done" | tr "A-Z" "a-z")" = "y" ] || [ "$(echo "$done" | tr "A-Z" "a-z")" = "yes" ]
+  then
+    done=''
+  else
+    done='true'
+  fi
 done
 
 echo "Creating new commit for ${DNS_FILE}..."

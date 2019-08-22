@@ -18,8 +18,8 @@ Double-check everything!
 read -p 'Are you SURE you want to deactivate a site? Type the title of the above article to continue: ' confirmation
 if [ ! "$(echo "$confirmation" | tr A-Z a-z)" = "deactivating a site" ]
 then
-	echo "Title does not match. Exiting script."
-	exit
+  echo "Title does not match. Exiting script."
+  exit
 fi
 
 echo "Continuing to deactivation..."
@@ -29,17 +29,17 @@ echo "The site's repo will be cloned to a new folder in ${HOME}/repo/"
 read -p "GitHub URL of site to deactivate: " giturl
 if [[ "$giturl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
 then
-	repo="${BASH_REMATCH[1]}"
+  repo="${BASH_REMATCH[1]}"
 else
-	echo "Invalid GitHub URL:\n${giturl}"
-	exit 1
+  echo "Invalid GitHub URL:\n${giturl}"
+  exit 1
 fi
 git clone "git@github.com:yext-pages/${repo}.git" "${HOME}/repo/${repo}" || die "Cloning repo failed. Exiting script."
 (
-	cd "${HOME}/repo/${repo}"
-	git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
-	git fetch --all
-	git pull --all
+  cd "${HOME}/repo/${repo}"
+  git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+  git fetch --all
+  git pull --all
 ) || die "Cloning repo failed. Exiting script."
 
 echo
@@ -61,10 +61,10 @@ echo "Press Enter once the new Stash repo has been created."
 read -p ""
 
 (
-	cd "${HOME}/repo/${repo}"
-	git remote set-url origin "ssh://git@stash.office.yext.com:1234/pa/${repo}.git" &&
-	git push --all &&
-	git push --tags
+  cd "${HOME}/repo/${repo}"
+  git remote set-url origin "ssh://git@stash.office.yext.com:1234/pa/${repo}.git" &&
+  git push --all &&
+  git push --tags
 ) || die "Pushing to Stash failed. Exiting script. Please push manually: git remote set-url origin \"ssh://git@stash.office.yext.com:1234/pa/${repo}.git\" && git push --all && git push --tags"
 
 echo

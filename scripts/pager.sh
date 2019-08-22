@@ -1,6 +1,6 @@
 if [ "$1" = 'dist' ]
 then
-	dist='serve:dist'
+  dist='serve:dist'
 fi
 
 "$(dirname "${BASH_SOURCE[0]}")"/avn.sh

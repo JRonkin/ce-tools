@@ -4,7 +4,7 @@ assert_git_repo
 branch="$1"
 if [ ! "$branch" ]
 then
-	branch="$(get_current_branch)"
+  branch="$(get_current_branch)"
 fi
 
 # git pull origin "${branch}:${branch}"

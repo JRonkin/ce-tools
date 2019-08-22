@@ -5,7 +5,7 @@ group="$(get_current_group 2>/dev/null)"
 
 if [ "$group" ]
 then
-	pgs publish --branch "${group}/build" --noopen $@
+  pgs publish --branch "${group}/build" --noopen $@
 else
-	pgs publish --noopen $@
+  pgs publish --noopen $@
 fi

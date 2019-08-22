@@ -4,15 +4,15 @@
 
 if [ -f .node-version ]
 then
-	nodeVersion="$(cat .node-version)"
-	if [[ "$nodeVersion" =~ [0-9]+(\.[0-9x])* ]]
-	then
-		installedMatch="$(n ls | grep " $(echo "${nodeVersion%x*}" | cut -d x -f 1)" | tail -n 1 | tr -d ' ο')" | sed 's/\[[^m]*m//g'
-		if [ "$installedMatch" ]
-		then
-			n "$installedMatch"
-		else
-			n "${nodeVersion%.x*}"
-		fi
-	fi
+  nodeVersion="$(cat .node-version)"
+  if [[ "$nodeVersion" =~ [0-9]+(\.[0-9x])* ]]
+  then
+    installedMatch="$(n ls | grep " $(echo "${nodeVersion%x*}" | cut -d x -f 1)" | tail -n 1 | tr -d ' ο')" | sed 's/\[[^m]*m//g'
+    if [ "$installedMatch" ]
+    then
+      n "$installedMatch"
+    else
+      n "${nodeVersion%.x*}"
+    fi
+  fi
 fi

@@ -10,20 +10,20 @@ branch_name="${branch_name##refs/heads/}"
 
 if ! [ "$branch_name" = "master" ]
 then
-	echo "Error: alpha must be on branch 'master' to continue."
-	exit 1
+  echo "Error: alpha must be on branch 'master' to continue."
+  exit 1
 fi
 
 if [ "$(git diff head)" ]
 then
-	echo "Error: unsaved changes on branch 'master' of alpha. Commit or stash your changes to continue."
-	exit 1
+  echo "Error: unsaved changes on branch 'master' of alpha. Commit or stash your changes to continue."
+  exit 1
 fi
 
 if ! [ -f $DNS_FILE ]
 then
-	echo "Error: cannot find file ${ALPHA}/${DNS_FILE}"
-	exit 1
+  echo "Error: cannot find file ${ALPHA}/${DNS_FILE}"
+  exit 1
 fi
 
 echo "Pulling alpha..."
@@ -31,30 +31,30 @@ git pull
 
 if [ ! "$domain" ]
 then
-	read -p "Site Domain (format: 'locations.example.com'): " domain
+  read -p "Site Domain (format: 'locations.example.com'): " domain
 fi
 
 if [ ! "$(cat "$DNS_FILE" | grep "^${domain}:\$")" ]
 then
-	echo "Entry for '${domain}' not found."
-	exit
+  echo "Entry for '${domain}' not found."
+  exit
 fi
 
 >${DNS_FILE}.tmp
 deleting=''
 while IFS= read line
 do
-	if [[ ! "$line" == "  "* ]]
-	then
-		deleting=''
-	fi
+  if [[ ! "$line" == "  "* ]]
+  then
+    deleting=''
+  fi
 
-	if [ ! $deleting ] && [[ ! "$line" == "${domain}:" ]]
-	then
-		echo "$line" >> ${DNS_FILE}.tmp
-	else
-		deleting=true
-	fi
+  if [ ! $deleting ] && [[ ! "$line" == "${domain}:" ]]
+  then
+    echo "$line" >> ${DNS_FILE}.tmp
+  else
+    deleting=true
+  fi
 done < ${DNS_FILE}
 
 mv ${DNS_FILE}.tmp ${DNS_FILE}

@@ -16,6 +16,6 @@ sed -i '' $'s/\t/  /g' pages.json
 # Bump node version to be compatible with yarn
 if [[ "$(cat .node-version)" = 5.* ]]
 then
-	echo 6.2.1 > .node-version
+  echo 6.2.1 > .node-version
 fi
 "$(dirname "${BASH_SOURCE[0]}")"/avn.sh

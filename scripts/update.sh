@@ -2,7 +2,7 @@
 parallel=''
 if [ "$1" = "-p" ]
 then
-	parallel=true
+  parallel=true
 fi
 
 # generator ysp
@@ -27,31 +27,31 @@ npm i -g npm bower yo &
 
 # Python
 (
-	pip install --upgrade pip --user
-	pip install --upgrade awscli --user
+  pip install --upgrade pip --user
+  pip install --upgrade awscli --user
 ) &
 [ $parallel ] || wait
 
 # alpha and congo
 (
-	cd $ALPHA && git co master && git pull && make
+  cd $ALPHA && git co master && git pull && make
 
-	cd $YEXT && git co master && git pull && glock sync yext && (make || make binaries || (
-		# make failed, build all packages individually
-		while read package
-		do
-			go install -v "$(dirname "$package")"
-		done <<< "$(find . -name main.go -type f)"
-	))
+  cd $YEXT && git co master && git pull && glock sync yext && (make || make binaries || (
+    # make failed, build all packages individually
+    while read package
+    do
+      go install -v "$(dirname "$package")"
+    done <<< "$(find . -name main.go -type f)"
+  ))
 
-	cd $CONGO && git co master && git pull && glock sync congo && (make || (
-		# make failed, build all packages individually
-		while read package
-		do
-			go install -v "$(dirname "$package")"
-		done <<< "$(find . -name main.go -type f | grep -v ./client)"
-	))
-	cd $ALPHA && git co master
+  cd $CONGO && git co master && git pull && glock sync congo && (make || (
+    # make failed, build all packages individually
+    while read package
+    do
+      go install -v "$(dirname "$package")"
+    done <<< "$(find . -name main.go -type f | grep -v ./client)"
+  ))
+  cd $ALPHA && git co master
 ) &
 [ $parallel ] || wait
 

@@ -1,13 +1,13 @@
 if [ "$1" ] && [ ! "$1" = -h ]
 then
-	script="$1"
-	if [[ ! $script == *\.* ]]
-	then
-		script="${script}.sh"
-	fi
+  script="$1"
+  if [[ ! $script == *\.* ]]
+  then
+    script="${script}.sh"
+  fi
 
-	shift 1
-	"$(dirname "${BASH_SOURCE[0]}")"/../scripts/"$script" $@
+  shift 1
+  "$(dirname "${BASH_SOURCE[0]}")"/../scripts/"$script" $@
 else
-	ls "$(dirname "${BASH_SOURCE[0]}")"/../scripts
+  ls "$(dirname "${BASH_SOURCE[0]}")"/../scripts
 fi
