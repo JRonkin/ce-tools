@@ -1,9 +1,10 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../common/funcs.sh"
 
-for appfile in $(ls "$(dirname "${BASH_SOURCE[0]}")/apps")
+while read app
 do
-  source "$(dirname "${BASH_SOURCE[0]}")/apps/$appfile"
-done
+	apps[${#apps[@]}]="$app"
+  selectors[$(hash "$app")]="$(cat "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/selector.txt")"
+done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
 
 # Count the number of displays (monitors)
 monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")
@@ -13,7 +14,7 @@ selector() {
   local jiranum="$2"
   local repo="$3"
 
-  selector_$(echo "$app" | tr -d ' ') "$jiranum" "$repo"
+  printf "${selectors[$(hash "$app")]}" "$jiranum"
 }
 
 save-window-bounds() {
@@ -25,7 +26,7 @@ save-window-bounds() {
     do
       if [ ${enabledApps[$(hash "$app")]} ]
       then
-        save-window-bounds_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" &
+        echo "bounds_${app// }='$(osascript -e "tell app \"${app}\" to get the bounds of the 1st $(selector "$app" "$jiranum" "$repo")")'" &
       fi
     done
     wait
@@ -37,7 +38,7 @@ new-app() {
   local jiranum="$2"
   local repo="$3"
 
-  new_$(echo "$app" | tr -d ' ') "$jiranum" "$repo" "$monitors"
+  $(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$monitors"
 }
 
 new() {

@@ -1,0 +1,1 @@
+window whose name contains \"%s — \"
