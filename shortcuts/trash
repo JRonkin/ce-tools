@@ -1,1 +1,1 @@
-source "$(dirname "${BASH_SOURCE[0]}")"/../common/trash.sh $@
+source "$(dirname "${BASH_SOURCE[0]}")"/../scripts/trash.sh $@
