@@ -2,10 +2,9 @@
 *A repository for scripts and automation tools related to Consulting Engineering*
 
 ### INSTALL INSTRUCTIONS:
-1. Clone this repo
-2. Run install.sh (or `source` it to skip step 3)
-3. Restart your terminal
-4. Done! To use, run shortcuts in Terminal (e.g. run `tb` for TaskBoard)
+1. Clone this repo.
+2. In Terminal, `cd` to this directory and run `source install.sh`
+3. Done! To use, run shortcuts in Terminal (e.g. run `tb` for TaskBoard).
 
 ### How to Use TaskBoard:
 1. After following the install instructions, run tb.sh to launch TaskBoard
