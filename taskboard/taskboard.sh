@@ -43,6 +43,40 @@ list-repos() {
   done
 }
 
+read-jira() {
+  local jiraUrl="$1"
+  local jiranum
+
+  [ ! "$jiraUrl" ] && read -p 'JIRA URL or Number: ' jiraUrl
+
+  if [[ "$jiraUrl" =~ .*\.atlassian\.net\/browse\/([^/#?]+).* ]]
+  then
+    jiranum="${BASH_REMATCH[1]}"
+  else
+    jiranum="$jiraUrl"
+  fi
+
+  if [[ "$jiranum" =~ ^[A-Za-z]+-[0-9]+$ ]]
+  then
+    echo "$jiranum"
+  fi
+}
+
+read-repo() {
+  local gitUrl="$1"
+  local repo
+
+  [ ! "$gitUrl" ] && read -p 'GitHub URL or Repo Name (blank for none): ' gitUrl
+
+  repo="$gitUrl"
+  if [[ "$gitUrl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
+  then
+    repo="${BASH_REMATCH[1]}"
+  fi
+
+  echo "$repo"
+}
+
 timelog-message() {
   local jiranum="$1"
   local repo="$2"
@@ -108,7 +142,6 @@ apps-menu() {
 }
 
 new-task() {
-  local jiraurl
   local jiranum
   local name
   local gitUrl
@@ -118,33 +151,21 @@ new-task() {
   tput cnorm
   stty echo
 
-  read -p 'JIRA URL or Number: ' jiraurl
-  if [[ "$jiraurl" =~ .*\.atlassian\.net\/browse\/([^/#?]+).* ]]
+  jiranum="$(read-jira)"
+  if [ ! "$jiranum" ]
   then
-    jiranum="${BASH_REMATCH[1]}"
-  else
-    if [[ "$jiraurl" =~ ^[A-Za-z]+-[0-9]+$ ]]
-    then
-      jiranum="$jiraurl"
-    else
-      tput civis
-      stty -echo
-      printf "Invalid URL or JIRA Number:\n${jiraurl}\n\n> Return to TaskBoard"
-      read -sp ''
-      return
-    fi
+    tput civis
+    stty -echo
+    printf "Invalid URL or JIRA Number\n\n> Return to TaskBoard"
+    read -sp ''
+    return
   fi
 
   IFS= read -p 'Name: ' name
   name="${name//\"/\\\"}"
   name="${name//\$/\\\$}"
 
-  read -p 'GitHub URL or Repo Name (blank for none): ' gitUrl
-  repo="$gitUrl"
-  if [[ "$gitUrl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
-  then
-    repo="${BASH_REMATCH[1]}"
-  fi
+  repo="$(read-repo)"
 
   # Start new task
   clear-menu
@@ -191,12 +212,7 @@ R: Change Repo" ' Return to TaskBoard' 0 'N' 'R'
             tput cnorm
             stty echo
 
-            read -p 'GitHub URL or Repo Name: ' gitUrl
-            repo="$gitUrl"
-            if [[ "$gitUrl" =~ .*github\.com\/[^/]+\/([^/]+).* ]]
-            then
-              repo="${BASH_REMATCH[1]}"
-            fi
+            repo="$(read-repo)"
 
             git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${ITEMS_DIR}/${jiranum}/${repo}"
           ;;
