@@ -12,7 +12,7 @@ then
   selector="window whose name contains \"/${jiranum}/${repo}\""
 
   atom "${folder}/${repo}" && sleep 2 &&
-    printf "
+    osascript -e "
       tell app \"Atom\"
         set timer to 0
         repeat until the length of (get every ${selector}) > 0 or timer > 15
@@ -21,5 +21,5 @@ then
         end repeat
         set the bounds of every ${selector} to {${bounds}}
       end tell
-    " | osascript &
+    " &
 fi

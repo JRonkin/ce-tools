@@ -16,7 +16,7 @@ then
     set the URL of the active tab of new_window to \"https://www.yext.com/pagesadmin/?query=$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)\""
 fi
 
-printf "
+osascript -e "
   tell app \"Google Chrome\"
     set new_window to (make new window)
     set the bounds of new_window to {${bounds}}
@@ -24,4 +24,4 @@ printf "
     ${repoCmds}
     set the active tab index of new_window to 1
   end tell
-" | osascript &
+" &

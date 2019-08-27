@@ -120,7 +120,7 @@ quit() {
   clear-menu
 
   # Remove custom title
-  echo -n -e "\033]0;\007"
+  ../scripts/ttitle.sh ''
 
   exit
 }
@@ -345,7 +345,7 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
 # PROGRAM START
 
 # Set window title
-echo -n -e "\033]0;TaskBoard\007"
+../scripts/ttitle.sh 'TaskBoard'
 
 # Set up directory and files
 cd "$(dirname "${BASH_SOURCE[0]}")"
