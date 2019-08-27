@@ -162,8 +162,6 @@ new-task() {
   fi
 
   IFS= read -p 'Name: ' name
-  name="${name//\"/\\\"}"
-  name="${name//\$/\\\$}"
 
   repo="$(read-repo)"
 

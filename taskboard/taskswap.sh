@@ -62,7 +62,7 @@ new() {
   [ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
 
   # Set up new task
-  echo -e "name=\"${name}\"\nsymbol='*'\nrepo='${repo}'" > "${folder}/.taskboard"
+  echo -e "name='$(echo "$name" | sed "s/'/'\"'\"'/g")'\nsymbol='*'\nrepo='${repo}'" > "${folder}/.taskboard"
 
   if [ "$repo" ]
   then
