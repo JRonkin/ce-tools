@@ -7,5 +7,6 @@ then
   branch="$(get_current_branch)"
 fi
 
+# TODO: find the correct way of pulling a branch without switching to it
 # git pull origin "${branch}:${branch}"
 git pull
