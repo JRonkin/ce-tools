@@ -5,7 +5,7 @@
 1. Clone this repo
 2. Run install.sh (or `source` it to skip step 3)
 3. Restart your terminal
-4. Done! To use, run shortcuts in Terminal (e.g. run `tb.sh` for TaskBoard)
+4. Done! To use, run shortcuts in Terminal (e.g. run `tb` for TaskBoard)
 
 ### How to Use TaskBoard:
 1. After following the install instructions, run tb.sh to launch TaskBoard
@@ -42,14 +42,5 @@
 - See time on a single day or in a range of days
 - Submit time to JIRA, logged individually for each item on each day
 
-### Scripts
-*Shortcut: ce [SCRIPTNAME]*
-- add-dns: step-through automation of adding a DNS entry (bridge domain)
-- custom-field-audit: find all the custom fields used in a site
-- deactivate-site: step through the process of deactivating a Pages site
-- pager: run old pager (json pager)
-- repo-fixes: fix yarn install errors, README location, and node version < 5
-- reset-alpha: reset the local repo of alpha by re-cloning, re-installing, and re-making binaries
-- s3-download: download site files from S3
-- sites-pager-helper: start sites-pager for a site
-- update: update alpha, generator-ysp, pages-builder, pages-tools, ce-tools, and homebrew
+### [Scripts](scripts#scripts)
+- Various scripts for automating tasks
