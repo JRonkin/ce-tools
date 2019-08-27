@@ -137,7 +137,7 @@ new-task() {
 
   IFS= read -p 'Name: ' name
   name="${name//\"/\\\"}"
-  name="${name//\$/\\\"}"
+  name="${name//\$/\\\$}"
 
   read -p 'GitHub URL or Repo Name (blank for none): ' gitUrl
   repo="$gitUrl"
