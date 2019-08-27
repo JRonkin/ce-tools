@@ -19,7 +19,7 @@
 
 ## Contents
 
-### [Flow 2](flow2#flow-2)
+### [Git Flow 2](flow2#git-flow-2)
 - Shortcuts for common git commands
 - Smart shortcuts for branches grouped by JIRA number, such as automatically adding the JIRA number to the commit message and switching between branches in a group without typing the JIRA number
 - Based on Git Flow from pages-tools

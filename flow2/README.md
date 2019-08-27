@@ -1,4 +1,4 @@
-# Flow 2
+# Git Flow 2
 *Additions and shortcuts for Git Flow from pages-tools*
 
 These tools have shortcuts set for each of them, shown in parentheses. See [Shortcuts](../shortcuts#shortcuts) for more information.
