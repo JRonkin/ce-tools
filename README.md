@@ -27,6 +27,10 @@
 ### [Scripts](scripts#scripts)
 - Various scripts for automating tasks
 
+### [Tampermonkey Scripts](tampermonkey#tampermonkey-scripts)
+- Userscripts for the browser plugin [Tampermonkey](https://www.tampermonkey.net)
+- Automate logins and improve experience on some websites
+
 ### TaskBoard
 *Shortcut: tb*
 - Easily create and switch between tasks through a terminal GUI
