@@ -1,4 +1,4 @@
-# Scripts
+# CE Scripts
 
 - [add-dns](add-dns.sh): Add a DNS entry (bridge domain) to octo-dns.
 - [avn](avn.sh): Change node version based on the .node-version file in a directory, like regular avn but runnable from inside a shell script.

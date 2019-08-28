@@ -7,18 +7,16 @@
 3. Done! To use, run shortcuts in Terminal (see [Shortcuts](#shortcuts)).
 
 ## Contents
+- [Tools](#tools)
+  - [TaskBoard](#taskboard)
+  - [TimeLog](#timelog)
+- [Scripts](#scripts)
+  - [CE Scripts](#ce-scripts)
+  - [Git Flow 2](#git-flow-2)
+  - [Tampermonkey Scripts](tampermonkey#tampermonkey-scripts)
+- [Shortcuts](#shortcuts)
 
-### [Git Flow 2](flow2#git-flow-2)
-- Shortcuts for common git commands
-- Smart shortcuts for branches grouped by JIRA number, such as automatically adding the JIRA number to the commit message and switching between branches in a group without typing the JIRA number
-- Based on Git Flow from pages-tools
-
-### [Scripts](scripts#scripts)
-- Various scripts for automating tasks
-
-### [Tampermonkey Scripts](tampermonkey#tampermonkey-scripts)
-- Userscripts for the browser plugin [Tampermonkey](https://www.tampermonkey.net)
-- Automate logins and improve experience on some websites
+## Tools
 
 ### [TaskBoard](taskboard#taskboard)
 - Easily create and switch between tasks through a terminal GUI
@@ -34,7 +32,21 @@
 - See time reports for a single day or a range of days
 - Submit time to JIRA, logged individually for each item on each day
 
-### [Shortcuts](shortcuts)
+## Scripts
+
+### [CE Scripts](scripts#ce-scripts)
+- Various scripts for automating tasks
+
+### [Git Flow 2](flow2#git-flow-2)
+- Shortcuts for common git commands
+- Smart shortcuts for branches grouped by JIRA number, such as automatically adding the JIRA number to the commit message and switching between branches in a group without typing the JIRA number
+- Based on Git Flow from pages-tools
+
+### [Tampermonkey Scripts](tampermonkey#tampermonkey-scripts)
+- Userscripts for the browser plugin [Tampermonkey](https://www.tampermonkey.net)
+- Automate logins and improve experience on some websites
+
+## Shortcuts
 - **ce**: Run `ce [SCRIPT_NAME]` to run the named script ('.sh' not needed) with any given args. See [Scripts](scripts#scripts).
 - **gbp**: Git Flow 2 -- [phase-build.sh](flow2/phase-build.sh)
 - **gci**: Git Flow 2 -- [phase-commit.sh](flow2/phase-commit.sh)
