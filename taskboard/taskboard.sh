@@ -127,17 +127,41 @@ quit() {
 
 apps-menu() {
   menu "$(timelog-message "$jiranum" "$repo" "$name")
+E: Enable/Disable Apps
 [Enter]: Open App | X: Close App | Q: Return to TaskBoard" "$(
     for app in "${apps[@]}"
     do
-      echo "$app"
+      [ ${enabledApps[$(hash "$app")]} ] && echo "$app"
     done
-  )" 0 'X' 'Q'
+  )" 0 'E' 'X' 'Q'
 
   case "$menu_key" in
-    '' ) new-app "$menu_value" "$jiranum" "$repo";;
+    '' ) [ "$menu_value" ] && new-app "$menu_value" "$jiranum" "$repo";;
+
+    'E' )
+      menu_selected=0
+      while :
+      do
+        menu '[Enter]: Enable/Disable App | Q: Save Preferences' "$(
+          for app in "${apps[@]}"
+          do
+            local symbol=' '
+            [ ${enabledApps[$(hash "$app")]} ] && symbol='*'
+            echo "${symbol}${app}"
+          done
+        )" $menu_selected 'Q'
+
+        [ "$menu_key" = 'Q' ] && break
+
+        enabledApps[$(hash "${menu_value:1}")]=$([ ${enabledApps[$(hash "${menu_value:1}")]} ] || echo true)
+      done
+
+      save-config
+    ;;
+
     'Q' ) ;;
-    'X' ) close-app "$menu_value" "$jiranum" "$repo";;
+
+    'X' ) [ "$menu_value" ] && close-app "$menu_value" "$jiranum" "$repo";;
   esac
 }
 
@@ -256,34 +280,11 @@ select-task() {
 
 more-options() {
   menu "\
-E: Enable/Disable TaskSwap
 I: Change Items Directory
 S: Set Current Window Positions as Default
-T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
+T: TimeReport" ' Return to TaskBoard' 0 'I' 'S' 'T'
 
   case "$menu_key" in
-    'E' )
-      menu_selected=0
-      while :
-      do
-        menu '[Enter]: Enable/Disable App | Q: Save Preferences' "$(
-          for app in "${apps[@]}"
-          do
-            local symbol=' '
-            [ ${enabledApps[$(hash "$app")]} ] && symbol='*'
-            echo "${symbol}${app}"
-          done
-        )" $menu_selected 'Q'
-
-        [ "$menu_key" = 'Q' ] && break
-
-        enabledApps[$(hash "${menu_value:1}")]=$([ ${enabledApps[$(hash "${menu_value:1}")]} ] || echo true)
-      done
-
-      save-config
-
-    ;;
-
     # Change Items Directory
     'I' )
       clear
