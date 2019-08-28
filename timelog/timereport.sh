@@ -3,7 +3,7 @@ source jira-auth.sh
 source ../common/timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
-usage="Usage: timesum.sh [-hn] [-d decimals] [-r round_to] [-j [-u jira_user [-t jira_token]]] [date] [end_date]"
+usage="Usage: timereport.sh [-hn] [-d decimals] [-r round_to] [-j [-u jira_user [-t jira_token]]] [date] [end_date]"
 definitions=(""
   "-h = help"
   "-n = no intermediate rounding (displayed times may not sum to total)"

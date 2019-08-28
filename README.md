@@ -27,17 +27,11 @@
 - Automatically clone repo and run a setup script
 - Switch between windows of integrated apps -- Atom, Chrome, and Terminal
 
-### TimeLog
-*Shortcut: tl*
+### [TimeLog](timelog#timelog)
 - Keep track of time spent on a task
-- Supports multiple tasks running concurrently
-- Log time using commands "start" and "end" with matching messages
-- Or log time using commands "from" and "to" to log a duration from a start time or to an end time
-
-### TimeReport
-*Shortcut: tr*
-- Get a report of time spent on each task
-- See time on a single day or in a range of days
+- Save logs for each day
+- Get a report of time spent on each task with TimeReport
+- See time reports for a single day or a range of days
 - Submit time to JIRA, logged individually for each item on each day
 
 ### [Shortcuts](shortcuts)
