@@ -342,11 +342,12 @@ T: TimeReport" ' Return to TaskBoard' 0 'E' 'I' 'S' 'T'
 
 # PROGRAM START
 
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
 # Set window title
 ../scripts/ttitle.sh 'TaskBoard'
 
 # Set up directory and files
-cd "$(dirname "${BASH_SOURCE[0]}")"
 source taskswap.sh
 source ../common/menu.sh
 mkdir -p ../appdata/taskboard
