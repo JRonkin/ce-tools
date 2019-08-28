@@ -126,18 +126,36 @@ quit() {
 }
 
 apps-menu() {
-  menu "$(timelog-message "$jiranum" "$repo" "$name")
-E: Enable/Disable Apps
-[Enter]: Open App | X: Close App | Q: Return to TaskBoard" "$(
+  local appsList="$(
     for app in "${apps[@]}"
     do
       [ ${enabledApps[$(hash "$app")]} ] && echo "$app"
     done
-  )" 0 'E' 'X' 'Q'
+  )"
+
+  local appsOptions="$(timelog-message "$jiranum" "$repo" "$name")
+Q: Return to TaskBoard           | E: Enable/Disable Apps"
+
+  local appsKeys='Q E'
+
+  if [ "$appsList" ]
+  then
+    appsOptions="${appsOptions}
+[Enter]: Open App | X: Close App | S: Save Window Position"
+
+    appsKeys="${appsKeys} S X"
+  fi
+
+  menu "$appsOptions" "$appsList" 0 $appsKeys
 
   case "$menu_key" in
+    # Open App
     '' ) [ "$menu_value" ] && new-app "$menu_value" "$jiranum" "$repo";;
 
+    # Return to TaskBoard
+    'Q' ) ;;
+
+    # Enable/Disable Apps
     'E' )
       menu_selected=0
       while :
@@ -159,8 +177,22 @@ E: Enable/Disable Apps
       save-config
     ;;
 
-    'Q' ) ;;
+    # Set Current Window Positions as Default
+    'S' )
+      if [ "$active_jira" ]
+      then
+        save-window-bounds "$active_jira" "$active_repo"
+        clear
+        printf "The current window positions and sizes have been set as default.\n\n> Return to TaskBoard"
+        read -p ''
+      else
+        clear
+        printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
+        read -p ''
+      fi
+    ;;
 
+    # Close App
     'X' ) [ "$menu_value" ] && close-app "$menu_value" "$jiranum" "$repo";;
   esac
 }
@@ -281,8 +313,7 @@ select-task() {
 more-options() {
   menu "\
 I: Change Items Directory
-S: Set Current Window Positions as Default
-T: TimeReport" ' Return to TaskBoard' 0 'I' 'S' 'T'
+T: TimeReport" ' Return to TaskBoard' 0 'I' 'T'
 
   case "$menu_key" in
     # Change Items Directory
@@ -299,21 +330,6 @@ T: TimeReport" ' Return to TaskBoard' 0 'I' 'S' 'T'
       ITEMS_DIR=${ITEMS_DIR%/}
 
       save-config
-    ;;
-
-    # Set Current Window Positions as Default
-    'S' )
-      if [ "$active_jira" ]
-      then
-        save-window-bounds "$active_jira" "$active_repo"
-        clear
-        printf "The current window positions and sizes have been set as default.\n\n> Return to TaskBoard"
-        read -p ''
-      else
-        clear
-        printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
-        read -p ''
-      fi
     ;;
 
     # TimeReport
