@@ -1,7 +1,7 @@
 # Git Flow 2
 *Additions and shortcuts for Git Flow from pages-tools*
 
-These tools have shortcuts set for each of them, shown in parentheses. See [Shortcuts](../shortcuts#shortcuts) for more information.
+These tools have shortcuts set for each of them, shown in parentheses. See [Shortcuts](..#shortcuts) for more information.
 
 - [finish](finish.sh) (gf): Runs git finish with the argument list as the message. Optionally start the argument list with -t [TAG] to set a tag. Example: `gf -t 1.0.0 This is the message`
 - [funcs](funcs.sh): Common functions used by the flow tools.

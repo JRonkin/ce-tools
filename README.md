@@ -4,7 +4,7 @@
 ### INSTALL INSTRUCTIONS:
 1. Clone this repo.
 2. In Terminal, `cd` to this directory and run `source install.sh`
-3. Done! To use, run shortcuts in Terminal (e.g. run `tb` for TaskBoard).
+3. Done! To use, run shortcuts in Terminal (see [Shortcuts](#shortcuts)).
 
 ### How to Use TaskBoard:
 1. After following the install instructions, run tb.sh to launch TaskBoard
@@ -52,3 +52,17 @@
 - Get a report of time spent on each task
 - See time on a single day or in a range of days
 - Submit time to JIRA, logged individually for each item on each day
+
+### [Shortcuts](shortcuts)
+- **ce**: Run `ce [SCRIPT_NAME]` to run the named script ('.sh' not needed) with any given args. See [Scripts](scripts#scripts).
+- **gbp**: Git Flow 2 -- [phase-build.sh](flow2/phase-build.sh)
+- **gci**: Git Flow 2 -- [phase-commit.sh](flow2/phase-commit.sh)
+- **gco**: Git Flow 2 -- [phase-checkout.sh](flow2/phase-checkout.sh)
+- **gf**: Git Flow 2 -- [finish.sh](flow2/finish.sh)
+- **gpl**: Git Flow 2 -- [pull.sh](flow2/pull.sh)
+- **gps**: Git Flow 2 -- [push-set-upstream.sh](flow2/push-set-upstream.sh)
+- **gpub**: Git Flow 2 -- [publish-build.sh](flow2/publish-build.sh)
+- **tb**: TaskBoard -- [taskboard.sh](taskboard/taskboard.sh)
+- **tl**: TimeLog -- [timelog.sh](timelog/timelog.sh)
+- **tlr**: TimeLog -- [timereport.sh](timelog/timereport.sh)
+- **trash**: Scripts -- [trash.sh](scripts/trash.sh)
