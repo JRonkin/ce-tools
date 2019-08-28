@@ -6,16 +6,6 @@
 2. In Terminal, `cd` to this directory and run `source install.sh`
 3. Done! To use, run shortcuts in Terminal (see [Shortcuts](#shortcuts)).
 
-### How to Use TaskBoard:
-1. After following the install instructions, run tb.sh to launch TaskBoard
-2. In TaskBoard, press N to start a new task
-3. Enter the JIRA number or the URL of the JIRA item's page
-4. Enter the GitHub URL of the repo for the item or a custom message
-5. Time is counted for the active task, denoted by *
-6. Switch between tasks with arrows and Enter
-7. See time worked per item and log to JIRA in More Options > TimeReport
-8. Optionally enable automatic Chrome, Terminal, and/or Atom window switching in More Options > Enable/Disable TaskSwap
-
 ## Contents
 
 ### [Git Flow 2](flow2#git-flow-2)
@@ -30,15 +20,12 @@
 - Userscripts for the browser plugin [Tampermonkey](https://www.tampermonkey.net)
 - Automate logins and improve experience on some websites
 
-### TaskBoard
-*Shortcut: tb*
+### [TaskBoard](taskboard#taskboard)
 - Easily create and switch between tasks through a terminal GUI
+- Assign tasks a JIRA number and GitHub repo
 - Automatically track time per item with option to submit to JIRA
-- Assign tasks a JIRA number and GitHub repo or message
-- Automatically clone repo and install node modules
-- Open Atom to repo and Chrome to JIRA, GitHub, and Storm for the site
-- Integration with TimeLog to track time spent on each task
-- Integration with TimeReport to submit time to JIRA
+- Automatically clone repo and run a setup script
+- Switch between windows of integrated apps -- Atom, Chrome, and Terminal
 
 ### TimeLog
 *Shortcut: tl*
