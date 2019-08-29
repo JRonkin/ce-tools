@@ -1,13 +1,11 @@
 folder="$1"
 jiranum="$2"
 repo="$3"
-monitors="$4"
-bounds="$5"
+bounds="$4"
 
 if [ ! "$bounds" ]
 then
   bounds='279, 23, 1610, 1050'
-  [ $monitors -gt 1 ] && bounds='232, 23, 1919, 1118'
 fi
 
 if [ "$repo" ]

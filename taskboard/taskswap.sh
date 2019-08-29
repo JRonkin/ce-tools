@@ -8,9 +8,6 @@ do
   selectors[$(hash "$app")]="$(cat "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/selector.txt")"
 done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
 
-# Count the number of displays (monitors)
-monitors=$(system_profiler SPDisplaysDataType -detaillevel mini | grep -c "Display Serial")
-
 selector() {
   local app="$1"
   local jiranum="$2"
@@ -49,7 +46,7 @@ new-app() {
   # Load window bounds
   [ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
 
-  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$monitors" "${windowBounds[$(hash "$app")]}"
+  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "${windowBounds[$(hash "$app")]}"
 }
 
 new() {
