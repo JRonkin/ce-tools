@@ -1,17 +1,17 @@
 folder="$1"
 jiranum="$2"
 repo="$3"
-bounds="$4"
+position="$4"
+size="$5"
 
-if [ ! "$bounds" ]
-then
-  bounds='0, 347, 571, 700'
-fi
+[ "$position" ] || position='0, 347'
+[ "$size" ] || size='571, 353'
 
 osascript -e "
   tell app \"Terminal\"
     do script \"J=${jiranum}; cd ${folder}; source '$(realpath "$(dirname "${BASH_SOURCE[0]}")")/startup-script.sh' '${repo}'\"
     set the custom title of the front window to \"${jiranum}\"
-    set the bounds of the front window whose name contains \"${jiranum} — \" to {${bounds}}
+    set the position of the front window whose name contains \"${jiranum} — \" to {${position}}
+    set the size of the front window whose name contains \"${jiranum} — \" to {${size}}
   end tell
 " &

@@ -1,12 +1,11 @@
 folder="$1"
 jiranum="$2"
 repo="$3"
-bounds="$4"
+position="$4"
+size="$5"
 
-if [ ! "$bounds" ]
-then
-  bounds='279, 23, 1610, 1050'
-fi
+[ "$position" ] || position='279, 23'
+[ "$size" ] || size='1331, 1027'
 
 if [ "$repo" ]
 then
@@ -20,7 +19,8 @@ then
           delay 0.5
           set timer to timer + 0.5
         end repeat
-        set the bounds of every ${selector} to {${bounds}}
+        set the position of every ${selector} to {${position}}
+        set the size of every ${selector} to {${size}}
       end tell
     " &
 fi

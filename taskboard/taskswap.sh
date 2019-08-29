@@ -21,20 +21,35 @@ save-window-bounds() {
   local jiranum="$2"
   local repo="$3"
 
-  local bounds="$(osascript -e "tell app \"${app}\" to get the bounds of the 1st $(selector "$app" "$jiranum" "$repo")" 2>/dev/null)"
+  local position="$(osascript -e "
+    tell app \"System Events\"
+      tell process \"${app}\"
+        set pos to the position of the front $(selector "$app" "$jiranum" "$repo")
+        set siz to the size of the front $(selector "$app" "$jiranum" "$repo")
+      end tell
+    end tell
 
-  if [ ! "$bounds" ]
+    set AppleScript's text item delimiters to {\", \"}
+    (pos as text) & \"|\" & (siz as text)
+  " 2>/dev/null)"
+
+  if [ ! "$position" ]
   then
-    return 1
+    local bounds=($(osascript -e "tell app \"${app}\" to get the bounds of the 1st $(selector "$app" "$jiranum" "$repo")" 2>/dev/null | tr -d ','))
+
+    if [ "${bounds[0]}" ]
+    then
+      position="${bounds[0]}, ${bounds[1]}|$(( ${bounds[2]} - ${bounds[0]} )), $(( ${bounds[3]} - ${bounds[1]} ))"
+    fi
   fi
 
-  local file="${CONFIG_DIR}/windowbounds"
+  [ "$position" ] || return 1
+
+  local file="${CONFIG_DIR}/windowPositions"
 
   touch "$file"
-  echo "\
-windowBounds[$(hash "$app")]='${bounds}'
-$(cat "$file" | grep -v "windowBounds\[$(hash "$app")\]=")" >"${file}.tmp"
-
+  echo "windowPositions[$(hash "$app")]='${position}'
+$(cat "$file" | grep -v "windowPositions\[$(hash "$app")\]=")" >"${file}.tmp"
   mv "${file}.tmp" "$file"
 }
 
@@ -44,9 +59,12 @@ new-app() {
   local repo="$3"
 
   # Load window bounds
-  [ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
+  [ -f "${CONFIG_DIR}/windowPositions" ] && source "${CONFIG_DIR}/windowPositions"
 
-  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "${windowBounds[$(hash "$app")]}"
+  local position="$(echo "${windowPositions[$(hash "$app")]}" | cut -d '|' -f 1)"
+  local size="$(echo "${windowPositions[$(hash "$app")]}" | cut -d '|' -f 2)"
+
+  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size"
 }
 
 new() {

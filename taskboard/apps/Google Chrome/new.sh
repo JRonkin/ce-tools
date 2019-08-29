@@ -1,12 +1,13 @@
 folder="$1"
 jiranum="$2"
 repo="$3"
-bounds="$4"
+position="$4"
+size="$5"
 
-if [ ! "$bounds" ]
-then
-  bounds='279, 23, 1610, 1050'
-fi
+[ "$position" ] || position='279, 23'
+[ "$size" ] || size='1331, 1027'
+
+bounds="${position}, $(( ${position%,*} + ${size%,*} )), $(( ${position#*,} + ${size#*,} ))"
 
 if [ "$repo" ]
 then
