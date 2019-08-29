@@ -2,10 +2,13 @@ folder="$1"
 jiranum="$2"
 repo="$3"
 monitors="$4"
+bounds="$5"
 
-bounds='279, 23, 1610, 1050'
-[ $monitors -gt 1 ] && bounds='232, 23, 1919, 1118'
-[ "$bounds_GoogleChrome" ] && bounds="$bounds_GoogleChrome"
+if [ ! "$bounds" ]
+then
+  bounds='279, 23, 1610, 1050'
+  [ $monitors -gt 1 ] && bounds='232, 23, 1919, 1118'
+fi
 
 if [ "$repo" ]
 then
@@ -13,7 +16,8 @@ then
     make new tab in new_window
     set the URL of the active tab of new_window to \"https://github.com/yext-pages/${repo}\"
     make new tab in new_window
-    set the URL of the active tab of new_window to \"https://www.yext.com/pagesadmin/?query=$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)\""
+    set the URL of the active tab of new_window to \"https://www.yext.com/pagesadmin/?query=$(echo "${repo//[Mm]aster[^A-Za-z0-9]}" | tr A-Z a-z)\"
+  "
 fi
 
 osascript -e "

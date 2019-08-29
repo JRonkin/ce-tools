@@ -181,19 +181,23 @@ Q: Return to TaskBoard           | E: Enable/Disable Apps"
     'S' )
       if [ "$active_jira" ]
       then
-        save-window-bounds "$active_jira" "$active_repo"
         clear
-        printf "The current window positions and sizes have been set as default.\n\n> Return to TaskBoard"
-        read -p ''
+        if save-window-bounds "$menu_value" "$active_jira" "$active_repo"
+        then
+          printf "The current window position and size for ${menu_value} has been set as default.\n\n"
+        else
+          printf "Error: Could not get window position of ${menu_value}. Is there an open window?\n\n"
+        fi
+        read -p '> Return to TaskBoard'
       else
         clear
-        printf "You must have an active task to save window positions.\n\n> Return to TaskBoard"
-        read -p ''
+        printf "You must have an active task to save window positions.\n\n"
+        read -p '> Return to TaskBoard'
       fi
     ;;
 
     # Close App
-    'X' ) [ "$menu_value" ] && close-app "$menu_value" "$jiranum" "$repo";;
+    'X' ) close-app "$menu_value" "$jiranum" "$repo";;
   esac
 }
 

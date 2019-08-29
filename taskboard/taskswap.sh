@@ -1,8 +1,10 @@
 source "$(dirname "${BASH_SOURCE[0]}")/../common/funcs.sh"
 
+CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
+
 while read app
 do
-	apps[${#apps[@]}]="$app"
+  apps[${#apps[@]}]="$app"
   selectors[$(hash "$app")]="$(cat "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/selector.txt")"
 done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
 
@@ -18,19 +20,25 @@ selector() {
 }
 
 save-window-bounds() {
-  local jiranum="$1"
-  local repo="$2"
+  local app="$1"
+  local jiranum="$2"
+  local repo="$3"
 
-  (
-    for app in "${apps[@]}"
-    do
-      if [ ${enabledApps[$(hash "$app")]} ]
-      then
-        echo "bounds_${app// }='$(osascript -e "tell app \"${app}\" to get the bounds of the 1st $(selector "$app" "$jiranum" "$repo")")'" &
-      fi
-    done
-    wait
-  ) | sort > "$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard/windowbounds"
+  local bounds="$(osascript -e "tell app \"${app}\" to get the bounds of the 1st $(selector "$app" "$jiranum" "$repo")" 2>/dev/null)"
+
+  if [ ! "$bounds" ]
+  then
+    return 1
+  fi
+
+  local file="${CONFIG_DIR}/windowbounds"
+
+  touch "$file"
+  echo "\
+windowBounds[$(hash "$app")]='${bounds}'
+$(cat "$file" | grep -v "windowBounds\[$(hash "$app")\]=")" >"${file}.tmp"
+
+  mv "${file}.tmp" "$file"
 }
 
 new-app() {
@@ -38,15 +46,16 @@ new-app() {
   local jiranum="$2"
   local repo="$3"
 
-  $(dirname "${BASH_SOURCE[0]}")/apps/"$app"/new.sh "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$monitors"
+  # Load window bounds
+  [ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
+
+  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$monitors" "${windowBounds[$(hash "$app")]}"
 }
 
 new() {
   local name="$1"
   local jiranum="$2"
   local repo="$3"
-
-  local CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
 
   local folder
   if [ "$ITEMS_DIR" ]
@@ -57,9 +66,6 @@ new() {
   fi
 
   mkdir -p "$folder"
-
-  # Load window bounds
-  [ -f "${CONFIG_DIR}/windowbounds" ] && source "${CONFIG_DIR}/windowbounds"
 
   # Set up new task
   echo -e "name='$(echo "$name" | sed "s/'/'\"'\"'/g")'\nsymbol='*'\nrepo='${repo}'" > "${folder}/.taskboard"

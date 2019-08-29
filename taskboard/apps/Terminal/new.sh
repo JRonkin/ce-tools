@@ -2,10 +2,13 @@ folder="$1"
 jiranum="$2"
 repo="$3"
 monitors="$4"
+bounds="$5"
 
-bounds='0, 347, 571, 700'
-[ $monitors -gt 1 ] && bounds='3255, 390, 3840, 756'
-[ "$bounds_Terminal" ] && bounds="$bounds_Terminal"
+if [ ! "$bounds" ]
+then
+  bounds='0, 347, 571, 700'
+  [ $monitors -gt 1 ] && bounds='3255, 390, 3840, 756'
+fi
 
 osascript -e "
   tell app \"Terminal\"
