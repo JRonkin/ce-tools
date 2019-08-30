@@ -102,7 +102,7 @@ activate-app() {
   local jiranum="$2"
   local repo="$3"
 
-  osascript -e "tell app \"${app}\" to set index of every $(selector "$app" "$jiranum" "$repo") to 1"
+  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/activate.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo"
 }
 
 activate() {
@@ -125,8 +125,7 @@ deactivate-app() {
   local jiranum="$2"
   local repo="$3"
 
-  osascript -e "tell app \"${app}\" to set miniaturized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
-  osascript -e "tell app \"${app}\" to set minimized of every $(selector "$app" "$jiranum" "$repo") to true" 2>/dev/null
+  osascript -e "tell app \"System Events\" to tell process \"${app}\" to tell every $(selector "$app" "$jiranum" "$repo") to click button 3"
 }
 
 deactivate() {
@@ -149,7 +148,7 @@ close-app() {
   local jiranum="$2"
   local repo="$3"
 
-  osascript -e "tell app \"${app}\" to close every $(selector "$app" "$jiranum" "$repo")"
+  osascript -e "tell app \"System Events\" to tell process \"${app}\" to tell every $(selector "$app" "$jiranum" "$repo") to click button 1"
 }
 
 close() {
