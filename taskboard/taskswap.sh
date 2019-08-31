@@ -1,12 +1,14 @@
-source "$(dirname "${BASH_SOURCE[0]}")/../common/funcs.sh"
+BASE_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
+CONFIG_DIR="${BASE_DIR}/appdata/taskboard"
+APPS_DIR="${BASE_DIR}/taskboard/apps"
 
-CONFIG_DIR="$(dirname "${BASH_SOURCE[0]}")/../appdata/taskboard"
+source "${BASE_DIR}/common/funcs.sh"
 
 while read app
 do
   apps[${#apps[@]}]="$app"
-  selectors[$(hash "$app")]="$(cat "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/selector.txt")"
-done <<< "$(ls "$(dirname "${BASH_SOURCE[0]}")/apps")"
+  selectors[$(hash "$app")]="$(cat "${APPS_DIR}/${app}/selector.txt")"
+done <<< "$(ls "${APPS_DIR}")"
 
 selector() {
   local app="$1"
@@ -53,10 +55,11 @@ $(cat "$file" | grep -v "windowPositions\[$(hash "$app")\]=")" >"${file}.tmp"
   mv "${file}.tmp" "$file"
 }
 
-new-app() {
-  local app="$1"
-  local jiranum="$2"
-  local repo="$3"
+app-command() {
+  local command="$1"
+  local app="$2"
+  local jiranum="$3"
+  local repo="$4"
 
   # Load window bounds
   [ -f "${CONFIG_DIR}/windowPositions" ] && source "${CONFIG_DIR}/windowPositions"
@@ -64,7 +67,7 @@ new-app() {
   local position="$(echo "${windowPositions[$(hash "$app")]}" | cut -d '|' -f 1)"
   local size="$(echo "${windowPositions[$(hash "$app")]}" | cut -d '|' -f 2)"
 
-  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/new.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size"
+  "${APPS_DIR}/${app}/${command}.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size" &>/dev/null
 }
 
 new() {
@@ -93,77 +96,44 @@ new() {
 
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] && new-app "$app" "$jiranum" "$repo" &
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'new' "$app" "$jiranum" "$repo" &
   done
-}
-
-activate-app() {
-  local app="$1"
-  local jiranum="$2"
-  local repo="$3"
-
-  "$(dirname "${BASH_SOURCE[0]}")/apps/${app}/activate.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo"
 }
 
 activate() {
   local jiranum="$1"
   local repo="$2"
 
-  local folder="${ITEMS_DIR}/${jiranum}"
-  [ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
-
-  sed -i '' "s/^symbol=.*/symbol='*'/" "${folder}/.taskboard"
+  sed -i '' "s/^symbol=.*/symbol='*'/" "${ITEMS_DIR}/${jiranum}/.taskboard"
 
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] && activate-app "$app" "$jiranum" "$repo" &
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'activate' "$app" "$jiranum" "$repo" &
   done
-}
-
-deactivate-app() {
-  local app="$1"
-  local jiranum="$2"
-  local repo="$3"
-
-  osascript -e "tell app \"System Events\" to tell process \"${app}\" to tell every $(selector "$app" "$jiranum" "$repo") to click button 3"
 }
 
 deactivate() {
   local jiranum="$1"
   local repo="$2"
 
-  local folder="${ITEMS_DIR}/${jiranum}"
-  [ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
-
-  sed -i '' "s/^symbol=.*/symbol=' '/" "${folder}/.taskboard"
+  sed -i '' "s/^symbol=.*/symbol=' '/" "${ITEMS_DIR}/${jiranum}/.taskboard"
 
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] && deactivate-app "$app" "$jiranum" "$repo" &
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'deactivate' "$app" "$jiranum" "$repo" &
   done
-}
-
-close-app() {
-  local app="$1"
-  local jiranum="$2"
-  local repo="$3"
-
-  osascript -e "tell app \"System Events\" to tell process \"${app}\" to tell every $(selector "$app" "$jiranum" "$repo") to click button 1"
 }
 
 close() {
   local jiranum="$1"
   local repo="$2"
 
-  local folder="${ITEMS_DIR}/${jiranum}"
-  [ "$ITEMS_DIR" ] || folder="${HOME}/items/${jiranum}"
-
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] && close-app "$app" "$jiranum" "$repo" &
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'close' "$app" "$jiranum" "$repo" &
   done
 
   wait
 
-  trash "$folder"
+  trash "${ITEMS_DIR}/${jiranum}"
 }

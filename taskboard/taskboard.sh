@@ -150,7 +150,7 @@ Q: Return to TaskBoard           | E: Enable/Disable Apps"
 
   case "$menu_key" in
     # Open App
-    '' ) [ "$menu_value" ] && new-app "$menu_value" "$jiranum" "$repo";;
+    '' ) [ "$menu_value" ] && app-command 'new' "$menu_value" "$jiranum" "$repo";;
 
     # Return to TaskBoard
     'Q' ) ;;
@@ -197,7 +197,7 @@ Q: Return to TaskBoard           | E: Enable/Disable Apps"
     ;;
 
     # Close App
-    'X' ) close-app "$menu_value" "$jiranum" "$repo";;
+    'X' ) app-command 'close' "$menu_value" "$jiranum" "$repo";;
   esac
 }
 
