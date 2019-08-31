@@ -7,51 +7,22 @@ source "${BASE_DIR}/common/funcs.sh"
 while read app
 do
   apps[${#apps[@]}]="$app"
-  selectors[$(hash "$app")]="$(cat "${APPS_DIR}/${app}/selector.txt")"
 done <<< "$(ls "${APPS_DIR}")"
-
-selector() {
-  local app="$1"
-  local jiranum="$2"
-  local repo="$3"
-
-  printf "${selectors[$(hash "$app")]}" "$jiranum"
-}
 
 save-window-bounds() {
   local app="$1"
   local jiranum="$2"
   local repo="$3"
 
-  local position="$(osascript -e "
-    tell app \"System Events\"
-      tell process \"${app}\"
-        set pos to the position of the front $(selector "$app" "$jiranum" "$repo")
-        set siz to the size of the front $(selector "$app" "$jiranum" "$repo")
-      end tell
-    end tell
-
-    set AppleScript's text item delimiters to {\", \"}
-    (pos as text) & \"|\" & (siz as text)
-  " 2>/dev/null)"
-
-  if [ ! "$position" ]
-  then
-    local bounds=($(osascript -e "tell app \"${app}\" to get the bounds of the 1st $(selector "$app" "$jiranum" "$repo")" 2>/dev/null | tr -d ','))
-
-    if [ "${bounds[0]}" ]
-    then
-      position="${bounds[0]}, ${bounds[1]}|$(( ${bounds[2]} - ${bounds[0]} )), $(( ${bounds[3]} - ${bounds[1]} ))"
-    fi
-  fi
+  local position="$(app-command bounds "$app" "$jiranum" "$repo" 2>/dev/null)"
 
   [ "$position" ] || return 1
 
-  local file="${CONFIG_DIR}/windowPositions"
+  local file="${CONFIG_DIR}/windowBounds"
 
   touch "$file"
-  echo "windowPositions[$(hash "$app")]='${position}'
-$(cat "$file" | grep -v "windowPositions\[$(hash "$app")\]=")" >"${file}.tmp"
+  echo "windowBounds[$(hash "$app")]='${position}'
+$(cat "$file" | grep -v "windowBounds\[$(hash "$app")\]=")" >"${file}.tmp"
   mv "${file}.tmp" "$file"
 }
 
@@ -62,12 +33,12 @@ app-command() {
   local repo="$4"
 
   # Load window bounds
-  [ -f "${CONFIG_DIR}/windowPositions" ] && source "${CONFIG_DIR}/windowPositions"
+  [ -f "${CONFIG_DIR}/windowBounds" ] && source "${CONFIG_DIR}/windowBounds"
 
-  local position="$(echo "${windowPositions[$(hash "$app")]}" | cut -d '|' -f 1)"
-  local size="$(echo "${windowPositions[$(hash "$app")]}" | cut -d '|' -f 2)"
+  local position="$(echo "${windowBounds[$(hash "$app")]}" | cut -d '|' -f 1)"
+  local size="$(echo "${windowBounds[$(hash "$app")]}" | cut -d '|' -f 2)"
 
-  "${APPS_DIR}/${app}/${command}.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size" &>/dev/null
+  "${APPS_DIR}/${app}/${command}.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size"
 }
 
 new() {

@@ -1,1 +1,0 @@
-window where the title of the 1st tab contains \"[%s]\"
