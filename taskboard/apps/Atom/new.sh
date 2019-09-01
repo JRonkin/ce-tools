@@ -7,6 +7,8 @@ size="$5"
 [ "$position" ] || position='279, 23'
 [ "$size" ] || size='1331, 1027'
 
+bounds="${position}, $(( ${position%,*} + ${size%,*} )), $(( ${position#*,} + ${size#*,} ))"
+
 if [ "$repo" ]
 then
   selector="window whose name contains \"/${jiranum}/${repo}\""
@@ -19,8 +21,7 @@ then
           delay 0.5
           set timer to timer + 0.5
         end repeat
-        set the position of every ${selector} to {${position}}
-        set the size of every ${selector} to {${size}}
+        set the bounds of every ${selector} to {${bounds}}
       end tell
     " &
 fi
