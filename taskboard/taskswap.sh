@@ -38,7 +38,9 @@ app-command() {
   local position="$(echo "${windowBounds[$(hash "$app")]}" | cut -d '|' -f 1)"
   local size="$(echo "${windowBounds[$(hash "$app")]}" | cut -d '|' -f 2)"
 
+  pushd "${APPS_DIR}/${app}" >/dev/null
   "${APPS_DIR}/${app}/${command}.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size"
+  popd >/dev/null
 }
 
 new() {

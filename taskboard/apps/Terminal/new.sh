@@ -9,7 +9,7 @@ size="$5"
 
 osascript -e "
   tell app \"Terminal\"
-    do script \"J=${jiranum}; cd ${folder}; source '$(realpath "$(dirname "${BASH_SOURCE[0]}")")/startup-script.sh' '${repo}'\"
+    do script \"J=${jiranum}; cd ${folder}; source '$(pwd)/startup-script.sh' '${repo}'\"
     set the custom title of the front window to \"${jiranum}\"
     set the position of the front window whose name contains \"${jiranum} — \" to {${position}}
     set the size of the front window whose name contains \"${jiranum} — \" to {${size}}
