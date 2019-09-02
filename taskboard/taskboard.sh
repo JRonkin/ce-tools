@@ -157,24 +157,36 @@ Q: Return to TaskBoard           | E: Enable/Disable Apps"
 
     # Enable/Disable Apps
     'E' )
-      menu_selected=0
-      while :
-      do
-        menu '[Enter]: Enable/Disable App | Q: Save Preferences' "$(
-          for app in "${apps[@]}"
-          do
-            local symbol=' '
-            [ ${enabledApps[$(hash "$app")]} ] && symbol='*'
-            echo "${symbol}${app}"
-          done
-        )" $menu_selected 'Q'
+      if [ "$(osascript -e 'tell app "System Events" to get UI elements enabled')" = 'true' ]
+      then
+        menu_selected=0
+        while :
+        do
+          menu '[Enter]: Enable/Disable App | Q: Save Preferences' "$(
+            for app in "${apps[@]}"
+            do
+              local symbol=' '
+              [ ${enabledApps[$(hash "$app")]} ] && symbol='*'
+              echo "${symbol}${app}"
+            done
+          )" $menu_selected 'Q'
 
-        [ "$menu_key" = 'Q' ] && break
+          [ "$menu_key" = 'Q' ] && break
 
-        enabledApps[$(hash "${menu_value:1}")]=$([ ${enabledApps[$(hash "${menu_value:1}")]} ] || echo true)
-      done
+          enabledApps[$(hash "${menu_value:1}")]=$([ ${enabledApps[$(hash "${menu_value:1}")]} ] || echo true)
+        done
 
-      save-config
+        save-config
+      else
+        menu 'To let TaskBoard manage app windows, Terminal needs
+access to accessibility features. Open Accessibility
+settings and check the box next to Terminal to contine.' 'Open Accessibility Settings
+Cancel'
+        if [ "$menu_selected" -eq 0 ]
+        then
+          open 'x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility'
+        fi
+      fi
     ;;
 
     # Set Current Window Positions as Default
