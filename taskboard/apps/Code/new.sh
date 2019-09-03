@@ -9,7 +9,7 @@ size="$5"
 
 selector="window whose name is \"${jiranum}\""
 
-code "$folder" && sleep 2 &&
+open -a 'Visual Studio Code' "$folder" && sleep 2 &&
   osascript -e "
     tell app \"System Events\"
       tell process \"Code\"
