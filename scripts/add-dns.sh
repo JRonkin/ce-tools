@@ -78,7 +78,7 @@ do
 
   mv ${DNS_FILE}.tmp ${DNS_FILE}
 
-  read -p "Add another? (y/N)" done
+  read -p 'Add another? (y/N) ' done
   if [ "$(echo "$done" | tr "A-Z" "a-z")" = "y" ] || [ "$(echo "$done" | tr "A-Z" "a-z")" = "yes" ]
   then
     done=''
