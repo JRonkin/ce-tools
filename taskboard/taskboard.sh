@@ -357,11 +357,11 @@ T: TimeReport" ' Return to TaskBoard' 0 'I' 'T'
       read -p 'Start Date (format yyyy-mm-dd; leave blank for today): ' date
       read -p 'End Date (format yyyy-mm-dd; leave blank for same as start): ' endDate
 
-      [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" end
+      [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" end
 
       ../timelog/timereport.sh "$date" "$endDate"
 
-      [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$jiranum" "$repo" "$name")" start
+      [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" start
 
       tput civis
       stty -echo
