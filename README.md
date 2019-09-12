@@ -13,7 +13,7 @@
 - [Scripts](#scripts)
   - [CE Scripts](#ce-scripts)
   - [Git Flow 2](#git-flow-2)
-  - [Tampermonkey Scripts](tampermonkey#tampermonkey-scripts)
+  - [Tampermonkey Scripts](#tampermonkey-scripts)
 - [Shortcuts](#shortcuts)
 
 ## Tools
@@ -42,7 +42,8 @@
 - Smart shortcuts for branches grouped by JIRA number, such as automatically adding the JIRA number to the commit message and switching between branches in a group without typing the JIRA number
 - Based on Git Flow from pages-tools
 
-### [Tampermonkey Scripts](tampermonkey#tampermonkey-scripts)
+### [Tampermonkey Scripts](https://github.com/JRonkin/tampermonkey-ce)
+*Tampermonkey Scripts have been moved to their own repo: https://github.com/JRonkin/tampermonkey-ce*
 - Userscripts for the browser plugin [Tampermonkey](https://www.tampermonkey.net)
 - Automate logins and improve experience on some websites
 
