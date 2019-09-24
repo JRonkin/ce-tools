@@ -48,7 +48,7 @@
 - Automate logins and improve experience on some websites
 
 ## Shortcuts
-- **ce**: Run `ce [SCRIPT_NAME]` to run the named script ('.sh' not needed) with any given args. See [Scripts](scripts#scripts).
+- **ce**: Run `ce [SCRIPT_NAME]` to run the named script ('.sh' not needed) with any given args. See [CE Scripts](#ce-scripts).
 - **gbp**: Git Flow 2 -- [phase-build.sh](flow2/phase-build.sh)
 - **gci**: Git Flow 2 -- [phase-commit.sh](flow2/phase-commit.sh)
 - **gco**: Git Flow 2 -- [phase-checkout.sh](flow2/phase-checkout.sh)
