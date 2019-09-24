@@ -1,9 +1,8 @@
 if [ ! "$(grep "# ce tools" < "${HOME}/.bash_profile")" ]
 then
-  cd "$(dirname "${BASH_SOURCE[0]}")"
-  export PATH="$PATH:$(pwd)/shortcuts"
+  export PATH="$PATH:$(realpath "$(dirname "${BASH_SOURCE[0]}")")/shortcuts"
   printf "
 # ce tools
-export PATH=\"\$PATH:$(pwd)/shortcuts\"
-" >> "$HOME"/.bash_profile
+export PATH=\"\$PATH:$(realpath "$(dirname "${BASH_SOURCE[0]}")")/shortcuts\"
+" >> "${HOME}/.bash_profile"
 fi
