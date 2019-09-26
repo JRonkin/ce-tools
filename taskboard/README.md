@@ -11,7 +11,8 @@
 1. Enter the name of the task to show in the tasks list.
 1. If the task has an associated Pages site repo, enter the GitHub URL or the name of the repo.
 1. The task will be added to the list. It will also be set as the active task, denoted by the `*`.
-1. Move through the list with the Up and Down arrow keys. To activate or deactivate a task, press Enter. One task can be active at a time.
+1. Move through the list with the Up and Down arrow keys, or press a number key to jump to that position.
+1. To activate or deactivate a task, press Enter. One task can be active at a time.
 1. Press X to remove a task from the list and send its item folder to the Trash.
 
 ### Time Logging
