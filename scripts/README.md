@@ -11,6 +11,7 @@
 - [repo-fixes](repo-fixes.sh): Fix missing messages directory, README location, yarn install errors, pages.json spacing, and node version < 6.
 - [reset-alpha](reset-alpha.sh): Reset the local repo of alpha by re-cloning, re-installing, and re-making binaries.
 - [s3-download](s3-download.sh): Download site files from S3. First argument is the domain, second argument is the folder of the root directory to download. Arguments are optional and will prompt as needed.
+- [sites-list](sites-list.sh): List all Pages sites with the given criteria. Run `sites-list.sh -h` to see a list of accepted parameters.
 - [sort-redirects](sort-redirects.sh): Sort all redirects alphabetically in redirects.csv and redirects.\*.csv in a repo, remove duplicate entries, and list all conflicting entries (where one source has multiple destinations).
 - [trash](trash.sh): Send a file or folder to the Trash as if it were deleted in Finder.
 - [ttitle](ttitle.sh): Set a custom title for the terminal window.
