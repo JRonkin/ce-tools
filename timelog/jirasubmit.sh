@@ -2,10 +2,12 @@ cd $(dirname "${BASH_SOURCE[0]}")
 source jira-auth.sh
 source ../common/timefuncs.sh
 
-usage="Usage: jirasubmit.sh [-hq] [-u username [-t api_token]] jira_number hours [date]"
+usage="Usage: jirasubmit.sh [-hq] [-o jira_org] [-u username [-t api_token]] jira_number hours [date]"
 definitions=(""
   "-h = help"
   "-q = quiet (suppress non-error messages)"
+  ""
+  "-o jira_org = JIRA organization (XXX in https://XXX.atlassian.net)"
   "-u username = JIRA username (your email address)"
   "-t api_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
   ""
@@ -15,10 +17,11 @@ definitions=(""
 "")
 
 quiet=""
+jiraorg=""
 username=""
 apiToken=""
 
-while getopts "hqt:u:" opt
+while getopts "hqo:t:u:" opt
 do
   case "$opt" in
     "h" )
@@ -28,6 +31,10 @@ do
           echo "$i"
         done
       exit
+    ;;
+
+    "o" )
+      jiraorg="$OPTARG"
     ;;
 
     "q" )
@@ -83,7 +90,7 @@ else
   date="$(date "+%Y-%m-%d")"
 fi
 
-jira-auth "$username" "$apiToken"
+jira-auth "$jiraorg" "$username" "$apiToken"
 
 if [ ! $quiet ]
 then
@@ -92,7 +99,7 @@ fi
 
 response=$(curl -so /dev/null -w '%{http_code}' \
   --request POST \
-  --url https://yexttest.atlassian.net/rest/api/3/issue/${jiranum}/worklog \
+  --url https://${jiraorg}.atlassian.net/rest/api/3/issue/${jiranum}/worklog \
   --user ${username}:${apiToken} \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json' \

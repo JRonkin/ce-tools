@@ -1,5 +1,16 @@
 jira-auth() {
-  username="$1"
+  jiraorg="$1"
+  if [ ! "$jiraorg" ]
+  then
+    jiraorg="$(security find-generic-password -s "TimeLog" -l "JIRA API token" 2>/dev/null | grep '"icmt"' | cut -d = -f 2 | tr -d \")"
+
+    while [ ! "$jiraorg" ]
+    do
+      read -p "JIRA Organization (XXX in https://XXX.atlassian.net): " jiraorg
+    done
+  fi
+
+  username="$2"
   if [ ! "$username" ]
   then
     username="$(security find-generic-password -s "TimeLog" -l "JIRA API token" 2>/dev/null | grep '"acct"' | cut -d = -f 2 | tr -d \")"
@@ -10,7 +21,7 @@ jira-auth() {
     done
   fi
 
-  apiToken="$2"
+  apiToken="$3"
   savedToken="$(security find-generic-password -s "TimeLog" -a "$username" -w 2>/dev/null)"
 
   if [ "$apiToken" ]
@@ -20,7 +31,7 @@ jira-auth() {
       echo "The given API token does not match the saved token for '${username}'."
       if [[ "$(read -p "Update saved token? (y/N) " ans; echo $ans)" =~ ^[Yy]([Ee][Ss])?$ ]]
       then
-        security add-generic-password -s "TimeLog" -a "$username" -l "JIRA API token" -p "$apiToken" -U
+        security add-generic-password -s "TimeLog" -j "$jiraorg" -a "$username" -l "JIRA API token" -w "$apiToken" -U
       fi
     fi
   else
@@ -40,7 +51,7 @@ jira-auth() {
 
       if [[ "$(read -p "Save your token in Keychain? (y/N) " ans; echo $ans)" =~ ^[Yy]([Ee][Ss])?$ ]]
       then
-        security add-generic-password -s "TimeLog" -a "$username" -l "JIRA API token" -p "$apiToken" -U
+        security add-generic-password -s "TimeLog" -j "$jiraorg" -a "$username" -l "JIRA API token" -w "$apiToken" -U
       fi
     fi
   fi

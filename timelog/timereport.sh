@@ -3,7 +3,7 @@ source jira-auth.sh
 source ../common/timefuncs.sh
 mkdir -p ../appdata/timelog/logs
 
-usage="Usage: timereport.sh [-hn] [-d decimals] [-r round_to] [-j [-u jira_user [-t jira_token]]] [date] [end_date]"
+usage="Usage: timereport.sh [-hn] [-d decimals] [-r round_to] [-j [-o jira_org] [-u jira_user [-t jira_token]]] [date] [end_date]"
 definitions=(""
   "-h = help"
   "-n = no intermediate rounding (displayed times may not sum to total)"
@@ -11,6 +11,7 @@ definitions=(""
   "-r round_to = round to the nearest multiple of roundto (default 0.25)"
   ""
   "-j = log time to JIRA (log messages must start with JIRA number, e.g. PC-12345)"
+  "-o jira_org = JIRA organization (XXX in https://XXX.atlassian.net)"
   "-u jira_user = JIRA username (your email address)"
   "-t jira_token = JIRA Api Token -- https://id.atlassian.com/manage/api-tokens"
   ""
@@ -19,19 +20,16 @@ definitions=(""
 "")
 
 jira=""
-apiToken=""
+jiraorg=""
 username=""
+apiToken=""
 unrounded=""
 decimals=2
 roundto=0.25
 
-while getopts "hntud:r:" opt
+while getopts "hjnd:o:r:t:u:" opt
 do
   case "$opt" in
-    "j" )
-      jira="-j"
-    ;;
-
     "h" )
       echo "${usage}"
         for i in "${definitions[@]}"
@@ -41,16 +39,12 @@ do
       exit
     ;;
 
+    "j" )
+      jira="-j"
+    ;;
+
     "n" )
       unrounded="-n"
-    ;;
-
-    "u" )
-      username="$OPTARG"
-    ;;
-
-    "t" )
-      apiToken="$OPTARG"
     ;;
 
     "d" )
@@ -61,6 +55,10 @@ do
         ./timereport.sh -h
         exit 1
       fi
+    ;;
+
+    "o" )
+      jiraorg="$OPTARG"
     ;;
 
     "r" )
@@ -75,6 +73,14 @@ do
 
     * )
       exit 1
+    ;;
+
+    "t" )
+      apiToken="$OPTARG"
+    ;;
+
+    "u" )
+      username="$OPTARG"
     ;;
   esac
 done
@@ -177,7 +183,7 @@ fi
 
 if [ "$jira" ]
 then
-  jira-auth "$username" "$apiToken"
+  jira-auth "$jiraorg" "$username" "$apiToken"
 
   if [ "$endDate" = "$date" ]
   then
@@ -187,7 +193,7 @@ then
       jiranum=$(echo "${messages[$index]}" | cut -d " " -f 1)
       if [ ! $roundedHours = 0 ] && [[ "$jiranum" =~ ^[A-Z]+-[0-9]+$ ]]
       then
-        ./jirasubmit.sh -t "$apiToken" -u "$username" "$jiranum" "$roundedHours" "$date"
+        ./jirasubmit.sh -o "$jiraorg" -u "$username" -t "$apiToken" "$jiranum" "$roundedHours" "$date"
       fi
     done
   else

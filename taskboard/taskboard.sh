@@ -1,7 +1,11 @@
 # Helper Functions
 
 save-config() {
-  echo "ITEMS_DIR='${ITEMS_DIR}'" > ../appdata/taskboard/taskswap.config
+  echo "\
+GITHUB_ORG='${GITHUB_ORG}'
+ITEMS_DIR='${ITEMS_DIR}'
+JIRA_ORG='${JIRA_ORG}'
+" > ../appdata/taskboard/taskswap.config
 
   for app in "${apps[@]}"
   do
@@ -284,7 +288,7 @@ R: Change Repo" ' Return to TaskBoard' 0 'N' 'R'
 
             repo="$(read-repo)"
 
-            git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${ITEMS_DIR}/${jiranum}/${repo}"
+            git clone --recurse-submodules -j8 "git@github.com:${GITHUB_ORG}${repo}.git" "${ITEMS_DIR}/${jiranum}/${repo}"
           ;;
           'X' )
             if [ "${menu_value:1}" ]
@@ -393,7 +397,7 @@ then
   clear
   echo 'Welcome to TaskBoard! Please choose a directory for item folders.'
   echo "Default is ${HOME}/items"
-  echo 'Type the full name of the directory or leave blank to use default:'
+  echo 'Enter the full name of the directory or leave blank to use default:'
 
   read ITEMS_DIR
   [ "$ITEMS_DIR" ] || ITEMS_DIR="${HOME}/items"
@@ -402,6 +406,27 @@ then
   save-config
 fi
 mkdir -p "$ITEMS_DIR"
+
+while [ ! "${JIRA_ORG}" ]
+do
+  clear
+  echo 'Enter your JIRA organization (XXX in https://XXX.atlassian.net):'
+
+  read JIRA_ORG
+
+  save-config
+done
+
+if [ ! "${GITHUB_ORG+x}" ]
+then
+  clear
+  echo 'Enter the name of the GitHub organization to use or leave blank for none:'
+
+  read GITHUB_ORG
+  [ "$GITHUB_ORG" ] && GITHUB_ORG="${GITHUB_ORG%/}/"
+
+  save-config
+fi
 
 selected=0
 

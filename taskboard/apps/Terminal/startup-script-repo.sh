@@ -5,8 +5,6 @@ if [ -d src ]
 then
   cd src
 
-  "$(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/scripts/repo-fixes.sh"
-
   [ -f package.json ] && yarn install
   [ -f bower.json ] && bower install
   [ -f Gemfile ] && bundle install

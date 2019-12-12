@@ -11,8 +11,7 @@
   - [TaskBoard](#taskboard)
   - [TimeLog](#timelog)
 - [Scripts](#scripts)
-  - [CE Scripts](#ce-scripts)
-  - [Git Flow 2](#git-flow-2)
+  - [Bash Scripts](#bash-scripts)
   - [Tampermonkey Scripts](#tampermonkey-scripts)
 - [Shortcuts](#shortcuts)
 
@@ -34,13 +33,8 @@
 
 ## Scripts
 
-### [CE Scripts](scripts#ce-scripts)
+### [Bash Scripts](scripts#bash-scripts)
 - Various scripts for automating tasks
-
-### [Git Flow 2](flow2#git-flow-2)
-- Shortcuts for common git commands
-- Smart shortcuts for branches grouped by JIRA number, such as automatically adding the JIRA number to the commit message and switching between branches in a group without typing the JIRA number
-- Based on Git Flow from pages-tools
 
 ### [Tampermonkey Scripts](https://github.com/JRonkin/tampermonkey-ce)
 *Tampermonkey Scripts have been moved to their own repo: https://github.com/JRonkin/tampermonkey-ce*
@@ -48,14 +42,6 @@
 - Automate logins and improve experience on some websites
 
 ## Shortcuts
-- **ce**: Run `ce [SCRIPT_NAME]` to run the named script ('.sh' not needed) with any given args. See [CE Scripts](#ce-scripts).
-- **gbp**: Git Flow 2 -- [phase-build.sh](flow2/phase-build.sh)
-- **gci**: Git Flow 2 -- [phase-commit.sh](flow2/phase-commit.sh)
-- **gco**: Git Flow 2 -- [phase-checkout.sh](flow2/phase-checkout.sh)
-- **gf**: Git Flow 2 -- [finish.sh](flow2/finish.sh)
-- **gpl**: Git Flow 2 -- [pull.sh](flow2/pull.sh)
-- **gps**: Git Flow 2 -- [push-set-upstream.sh](flow2/push-set-upstream.sh)
-- **gpub**: Git Flow 2 -- [publish-build.sh](flow2/publish-build.sh)
 - **tb**: TaskBoard -- [taskboard.sh](taskboard/taskboard.sh)
 - **tl**: TimeLog -- [timelog.sh](timelog/timelog.sh)
 - **tlr**: TimeLog -- [timereport.sh](timelog/timereport.sh)

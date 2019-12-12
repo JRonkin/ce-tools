@@ -1,1 +1,0 @@
-"$(dirname "${BASH_SOURCE[0]}")"/../flow2/push-set-upstream.sh $@

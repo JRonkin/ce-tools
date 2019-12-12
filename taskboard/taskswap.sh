@@ -39,7 +39,7 @@ app-command() {
   local size="$(echo "${windowBounds[$(hash "$app")]}" | cut -d '|' -f 2)"
 
   pushd "${APPS_DIR}/${app}" >/dev/null
-  "${APPS_DIR}/${app}/${command}.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size"
+  JIRA_ORG="$JIRA_ORG" GITHUB_ORG="$GITHUB_ORG" "${APPS_DIR}/${app}/${command}.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size"
   popd >/dev/null
 }
 
@@ -64,7 +64,7 @@ new() {
   if [ "$repo" ]
   then
     # Clone repo and submodules
-    git clone --recurse-submodules -j8 "git@github.com:yext-pages/${repo}.git" "${folder}/${repo}" || true
+    git clone --recurse-submodules -j8 "git@github.com:${GITHUB_ORG}${repo}.git" "${folder}/${repo}" || true
   fi
 
   for app in "${apps[@]}"
