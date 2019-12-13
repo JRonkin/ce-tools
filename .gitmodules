@@ -1,0 +1,3 @@
+[submodule "yext-ce-tools"]
+	path = yext-ce-tools
+	url = git@github.com:yext-pages/yext-ce-tools.git

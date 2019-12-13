@@ -5,6 +5,11 @@ if [ -d src ]
 then
   cd src
 
+  if [ -f "$(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/yext-ce-tools/scripts/repo-fixes.sh" ]
+  then
+    "$(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/yext-ce-tools/scripts/repo-fixes.sh"
+  fi
+
   [ -f package.json ] && yarn install
   [ -f bower.json ] && bower install
   [ -f Gemfile ] && bundle install
