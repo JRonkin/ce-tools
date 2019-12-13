@@ -4,7 +4,7 @@ git submodule update --init --recursive
 
 if [ ! "$(grep "# ce tools" < "${HOME}/.bash_profile")" ]
 then
-  export PATH="$PATH:$(pwd)/shortcuts"
+  export PATH="$PATH:$(pwd)/shortcuts:$(pwd)/yext-ce-tools/shortcuts"
   printf "
 # ce tools
 export PATH=\"\$PATH:$(pwd)/shortcuts:$(pwd)/yext-ce-tools/shortcuts\"
