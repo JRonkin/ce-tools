@@ -99,7 +99,7 @@ fi
 
 response=$(curl -so /dev/null -w '%{http_code}' \
   --request POST \
-  --url https://${jiraorg}.atlassian.net/rest/api/3/issue/${jiranum}/worklog \
+  --url https://${jiraorg}.atlassian.net/rest/api/3/issue/${jiranum}/worklog?notifyUsers=false \
   --user ${username}:${apiToken} \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json' \
