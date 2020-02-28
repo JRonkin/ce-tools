@@ -22,3 +22,4 @@ Each component has a shortcut. See [Shortcuts](../README.md#shortcuts) for more 
 - Run `tlr [START_DATE] [END_DATE]` to see the time report for all dates between the two given dates, inclusive. Time for each item is added up over all days.
 - After printing the report, TimeReport gives the option to submit to JIRA. Doing so will log time to each individual item on JIRA. If reporting a date range, it will log time separately for each day.
 - To submit time to JIRA, you need to create a JIRA API token for your account. [Create one here](https://id.atlassian.com/manage/api-tokens) and enter it into TimeReport when prompted.
+- You also need to generate an API token for Tempo for your JIRA organization. You will be prompted with a link the first time you submit time logs.
