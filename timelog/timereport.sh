@@ -1,7 +1,6 @@
 cd "$(dirname "${BASH_SOURCE[0]}")"
-source jira-auth.sh
-source tempo-auth.sh
 source ../common/timefuncs.sh
+source tempo-auth.sh
 mkdir -p ../appdata/timelog/logs
 
 usage='Usage: timereport.sh [-hn] [-d decimals] [-r round_to] [-j [-o jira_org] [-u jira_user [-t jira_token]]] [date] [end_date]'
@@ -191,8 +190,7 @@ fi
 
 if [ "$jira" ]
 then
-  jira-auth "$jiraorg" "$username" "$apiToken"
-  tempo-auth "$jiraorg" "$tempoToken"
+  tempo-auth "$jiraorg" "$username" "$apiToken" "$tempoToken"
 
   if [ "$endDate" = "$date" ]
   then

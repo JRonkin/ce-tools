@@ -1,8 +1,7 @@
 cd $(dirname "${BASH_SOURCE[0]}")
-source jira-auth.sh
-source tempo-auth.sh
 source ../common/funcs.sh
 source ../common/timefuncs.sh
+source tempo-auth.sh
 
 usage='Usage: jirasubmit.sh [-hq] [-o jira_org] [-u username [-t jira_api_token]] [-T tempo_api_token] jira_number hours [date]'
 definitions=(''
@@ -99,21 +98,12 @@ else
   date="$(date '+%Y-%m-%d')"
 fi
 
-jira-auth "$jiraorg" "$username" "$apiToken"
+tempo-auth "$jiraorg" "$username" "$apiToken" "$tempoToken"
 
 if [ ! $quiet ]
 then
   echo "Logging ${hours} hours to issue ${jiranum} as ${username}..."
 fi
-
-authorAccountId="$(readJSON "$(curl \
-  --silent \
-  --request 'GET' \
-  --url "https://${jiraorg}.atlassian.net/rest/api/3/user/search?username=${username}" \
-  --user "${username}:${apiToken}" \
-  --header 'Accept: application/json')" "[0]['accountId']")"
-
-tempo-auth "$jiraorg" "$tempoToken"
 
 tempoAccountId="$(readJSON "$(curl \
   --silent \
@@ -165,7 +155,7 @@ response="$(curl \
         \"value\": \"${tempoAccount}\"
       }
     ],
-    \"authorAccountId\": \"${authorAccountId}\",
+    \"authorAccountId\": \"${tempoJiraAccount}\",
     \"issueKey\": \"${jiranum}\",
     \"startDate\": \"${date}\",
     \"startTime\": \"12:00:00\",
