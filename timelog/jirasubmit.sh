@@ -116,7 +116,7 @@ tempoAccountId="$(readJSON "$(curl \
 tempoAccountsFile="../appdata/timelog/tempo_accounts/${jiraorg}"
 if [ -f "$tempoAccountsFile" ]
 then
-  tempoAccount="$(grep "^${tempoAccountId}" "$tempoAccountsFile" | cut -d ',' -f 2)"
+  tempoAccount="$(grep "^${tempoAccountId}," "$tempoAccountsFile" | cut -d ',' -f 2)"
 fi
 
 # Update the tempo account cache and check again

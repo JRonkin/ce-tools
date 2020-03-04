@@ -1,5 +1,5 @@
-source ../common/funcs.sh
-source jira-auth.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../common/funcs.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/jira-auth.sh"
 
 tempo-auth() {
   jiraorg="$1"
