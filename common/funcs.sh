@@ -1,5 +1,5 @@
 hash() {
-  cksum <<< "$1" | cut -d ' ' -f 1
+  echo $(( 16#$(md5 <<< "$1") )) | tr -d '-'
 }
 
 readJSON() {
