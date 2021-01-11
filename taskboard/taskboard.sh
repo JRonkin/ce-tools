@@ -269,7 +269,8 @@ R: Change Repo" ' Return to TaskBoard' 0 'N' 'R'
 
       echo "Current Name: ${name}"
       read -p 'New Name: ' name
-      sed -i '' "s/^name=.*/name='$(echo "$name" | sed "s/'/'\"'\"'/g")'/" "${ITEMS_DIR}/${jiranum}/.taskboard"
+      sed -i '' "/^name=/d" "${ITEMS_DIR}/${jiranum}/.taskboard"
+      echo "name='$(echo "$name" | sed "s/'/'\"'\"'/g")'" >> "${ITEMS_DIR}/${jiranum}/.taskboard"
     ;;
     'R' )
       while :
@@ -278,7 +279,8 @@ R: Change Repo" ' Return to TaskBoard' 0 'N' 'R'
         menu '[Enter]: Select Repo | N: New Repo | X: Remove Repo' "$(list-repos "${ITEMS_DIR}/${jiranum}" "$repo")" 0 'N' 'X'
         case "$menu_key" in
           '' )
-            sed -i '' "s/^repo=.*/repo='${menu_value:1}'/" "${ITEMS_DIR}/${jiranum}/.taskboard"
+            sed -i '' "/^repo=/d" "${ITEMS_DIR}/${jiranum}/.taskboard"
+            echo "repo='${menu_value:1}'" >> "${ITEMS_DIR}/${jiranum}/.taskboard"
             break
           ;;
           'N' )

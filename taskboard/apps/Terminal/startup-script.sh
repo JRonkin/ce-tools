@@ -16,8 +16,9 @@ then
 
       do script \"J=${J}; cd '$(pwd)'; source '$(realpath "$(dirname "${BASH_SOURCE[0]}")")/startup-script-repo.sh'\"
 
-      set the custom title of the front window to \"${J}\"
-      set the bounds of the front window whose name contains \"${J} — \" to windowBounds
+      set repo_window to the front window
+      set the custom title of repo_window to \"${J}\"
+      set the bounds of repo_window to windowBounds
     end tell
   "
 
