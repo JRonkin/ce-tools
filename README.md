@@ -36,8 +36,8 @@
 ### [Bash Scripts](scripts#bash-scripts)
 - Various scripts for automating tasks
 
-### [Tampermonkey Scripts](https://github.com/JRonkin/tampermonkey-ce)
-*Tampermonkey Scripts have been moved to their own repo: https://github.com/JRonkin/tampermonkey-ce*
+### [Tampermonkey Scripts](https://github.com/yextconsulting/tampermonkey-ce)
+*Tampermonkey Scripts have been moved to their own repo: https://github.com/yextconsulting/tampermonkey-ce*
 - Userscripts for the browser plugin [Tampermonkey](https://www.tampermonkey.net)
 - Automate logins and improve experience on some websites
 
