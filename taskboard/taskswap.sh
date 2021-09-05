@@ -9,20 +9,28 @@ do
   apps[${#apps[@]}]="$app"
 done <<< "$(ls "${APPS_DIR}")"
 
+update-current-display() {
+  currentDisplay="$(
+    system_profiler SPDisplaysDataType |
+      awk '/Resolution:/{ printf "%s %s %s\n", $2, $4, ($5 == "Retina" ? 2 : 1) }'
+  )"
+}
+
 save-window-bounds() {
   local app="$1"
   local jiranum="$2"
   local repo="$3"
 
-  local position="$(app-command bounds "$app" "$jiranum" "$repo" 2>/dev/null)"
+  local appBounds="$(app-command 'getbounds' "$app" "$jiranum" "$repo" 2>/dev/null)"
 
-  [ "$position" ] || return 1
+  [ "$appBounds" ] || return 1
 
   local file="${CONFIG_DIR}/windowBounds"
 
+  update-current-display
   touch "$file"
-  echo "windowBounds[$(hash "$app")]='${position}'
-$(cat "$file" | grep -v "windowBounds\[$(hash "$app")\]=")" >"${file}.tmp"
+  echo "windowBounds[$(hash "${currentDisplay}/${app}")]='${appBounds}'
+$(cat "$file" | grep -v "windowBounds\[$(hash "${currentDisplay}/${app}")\]=")" >"${file}.tmp"
   mv "${file}.tmp" "$file"
 }
 
@@ -35,8 +43,9 @@ app-command() {
   # Load window bounds
   [ -f "${CONFIG_DIR}/windowBounds" ] && source "${CONFIG_DIR}/windowBounds"
 
-  local position="$(echo "${windowBounds[$(hash "$app")]}" | cut -d '|' -f 1)"
-  local size="$(echo "${windowBounds[$(hash "$app")]}" | cut -d '|' -f 2)"
+  local appBounds="${windowBounds[$(hash "${currentDisplay}/${app}")]}"
+  local position="$(echo "$appBounds" | cut -d '|' -f 1)"
+  local size="$(echo "$appBounds" | cut -d '|' -f 2)"
 
   pushd "${APPS_DIR}/${app}" >/dev/null
   JIRA_ORG="$JIRA_ORG" GITHUB_ORG="$GITHUB_ORG" "${APPS_DIR}/${app}/${command}.sh" "${ITEMS_DIR}/${jiranum}" "$jiranum" "$repo" "$position" "$size"
@@ -69,7 +78,9 @@ new() {
 
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] && app-command 'new' "$app" "$jiranum" "$repo" &
+    [ ${enabledApps[$(hash "$app")]} ] &&
+      app-command 'new' "$app" "$jiranum" "$repo" &&
+      app-command 'setbounds' "$app" "$jiranum" "$repo" &
   done
 }
 
@@ -97,6 +108,16 @@ deactivate() {
   done
 }
 
+setbounds() {
+  local jiranum="$1"
+  local repo="$2"
+
+  for app in "${apps[@]}"
+  do
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'setbounds' "$app" "$jiranum" "$repo" &
+  done
+}
+
 close() {
   local jiranum="$1"
   local repo="$2"
@@ -110,3 +131,5 @@ close() {
 
   trash "${ITEMS_DIR}/${jiranum}"
 }
+
+update-current-display

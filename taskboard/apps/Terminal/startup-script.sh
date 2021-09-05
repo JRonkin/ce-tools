@@ -9,16 +9,21 @@ then
   # Create a new window below the current window to run startup-script-repo.sh
   osascript -e "
     tell app \"Terminal\"
-      set windowBounds to the bounds of the front window whose name contains \"${J} — \"
-      set windowHeight to (item 4 of windowBounds - item 2 of windowBounds)
-      set item 2 of windowBounds to (item 2 of windowBounds + windowHeight)
-      set item 4 of windowBounds to (item 4 of windowBounds + windowHeight)
-
-      do script \"J=${J}; cd '$(pwd)'; source '$(realpath "$(dirname "${BASH_SOURCE[0]}")")/startup-script-repo.sh'\"
-
-      set repo_window to the front window
-      set the custom title of repo_window to \"${J}\"
-      set the bounds of repo_window to windowBounds
+      do script \"\
+        J='${J}';\
+        $(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/scripts/ttitle.sh '${J}';\
+        osascript -e '
+          tell app \\\"Terminal\\\"
+            set windowBounds to the bounds of window 2 whose name contains \\\"${J} — \\\"
+            set windowHeight to (item 4 of windowBounds - item 2 of windowBounds)
+            set item 2 of windowBounds to (item 2 of windowBounds + windowHeight)
+            set item 4 of windowBounds to (item 4 of windowBounds + windowHeight)
+            set the bounds of the front window whose name contains \\\"${J} — \\\" to windowBounds
+          end tell
+        ';\
+        cd '$(pwd)';\
+        source '$(realpath "$(dirname "${BASH_SOURCE[0]}")")/startup-script-repo.sh';\
+      \"
     end tell
   "
 
