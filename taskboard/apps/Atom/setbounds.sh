@@ -4,7 +4,7 @@ repo="$3"
 position="$4"
 size="$5"
 
-if [ "$repo" ] [ "$position" ] && [ "$size" ]
+if [ "$repo" ] && [ "$position" ] && [ "$size" ]
 then
   bounds="${position}, $(( ${position%,*} + ${size%,*} )), $(( ${position#*,} + ${size#*,} ))"
   selector="window whose name contains \"/${jiranum}/${repo}\""

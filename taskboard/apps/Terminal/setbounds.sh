@@ -8,5 +8,5 @@ if [ "$position" ] && [ "$size" ]
 then
   bounds="${position}, $(( ${position%,*} + ${size%,*} )), $(( ${position#*,} + ${size#*,} ))"
 
-  osascript -e "tell app \"Terminal\" to set the bounds of every window whose name contains \"${jiranum} — \" to {${bounds}}"
+  osascript -e "tell app \"Terminal\" to set the bounds of the front window whose name contains \"${jiranum} — \" to {${bounds}}"
 fi

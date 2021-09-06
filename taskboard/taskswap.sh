@@ -78,9 +78,7 @@ new() {
 
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] &&
-      app-command 'new' "$app" "$jiranum" "$repo" &&
-      app-command 'setbounds' "$app" "$jiranum" "$repo" &
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'new' "$app" "$jiranum" "$repo"
   done
 }
 

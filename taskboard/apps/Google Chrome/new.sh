@@ -1,6 +1,8 @@
 folder="$1"
 jiranum="$2"
 repo="$3"
+position="$4"
+size="$5"
 
 repoCmds=
 
@@ -28,3 +30,5 @@ osascript -e "
     set the active tab index of new_window to 1
   end tell
 "
+
+./setbounds.sh "$folder" "$jiranum" "$repo" "$position" "$size"
