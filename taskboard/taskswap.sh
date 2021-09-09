@@ -1,6 +1,7 @@
 BASE_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
 CONFIG_DIR="${BASE_DIR}/appdata/taskboard"
 APPS_DIR="${BASE_DIR}/taskboard/apps"
+APP_COMMAND_LOG_FILE="${CONFIG_DIR}/taskswap_apps.log"
 
 source "${BASE_DIR}/common/funcs.sh"
 
@@ -73,12 +74,17 @@ new() {
   if [ "$repo" ]
   then
     # Clone repo and submodules
-    git clone --recurse-submodules -j8 "git@github.com:${GITHUB_ORG}${repo}.git" "${folder}/${repo}" || true
+    git clone --recurse-submodules -j8 "git@github.com:${GITHUB_ORG}${repo}.git" "${folder}/${repo}" || true &
   fi
+
+  update-current-display
+
+  # Wait for repo to finish being cloned
+  wait
 
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] && app-command 'new' "$app" "$jiranum" "$repo"
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'new' "$app" "$jiranum" "$repo" &
   done
 }
 
@@ -110,9 +116,11 @@ setbounds() {
   local jiranum="$1"
   local repo="$2"
 
+  update-current-display
+
   for app in "${apps[@]}"
   do
-    [ ${enabledApps[$(hash "$app")]} ] && app-command 'setbounds' "$app" "$jiranum" "$repo" &
+    [ ${enabledApps[$(hash "$app")]} ] && app-command 'setbounds' "$app" "$jiranum" "$repo" 2>/dev/null &
   done
 }
 

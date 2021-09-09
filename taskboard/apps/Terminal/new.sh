@@ -14,4 +14,4 @@ cd ${folder}
 clear
 source '$(pwd)/startup-script.sh' '${repo}'\"
   end tell
-"
+" &>/dev/null

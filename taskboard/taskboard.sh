@@ -138,9 +138,10 @@ apps-menu() {
   )"
 
   local appsOptions="$(timelog-message "$jiranum" "$repo" "$name")
-Q: Return to TaskBoard           | E: Enable/Disable Apps"
+Q: Return to TaskBoard
+E: Enable/Disable Apps           | R: Reset Window Positions"
 
-  local appsKeys='Q E'
+  local appsKeys='Q E R'
 
   if [ "$appsList" ]
   then
@@ -154,7 +155,7 @@ Q: Return to TaskBoard           | E: Enable/Disable Apps"
 
   case "$menu_key" in
     # Open App
-    '' ) [ "$menu_value" ] && app-command 'new' "$menu_value" "$jiranum" "$repo";;
+    '' ) [ "$menu_value" ] && app-command 'new' "$menu_value" "$jiranum" "$repo" &;;
 
     # Return to TaskBoard
     'Q' ) ;;
@@ -192,6 +193,9 @@ Cancel'
         fi
       fi
     ;;
+
+    # Reset App Windows to Their Defaults
+    'R' ) setbounds "$jiranum" "$repo" ;;
 
     # Set Current Window Positions as Default
     'S' )

@@ -18,5 +18,5 @@ then
       end repeat
       set the bounds of every ${selector} to {${bounds}}
     end tell
-  "
+  " &>/dev/null
 fi
