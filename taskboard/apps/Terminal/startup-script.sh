@@ -1,26 +1,23 @@
 # This script runs when Terminal opens a new window.
 # Current folder is [ITEMS_DIR]/[JIRANUM]
-# First agrument is the the current repo, or empty string if none
 
-if [ "$1" ]
+folder="$1"
+jiranum="$2"
+repo="$3"
+position="$4"
+size="$5"
+
+if [ "$repo" ]
 then
-  cd "$1"
+  cd "$repo"
 
   # Create a new window below the current window to run startup-script-repo.sh
   osascript -e "
     tell app \"Terminal\"
       do script \"\
-J='${J}'
-$(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/scripts/ttitle.sh '${J}'
-osascript -e '
-  tell app \\\"Terminal\\\"
-    set windowBounds to the bounds of window 2 whose name contains \\\"${J} — \\\"
-    set windowHeight to (item 4 of windowBounds - item 2 of windowBounds)
-    set item 2 of windowBounds to (item 2 of windowBounds + windowHeight)
-    set item 4 of windowBounds to (item 4 of windowBounds + windowHeight)
-    set the bounds of the front window whose name contains \\\"${J} — \\\" to windowBounds
-  end tell
-'
+J='${jiranum}'
+$(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/scripts/ttitle.sh '${jiranum} — 2'
+$(realpath "$(dirname "${BASH_SOURCE[0]}")")/setbounds.sh '${folder}' '${jiranum}' '${repo}' '${position}' '${size}'
 cd '$(pwd)'
 clear
 source '$(realpath "$(dirname "${BASH_SOURCE[0]}")")/startup-script-repo.sh'\"

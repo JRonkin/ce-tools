@@ -8,10 +8,10 @@ osascript -e "
   tell app \"Terminal\"
     do script \"\
 J='${jiranum}'
-$(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/scripts/ttitle.sh '${jiranum}'
+$(realpath "$(dirname "${BASH_SOURCE[0]}")/../../..")/scripts/ttitle.sh '${jiranum} — 1'
 $(realpath "$(dirname "${BASH_SOURCE[0]}")")/setbounds.sh '${folder}' '${jiranum}' '${repo}' '${position}' '${size}'
-cd ${folder}
+cd '${folder}'
 clear
-source '$(pwd)/startup-script.sh' '${repo}'\"
+source '$(pwd)/startup-script.sh' '${folder}' '${jiranum}' '${repo}' '${position}' '${size}'\"
   end tell
 " &>/dev/null
