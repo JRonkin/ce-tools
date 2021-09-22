@@ -19,12 +19,16 @@ tempo-auth() {
 
   if [ ! "$tempoJiraAccount" ]
   then
-    tempoJiraAccount="$(readJSON "$(curl \
-      --silent \
-      --request 'GET' \
-      --url "https://${jiraorg}.atlassian.net/rest/api/3/user/search?username=${username}" \
-      --user "${username}:${apiToken}" \
-      --header 'Accept: application/json')" "[0]['accountId']")"
+    echo "Enter your JIRA Account ID."
+    echo "To find your account ID, visit this URL:"
+    echo 'https://yexttest.atlassian.net/jira/people/me'
+    echo 'After you are redirected, take the ID from the URL:'
+    echo 'https://yexttest.atlassian.net/jira/people/[ID_HERE]'
+
+    while [ ! "$tempoJiraAccount" ]
+    do
+      read -p 'JIRA Account ID: ' tempoJiraAccount
+    done
   fi
 
   if [ "$tempoToken" ]
@@ -44,7 +48,7 @@ tempo-auth() {
     else
       echo 'Enter your Tempo API token'
       echo "If you haven't created a token yet, create one here:"
-      echo "https://${jiraorg}.atlassian.net/plugins/servlet/ac/io.tempo.jira/tempo-configuration#!/api-integration"
+      echo "https://${jiraorg}.atlassian.net/plugins/servlet/ac/io.tempo.jira/tempo-app#!/configuration/api-integration"
 
       while [ ! "$tempoToken" ]
       do

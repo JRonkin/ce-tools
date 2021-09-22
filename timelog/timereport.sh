@@ -3,7 +3,7 @@ source ../common/timefuncs.sh
 source tempo-auth.sh
 mkdir -p ../appdata/timelog/logs
 
-usage='Usage: timereport.sh [-hn] [-d decimals] [-r round_to] [-j [-o jira_org] [-u jira_user [-t jira_token]]] [date] [end_date]'
+usage='Usage: timereport.sh [-hn] [-d decimals] [-r round_to] [-j [-o jira_org] [-u jira_user [-t jira_token]]] [-T tempo_api_token] [date] [end_date]'
 definitions=(''
   '-h = help'
   '-n = no intermediate rounding (displayed times may not sum to total)'
@@ -30,7 +30,7 @@ unrounded=
 decimals=2
 roundto=0.25
 
-while getopts 'hjnd:o:r:t:u:' opt
+while getopts 'hjnd:o:r:T:t:u:' opt
 do
   case "$opt" in
     'h' )
@@ -206,7 +206,7 @@ then
   else
     while read epoch
     do
-      ./timereport $unrounded -d "$decimals" -r "$roundto" -j -u "$username" -t "$apiToken" -T "$tempoToken" "$(epoch2date $epoch)"
+      ./timereport.sh $unrounded -d "$decimals" -r "$roundto" -j -u "$username" -t "$apiToken" -T "$tempoToken" "$(epoch2date $epoch)"
     done <<< "$(seq -f %f $(date2epoch $date) 86400 $(date2epoch $endDate) | cut -d . -f 1) "
   fi
 fi
