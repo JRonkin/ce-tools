@@ -68,14 +68,14 @@ menu() {
   local end=1
 
   tput home
-  printf "\033[2J$(seq  -f '=' -s '' $width)\n"
+  printf "\033[2J$(seq -s '=' $width | tr -d '[:digit:]')\n"
 
   if [ "$header" ]
   then
     while IFS= read line
     do
       [ ${#line} -gt $(( width - 4 )) ] && line="${line:0:$(( width - 5 ))}…"
-      printf "| ${line}$(seq  -f ' ' -s '' $(( $width - 3 - ${#line} )))|\n"
+      printf "| ${line}$(seq -s ' ' $(( $width - 3 - ${#line} )) | tr -d '[:digit:]')|\n"
       (( ++start ))
       (( ++end ))
     done <<< "$header"
@@ -87,19 +87,19 @@ menu() {
     then
       if [ $end = $start ] && [ $start -gt 1 ]
       then
-        printf "|$(seq  -f '-' -s '' $(( $width - 2 )))|\n"
+        printf "|$(seq -s '-' $(( $width - 2 )) | tr -d '[:digit:]')|\n"
         (( ++start ))
         (( ++end ))
       fi
 
       [ ${#line} -gt $(( width - 5 )) ] && line="${line:0:$(( width - 6 ))}…"
-      printf "|  ${line}$(seq  -f ' ' -s '' $(( $width - 4 - ${#line} )))|\n"
+      printf "|  ${line}$(seq -s ' ' $(( $width - 4 - ${#line} )) | tr -d '[:digit:]')|\n"
       optionsArray[${#optionsArray[@]}]="$line"
       (( ++end ))
     fi
   done <<< "$options"
 
-  printf "$(seq  -f '=' -s '' $width)\n"
+  printf "$(seq -s '=' $width | tr -d '[:digit:]')\n"
 
   # Set Selected
   if [ $selected -lt 0 ]
