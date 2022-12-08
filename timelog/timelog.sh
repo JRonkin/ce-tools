@@ -47,7 +47,7 @@ case "$command" in
     else
       time="$(formattime "$3")"
     fi
-    linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
+    linenum="$(grep -Fnx "$item" "$file" | cut -d : -f 1)"
     if [ "$linenum" ]
     then
       sed -i "" "$(($linenum + 1))s/ \$/ ${time}-/" "$file"
@@ -59,11 +59,11 @@ case "$command" in
   ;;
 
   "e" | "end" )
-    linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
+    linenum="$(grep -Fnx "$item" "$file" | cut -d : -f 1)"
     if ! [ "$linenum" ]
     then
       ./timelog.sh "$item" start '0:00:00'
-      linenum="$(grep -Fn "$item" "$file" | cut -d : -f 1)"
+      linenum="$(grep -Fnx "$item" "$file" | cut -d : -f 1)"
     fi
     if [ "$#" -lt 3 ]
     then

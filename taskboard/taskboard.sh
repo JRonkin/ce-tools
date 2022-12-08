@@ -275,6 +275,13 @@ R: Change Repo" ' Return to TaskBoard' 0 'N' 'R'
       read -p 'New Name: ' name
       sed -i '' "/^name=/d" "${ITEMS_DIR}/${jiranum}/.taskboard"
       echo "name='$(echo "$name" | sed "s/'/'\"'\"'/g")'" >> "${ITEMS_DIR}/${jiranum}/.taskboard"
+
+      if [ "$active_jira" = "$jiranum" ]
+      then
+        ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" end
+        active_name="$name"
+        ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" start
+      fi
     ;;
     'R' )
       while :
@@ -293,6 +300,7 @@ R: Change Repo" ' Return to TaskBoard' 0 'N' 'R'
             stty echo
 
             repo="$(read-repo)"
+            [ "$active_jira" = "$jiranum" ] && active_repo="$repo"
 
             git clone --recurse-submodules -j8 "git@github.com:${GITHUB_ORG}${repo}.git" "${ITEMS_DIR}/${jiranum}/${repo}"
           ;;
@@ -369,7 +377,7 @@ T: TimeReport" ' Return to TaskBoard' 0 'I' 'T'
 
       [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" end
 
-      ../timelog/timereport.sh "$date" "$endDate"
+      ../timelog/timereport.sh -d 1 -r 0.1 "$date" "$endDate"
 
       [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" start
 
