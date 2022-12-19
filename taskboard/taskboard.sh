@@ -377,7 +377,7 @@ T: TimeReport" ' Return to TaskBoard' 0 'I' 'T'
 
       [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" end
 
-      ../timelog/timereport.sh -d 1 -r 0.1 "$date" "$endDate"
+      ../timelog/timereport.sh "$date" "$endDate"
 
       [ "$active_jira" ] && ../timelog/timelog.sh "$(timelog-message "$active_jira" "$active_repo" "$active_name")" start
 
