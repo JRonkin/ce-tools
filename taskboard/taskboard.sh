@@ -442,6 +442,25 @@ then
   save-config
 fi
 
+# Check for fetched updates
+if [ "$(git rev-parse --abbrev-ref HEAD)" = 'master' ] && [ "$(git rev-list 'HEAD..origin/master')" ]
+then
+  echo 'There are updates available. Would you like to update now?'
+  read -p '(Y/n): ' answer
+  answer="$(tr 'A-Z' 'a-z' <<< "$answer")"
+
+  if ! [ "$answer" = 'n' ] && ! [ "$answer" = 'no' ]
+  then
+    git pull && git submodule update --init --recursive
+    echo 'Update complete! Please start TaskBoard again.'
+    exit
+  fi
+fi
+
+# Fetch updates in the background
+git fetch origin master &> /dev/null &
+
+# Menu loop
 selected=0
 
 while :
