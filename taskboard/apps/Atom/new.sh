@@ -7,6 +7,6 @@ size="$5"
 if [ "$repo" ]
 then
   atom "${folder}/${repo}"
-  sleep 1
+  sleep 2
   ./setbounds.sh "$folder" "$jiranum" "$repo" "$position" "$size"
 fi
