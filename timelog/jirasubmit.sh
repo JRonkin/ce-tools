@@ -105,12 +105,14 @@ then
   echo "Logging ${hours} hours to issue ${jiranum} as ${username}..."
 fi
 
-tempoAccountId="$(readJSON "$(curl \
+issueData="$(curl \
   --silent \
   --request 'GET' \
-  --url "https://${jiraorg}.atlassian.net/rest/api/3/issue/${jiranum}" \
+  --url "https://${jiraorg}.atlassian.net/rest/api/3/issue/${jiranum}?fields=customfield_11000" \
   --user "${username}:${apiToken}" \
-  --header 'Accept: application/json')" "['fields']['customfield_11000']['id']")"
+  --header 'Accept: application/json')"
+issueId="$(readJSON "$issueData" "['id']")"
+tempoAccountId="$(readJSON "$issueData" "['fields']['customfield_11000']['id']")"
 
 # Check the cache of tempo accounts for the ID
 tempoAccountsFile="../appdata/timelog/tempo_accounts/${jiraorg}"
@@ -125,7 +127,7 @@ then
   allTempoAccounts="$(curl \
     --silent \
     --request 'GET' \
-    --url 'https://api.tempo.io/core/3/accounts' \
+    --url 'https://api.tempo.io/4/accounts?limit=1000000' \
     --header "Authorization: Bearer ${tempoToken}" \
     --header 'Accept: application/json')"
 
@@ -137,15 +139,16 @@ for account in json.load(sys.stdin)['results']:
   print(str(account['id']) + ',' + account['key'])
   " > "$tempoAccountsFile"
 
-  tempoAccount="$(grep "^${tempoAccountId}" "../appdata/timelog/tempo_accounts/${jiraorg}" | cut -d ',' -f 2)"
+  tempoAccount="$(grep "^${tempoAccountId}," "$tempoAccountsFile" | cut -d ',' -f 2)"
 fi
 
-response="$(curl \
+outputFile="$(mktemp)"
+responseCode="$(curl \
   --silent \
-  --output /dev/null \
-  --write-out '%{http_code}' \
+  --output "$outputFile" \
+  --write-out '%{response_code}' \
   --request 'POST' \
-  --url 'https://api.tempo.io/core/3/worklogs' \
+  --url 'https://api.tempo.io/4/worklogs' \
   --header "Authorization: Bearer ${tempoToken}" \
   --header 'Content-Type: application/json' \
   --data "{
@@ -156,19 +159,19 @@ response="$(curl \
       }
     ],
     \"authorAccountId\": \"${tempoJiraAccount}\",
-    \"issueKey\": \"${jiranum}\",
+    \"issueId\": \"${issueId}\",
     \"startDate\": \"${date}\",
-    \"startTime\": \"12:00:00\",
     \"timeSpentSeconds\": $(hours2seconds $hours)
   }")"
 
-case "$response" in
+case "$responseCode" in
   2* )
-    echo "Succeeded with response code ${response}"
+    echo "Succeeded with response code ${responseCode}"
   ;;
 
   400 )
-    echo "Error (400): The worklog can't be created for some reason."
+    echo "Error (400): The worklog can't be created for some reason. Response:"
+    echo <<< "$outputFile"
     exit 1
   ;;
 
@@ -183,12 +186,16 @@ case "$response" in
   ;;
 
   4*|5* )
-    echo "Error: Failed with response code ${response}"
+    echo "Error: Failed with response code ${responseCode}. Response:"
+    echo <<< "$outputFile"
     exit 1
   ;;
 
   * )
-    echo "Error: Received unexpected response '${response}'"
+    echo "Error: Received unexpected response code '${responseCode}'. Response:"
+    echo <<< "$outputFile"
     exit 1
   ;;
 esac
+
+rm "$outputFile"
