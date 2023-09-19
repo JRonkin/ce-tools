@@ -1,7 +1,11 @@
 # This script runs when Terminal opens a new window and there is an active repo.
 # Current folder is [ITEMS_DIR]/[JIRANUM]/[REPO]
 
-if [ -d src ]
+if [ -f package.json ]
+then
+  rm -f yarn.lock
+  npm install
+elif [ -d src ]
 then
   cd src
 
